@@ -181,6 +181,30 @@ Section cap_lang_rules.
     erewrite lmeasure_weaken_aux; eauto.
   Qed.
 
+  Lemma sweep_implies_no_pc {σ p pc_b pc_e pc_a r a v} b e :
+    reg σ !! PC = Some (WCap p pc_b pc_e pc_a)
+    → reg σ !! r = Some (WCap RX b e a)
+    → sweep_reg (mem σ) (reg σ) r = true
+    → r ≠ PC
+    -> pc_a ∈ finz.seq_between pc_b pc_e
+    → pc_a ∉ finz.seq_between b e.
+  Proof.
+    intros Hpc Hr Hsweep Hinbouds pcHrpc.
+    unfold sweep_reg, sweep_memory_reg, sweep_registers_reg in Hsweep.
+    rewrite Hr in Hsweep.
+    rewrite andb_true_iff in Hsweep.
+    destruct Hsweep as [_ Hsweep].
+    unfold unique_in_registers in *.
+    rewrite bool_decide_eq_true in Hsweep.
+    rewrite map_Forall_lookup in Hsweep.
+    eapply Hsweep in Hpc.
+    destruct (decide (PC = r)); eauto.
+    apply overlap_word_disjoint in Hpc.
+    intro Hpca.
+    eapply elem_of_disjoint; eauto.
+  Qed.
+
+
   Definition exec_optL_EInit {A}
     (lregs : LReg) (lmem : LMem)
     (r1 r2 :  RegName) (code_sweep data_sweep : bool)
@@ -522,7 +546,6 @@ Section cap_lang_rules.
         by eapply EInit_fail_enum_bound_exceeded. }
 
       iIntros (s_b) "%Hs_b _".
-
       iApply wp_opt2_bind. iApply wp_opt2_eqn_both.
       iApply wp2_diag_univ.
       iSplit.
@@ -552,7 +575,6 @@ Section cap_lang_rules.
       (* measure the enclave footprint *)
 
       subst p p0.
-
       iApply wp_opt2_bind.
       iApply wp_opt2_eqn_both.
       unfold measure at 1, lmeasure at 1.
@@ -560,34 +582,16 @@ Section cap_lang_rules.
       2: {
         eapply incl_Forall; cycle 1.
         eapply HallowsMemory; eauto.
-        + (* somehow this follows from the sweep succeeding. See lemma below... *) admit.
+        + eapply sweep_implies_no_pc; eauto.
+          *  intro ; simplify_eq.
+             rewrite -bool_decide_not in i.
+             done.
+          * eapply isCorrectPC_le_addr in Hcorrpc.
+            rewrite elem_of_finz_seq_between; solve_addr.
         + rewrite /incl.
           intros a HIna.
           rewrite -!elem_of_list_In !elem_of_finz_seq_between in HIna |- *.
           solve_addr.
-
-        Set Nested Proofs Allowed.
-        Lemma sweep_implies_no_pc {σ p pc_b pc_e pc_a r a v z} b e :
-          reg σ !! PC = Some (WCap p pc_b pc_e pc_a)
-          → mem σ !! pc_a = Some (WInt z)
-          → reg σ !! r = Some (WCap RX b e a)
-          → sweep_reg (mem σ) (reg σ) r = true
-          → r ≠ PC
-          → pc_a ∉ finz.seq_between b e.
-          Proof.
-            intros Hpc Hpc_a Hr Hsweep.
-            unfold sweep_reg, sweep_memory_reg, sweep_registers_reg in Hsweep.
-            rewrite Hr in Hsweep.
-            Search ((_ && _) = true).
-            rewrite andb_true_iff in Hsweep.
-            destruct Hsweep as [_ Hsweep].
-            unfold unique_in_registers in *.
-            rewrite bool_decide_eq_true in Hsweep.
-            (* rewrite map_Forall_lookup in Hsweep. *)
-            eapply map_Forall_lookup_1.
-            (* apply Hpc in Hsweep. *)
-            Search (bool_decide _ = true).
-          Admitted.
       }
 
       erewrite (lmeasure_measure _ (mem σ)); eauto.
@@ -644,7 +648,9 @@ Section cap_lang_rules.
 
         iMod (gen_heap_update_inSepM _ _ r_code (LCap machine_base.E f f0 (f ^+ 1)%a (v+1)) with "Hσr Hregs") as "(Hσr & Hregs)"; eauto.
         iMod (gen_heap_update_inSepM _ _ r_data (LInt 0) with "Hσr Hregs") as "(Hσr & Hregs)"; eauto.
-        admit. (* lookup_weaken_ne: follows from r_data ≠ r_code (their perms are different... )*)
+        { rewrite lookup_insert_ne; first done.
+          intro ; simplify_map_eq.
+        }
         iDestruct (gen_heap_valid_inclSepM with "Hσr Hregs") as "%Hlr2sub".
 
         iApply (wp_opt2_frame with "Hσm").
