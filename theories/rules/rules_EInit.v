@@ -2,6 +2,7 @@ From iris.base_logic Require Export invariants gen_heap.
 From iris.program_logic Require Export weakestpre ectx_lifting.
 From iris.proofmode Require Import proofmode.
 From iris.algebra Require Import frac.
+From iris.algebra.lib Require Import excl_auth.
 From cap_machine Require Export rules_base.
 
 Section cap_lang_rules.
@@ -18,6 +19,35 @@ Section cap_lang_rules.
   Implicit Types lregs : LReg.
   Implicit Types mem : Mem.
   Implicit Types lmem : LMem.
+
+  Definition full_own_mem (lmem : LMem) : LMemF := (λ y : LWord, (DfracOwn 1, y)) <$> lmem.
+
+  Lemma map_full_own (lm : LMem) :
+    ([∗ map] k↦y ∈ lm, k ↦ₐ y)%I
+    ⊣⊢ ([∗ map] la↦dw ∈ (full_own_mem lm), la ↦ₐ{dw.1} dw.2).
+  Proof. Admitted.
+
+  Lemma update_state_interp_next_version
+    {σr σm lr lm vmap lregs lmem src lwsrc p b e a v} :
+
+    let la := finz.seq_between b e in
+    Forall (λ a0 : Addr, a0 ∉ reserved_addresses) la ->
+    sweep_reg σm σr src = true ->
+    lregs !! src = Some lwsrc ->
+    get_wlcap_slcap lwsrc = Some (p, b, e, a, v) ->
+    gen_heap_interp lr ∗ gen_heap_interp lm ∗
+      ⌜state_phys_log_corresponds σr σm lr lm vmap⌝%I
+      ∗ ([∗ map] k↦y ∈ lregs, k ↦ᵣ y) ∗ ([∗ map] k↦y ∈ full_own_mem lmem, k ↦ₐ{y.1} y.2)
+      ⊢ |==>
+      let lmem' := update_version_region lm la v lmem in
+      let lm' := update_version_region lm la v lm in
+      let lregs' := (<[src:=next_version_lword lwsrc]> lregs) in
+      let lr' := (<[src:=next_version_lword lwsrc]> lr) in
+      let vmap' := update_version_region_vmap la v vmap in
+      ⌜ is_valid_updated_lmemory lm lmem (finz.seq_between b e) v lmem'⌝ ∗
+        gen_heap_interp lr' ∗ gen_heap_interp lm' ∗
+        ⌜state_phys_log_corresponds σr σm lr' lm' vmap' ⌝%I ∗ ([∗ map] k↦y ∈ lregs', k ↦ᵣ y) ∗ ([∗ map] k↦y ∈ full_own_mem lmem', k ↦ₐ{y.1} y.2).
+  Proof. Admitted.
 
   Inductive EInit_fail (lregs : LReg) (lmem : LMem) (r_code r_data : RegName) (tidx : TIndex) (ot : OType) : Prop :=
   (* the code register is PC *)
@@ -329,7 +359,7 @@ Section cap_lang_rules.
     (* derive frag ⊆ auth *)
     iDestruct (gen_heap_valid_inclSepM with "Hlm Hmem") as "%Hlmsub".
     iDestruct (gen_heap_valid_inclSepM with "Hlr Hregs") as "%Hlrsub".
-    iCombine "Hlr Hlm Hregs Hmem Hcur_tb Hecauth HECv" as "Hσ".
+    iCombine "Hlr Hlm Hregs Hmem Hcur_tb Hall_tb Hecauth HECv" as "Hσ".
 
     iDestruct (transiently_intro with "Hσ") as "Hσ".
 
@@ -350,7 +380,7 @@ Section cap_lang_rules.
     1: {
       iModIntro.
       iIntros.
-      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
       iSplitR "Hφ Hregs Hmem HECv".
       iExists lr, lm, vmap, _, _, _; now iFrame.
       iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -360,7 +390,7 @@ Section cap_lang_rules.
     2: {
       iModIntro.
       iIntros.
-      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
       iSplitR "Hφ Hregs Hmem HECv".
       iExists lr, lm, vmap, _, _, _; now iFrame.
       iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -372,7 +402,7 @@ Section cap_lang_rules.
     2: {
       iModIntro.
       iIntros.
-      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
       iSplitR "Hφ Hregs Hmem HECv".
       iExists lr, lm, vmap, _, _, _; now iFrame.
       iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -386,7 +416,7 @@ Section cap_lang_rules.
     2: { (* we do not have RX permissions for ccap. *)
       iModIntro.
       iIntros.
-      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
       iSplitR "Hφ Hregs Hmem HECv".
       iExists lr, lm, vmap, _, _, _; now iFrame.
       iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -397,7 +427,7 @@ Section cap_lang_rules.
     2: { (* ccap is too small to store dcap at address b *)
       iModIntro.
       iIntros.
-      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
       iSplitR "Hφ Hregs Hmem HECv".
       iExists lr, lm, vmap, _, _, _; now iFrame.
       iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -417,7 +447,7 @@ Section cap_lang_rules.
     1: {
       iModIntro.
       iIntros.
-      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
       iSplitR "Hφ Hregs Hmem HECv".
       iExists lr, lm, vmap, _, _, _; now iFrame.
       iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -430,7 +460,7 @@ Section cap_lang_rules.
     2: {
       iModIntro.
       iIntros.
-      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
       iSplitR "Hφ Hregs Hmem HECv".
       iExists lr, lm, vmap, _, _, _; now iFrame.
       iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -440,7 +470,7 @@ Section cap_lang_rules.
     2: {
       iModIntro.
       iIntros.
-      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
       iSplitR "Hφ Hregs Hmem HECv".
       iExists lr, lm, vmap, _, _, _; now iFrame.
       iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -456,7 +486,7 @@ Section cap_lang_rules.
     2: {
       iModIntro.
       iIntros.
-      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
       iSplitR "Hφ Hregs Hmem HECv".
       iExists lr, lm, vmap, _, _, _; now iFrame.
       iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -467,7 +497,7 @@ Section cap_lang_rules.
     2: { (* dcap is too small to store seals at address b' *)
       iModIntro.
       iIntros.
-      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
       iSplitR "Hφ Hregs Hmem HECv".
       iExists lr, lm, vmap, _, _, _; now iFrame.
       iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -484,7 +514,7 @@ Section cap_lang_rules.
       erewrite !(decide_False (H := Is_true_dec false)); eauto.
       iModIntro.
       iIntros.
-      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
       iSplitR "Hφ Hregs Hmem HECv".
       iExists lr, lm, vmap, _, _, _; now iFrame.
       iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -503,7 +533,7 @@ Section cap_lang_rules.
       erewrite !(decide_False (H := Is_true_dec false)); eauto.
       iModIntro.
       iIntros.
-      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
       iSplitR "Hφ Hregs Hmem HECv".
       iExists lr, lm, vmap, _, _, _; now iFrame.
       iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -525,7 +555,7 @@ Section cap_lang_rules.
         { cbn in i0. by exfalso. }
         iModIntro.
         iIntros.
-        iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+        iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
         iSplitR "Hφ Hregs Hmem HECv".
         iExists lr, lm, vmap, _, _, _; now iFrame.
         iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -537,7 +567,7 @@ Section cap_lang_rules.
       iSplit.
       1: {
         iIntros.
-        iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+        iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
         iSplitR "Hφ Hregs Hmem HECv".
         iExists lr, lm, vmap, _, _, _; now iFrame.
         iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -551,7 +581,7 @@ Section cap_lang_rules.
       iSplit.
       1: {
         iIntros.
-        iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+        iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
         iSplitR "Hφ Hregs Hmem HECv".
         iExists lr, lm, vmap, _, _, _; now iFrame.
         iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -613,7 +643,7 @@ Section cap_lang_rules.
 
       1: {
         iIntros (Hhash Hlhash).
-        iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+        iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
         iSplitR "Hφ Hregs Hmem HECv".
         iExists lr, lm, vmap, _, _, _; now iFrame.
         iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -629,48 +659,81 @@ Section cap_lang_rules.
       iApply wp_opt2_bind; iApply wp_opt2_eqn_both.
 
       iApply wp_opt2_mono2.
-      iSplitL "Hφ Hall_tb Hprev_tb".
+      iSplitL "Hφ Hprev_tb".
       2: {
         iApply transiently_wp_opt2.
-        iMod "Hσ" as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
-        (* TODO: check isUnique: nieuwe addressen worden aangemaakt (v0+1 bestaat nog niet) *)
+        iMod "Hσ" as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
+        rewrite map_full_own.
+        iMod (update_state_interp_next_version with "[$Hσr $Hσm $Hregs $Hmem]") as
+          "(%Hvm & Hσr & Hσm & #Hcorr' & Hregs & Hmem)"; eauto.
+          {
+            admit. (* this follows from HrdataAllowEInit. *)
+          }
+
+        rewrite -map_full_own.
         iMod (gen_heap_update_inSepM _ _ (f2,v0+1) (LSealRange (true, true) s_b s_e s_b) with "Hσm Hmem") as "(Hσm & Hmem)"; eauto.
-        admit.
+        admit. (* follows immediately from definition of update_version_region... *)
         iMod (gen_heap_update_inSepM _ _ (f,v+1) (LCap RW f2 f3 f4 v0) with "Hσm Hmem") as "(Hσm & Hmem)"; eauto.
         admit.
 
-        (* TODO: mod_update for <[(enumcur σ) := eid]> etable *)
-        (* TODO: also need an update for all_tb, in the same vein *)
-        (* use alloc lemma for frag in the table, own_update & excl_own_update *)
 
-        (* TODO: mod_update for (enumcur σ) := (enumcur σ + 1) *)
-        (* own_update & excl_own_update *)
+        (* mod update for <[(enumcur σ) := eid]> etable in CUR_TB *)
+        iMod (own_update with "Hcur_tb") as "(Hcur_tb & Hcur_frag)".
+        eapply (auth_update_alloc (Excl <$> cur_tb) (Excl <$> (<[tidx := eid]> cur_tb)) (Excl <$> {[ tidx := eid ]})).
+        rewrite fmap_insert.
+        rewrite map_fmap_singleton.
+        apply gmap.alloc_singleton_local_update.
+        { (* follows from HEC + Hdomtbcompl I believe *) admit. }
+        { admit. }
+
+        (* mod update for <[(enumcur σ) := eid]> etable in ALL_TB *)
+        iMod (own_update with "Hall_tb") as "(Hall_tb & Hall_frag)".
+        eapply (auth_update_alloc (to_agree <$> all_tb) (to_agree <$> (<[tidx := eid]> all_tb)) (to_agree <$> {[ tidx := eid ]})).
+        rewrite fmap_insert.
+        rewrite map_fmap_singleton.
+        apply gmap.alloc_singleton_local_update.
+        { (* follows from HEC + Hdomtbcompl I believe *) admit. }
+        { admit. }
+        cbn.
+        iCombine "Hecauth HECv" as "HEC".
+        iMod (own_update with "HEC") as "(Hecauth & HECv)".
+        apply (excl_auth_update _ _ (enumcur σ + 1)).
 
         iMod (gen_heap_update_inSepM _ _ r_code (LCap machine_base.E f f0 (f ^+ 1)%a (v+1)) with "Hσr Hregs") as "(Hσr & Hregs)"; eauto.
+        rewrite lookup_insert_ne. easy.
+        (* TODO: create this assumption early, we need it often *)
+        admit.
         iMod (gen_heap_update_inSepM _ _ r_data (LInt 0) with "Hσr Hregs") as "(Hσr & Hregs)"; eauto.
-        { rewrite lookup_insert_ne; first done.
-          intro ; simplify_map_eq.
-        }
+        rewrite lookup_insert_ne. admit. admit.
         iDestruct (gen_heap_valid_inclSepM with "Hσr Hregs") as "%Hlr2sub".
+
 
         iApply (wp_opt2_frame with "Hσm").
         iApply (wp_opt2_frame with "Hmem").
         iApply (wp_opt2_frame with "Hcur_tb").
+        iApply (wp_opt2_frame with "Hcur_frag").
+        iApply (wp_opt2_frame with "Hall_tb").
+        iApply (wp_opt2_frame with "Hall_frag").
         iApply (wp_opt2_frame with "Hecauth").
         iApply (wp_opt2_frame with "HECv").
+        iApply (wp_opt2_frame with "Hcorr'").
         iModIntro.
-        iApply (wp2_opt_incrementPC2 with "[$Hσr $Hregs]").
-        { apply elem_of_dom. by repeat (rewrite lookup_insert_is_Some'; right). }
-        apply Hlr2sub.
+        iDestruct "Hcorr'" as "%Corr".
 
-        apply state_phys_log_corresponds_update_reg; eauto. constructor. (* ints are always current... *)
-        apply state_phys_log_corresponds_update_reg; eauto. admit. (* after alloc of new address, this follows from updated vmap *) }
+        iApply (wp2_opt_incrementPC2 with "[Hσr Hregs]").
+
+        { apply elem_of_dom. by repeat (rewrite lookup_insert_is_Some'; right). }
+        (* apply Hlr2sub. *) admit.
+        eapply (state_phys_log_corresponds_update_reg (lw := LInt 0)); eauto. constructor. (* ints are always current... *)
+        eapply (state_phys_log_corresponds_update_reg (lw := LCap machine_base.E f f0 (f ^+ 1)%a (v+1))); eauto.
+        Search is_cur_word. admit. (* after alloc of new address, this follows from updated vmap *)
+        iFrame. admit. }
 
       iSplit.
       iIntros "Hσ %Hincrement".
       { (* PC increment failed *)
         iIntros.
-        iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+        iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
         iSplitR "Hφ Hregs Hmem HECv".
         iExists lr, lm, vmap, _, _, _; now iFrame.
         iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
@@ -680,15 +743,26 @@ Section cap_lang_rules.
       (* incr succeeds *)
       iIntros (lregs' regs') "Hσ %Hlincrement %Hincrement".
       iApply wp2_val.
-      iMod (transiently_commit with "Hσ") as "(Hσm & Hmem & Hcur_tb & Hecauth & HECv & [%lr' (Hσr' & %Hcorr' & Hregs')])".
+      iMod (transiently_commit with "Hσ") as "(Hσm & Hmem & Hcur_tb & Hcur_frag & Hall_tb & Hall_frag & Hecauth & HECv & %Hcorr'' & [%lr' (Hσr' & %Hcorr' & Hregs')])".
       iModIntro.
-      iSplitR " Hφ Hregs' Hmem".
-      iExists _, _, _, _, _, _; iFrame; cbn.
-      iSplit. iPureIntro. admit.
-      iSplit. iFrame. admit.
-      (*  *)
-      admit.
+      iSplitR " Hφ Hregs' Hmem HECv Hcur_frag Hall_frag".
+      { subst.
+      iExists _, _, _, _, _, _; iFrame; cbn; iPureIntro; try exact eq_refl.
+      repeat split.
+        - admit.
+        - admit.
+        - admit.
+        - admit.
+        - admit.
+        - admit.
+        - admit.
+        - admit.
+        - admit. }
 
+      { iApply ("Hφ" with "[$Hregs' $Hmem $HECv Hcur_frag Hall_frag]"). iLeft.
+        unfold EInit_spec_success.
+        iExists _, _, _, _, _, _, _, _, _, _, _, _.
+        admit. }
 
   Admitted.
 
