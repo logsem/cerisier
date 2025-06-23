@@ -536,13 +536,15 @@ Section cap_lang_rules.
         eapply (EInit_fail_otype_overflow _ _ _ _ tidx s_b).
         + rewrite -HEC /tid_of_otype.
           clear -Hs_b.
-          admit.
-        + clear -Hs_b.
-          admit.
+          destruct (Z.even s_b) eqn:HZeven; cycle 1.
+          { by apply finz_even_mul2 in Hs_b; rewrite Hs_b in HZeven. }
+          replace (Z.to_nat s_b) with (2 * Z.to_nat (enumcur σ)) by solve_finz.
+          apply finz_of_z_is_Some_spec in Hs_b.
+          rewrite Nat.mul_comm Nat.div_mul; lia.
+        + by eapply finz_even_mul2.
         + apply finz_of_z_is_Some_spec in Hs_b.
           rewrite -Hs_b in H.
-          clear -H Hs_b.
-          admit.
+          by eapply finz_of_z_add_None.
       }
 
       iIntros (s_e) "%Hs_e _".
