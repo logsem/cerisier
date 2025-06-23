@@ -756,11 +756,23 @@ Section cap_lang_rules.
         iModIntro.
         iDestruct "Hcorr''" as "%Corr".
 
-        iApply (wp2_opt_incrementPC2 with "[Hσr Hregs]").
-
+        iApply (wp2_opt_incrementPC2 with "[Hσr Hregs]"); cycle -1.
+        {
+          iFrame.
+          rewrite !insert_insert.
+          iEval (rewrite insert_commute; eauto) in "Hregs".
+          rewrite !insert_insert.
+          iEval (rewrite insert_commute; eauto) in "Hregs".
+          iFrame.
+        }
         { apply elem_of_dom. by repeat (rewrite lookup_insert_is_Some'; right). }
-        { shelve. }
-        (* (* apply Hlr2sub. *) admit. *)
+        {
+          rewrite insert_insert.
+          rewrite insert_commute; auto.
+          rewrite insert_insert.
+          rewrite insert_commute; auto.
+          by do 2 (apply insert_mono).
+        }
         {
           eapply (state_phys_log_corresponds_update_reg (lw := LInt 0)); eauto. constructor. (* ints are always current... *)
           eapply (state_phys_log_corresponds_update_reg
@@ -770,13 +782,6 @@ Section cap_lang_rules.
           rewrite /update_version_addr_vmap.
           apply update_version_region_vmap_lookup; auto.
           apply finz_seq_between_NoDup.
-        }
-        {
-          iFrame.
-          rewrite insert_insert.
-          rewrite insert_commute; eauto.
-          rewrite insert_insert.
-          rewrite insert_commute; eauto.
         }
       }
 
@@ -814,6 +819,11 @@ Section cap_lang_rules.
         unfold EInit_spec_success.
         iExists _, _, _, _, _, _, _, _, _, _, _, _.
         admit. }
+      Unshelve.
+      all : try exact 0%ot.
+      all : try exact 0%a.
+      all : try exact 0.
+      all : try exact ∅.
 
   Admitted.
 
