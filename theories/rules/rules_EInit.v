@@ -20,35 +20,6 @@ Section cap_lang_rules.
   Implicit Types mem : Mem.
   Implicit Types lmem : LMem.
 
-  Definition full_own_mem (lmem : LMem) : LMemF := (λ y : LWord, (DfracOwn 1, y)) <$> lmem.
-
-  Lemma map_full_own (lm : LMem) :
-    ([∗ map] k↦y ∈ lm, k ↦ₐ y)%I
-    ⊣⊢ ([∗ map] la↦dw ∈ (full_own_mem lm), la ↦ₐ{dw.1} dw.2).
-  Proof. Admitted.
-
-  Lemma update_state_interp_next_version
-    {σr σm lr lm vmap lregs lmem src lwsrc p b e a v} :
-
-    let la := finz.seq_between b e in
-    Forall (λ a0 : Addr, a0 ∉ reserved_addresses) la ->
-    sweep_reg σm σr src = true ->
-    lregs !! src = Some lwsrc ->
-    get_wlcap_slcap lwsrc = Some (p, b, e, a, v) ->
-    gen_heap_interp lr ∗ gen_heap_interp lm ∗
-      ⌜state_phys_log_corresponds σr σm lr lm vmap⌝%I
-      ∗ ([∗ map] k↦y ∈ lregs, k ↦ᵣ y) ∗ ([∗ map] k↦y ∈ full_own_mem lmem, k ↦ₐ{y.1} y.2)
-      ⊢ |==>
-      let lmem' := update_version_region lm la v lmem in
-      let lm' := update_version_region lm la v lm in
-      let lregs' := (<[src:=next_version_lword lwsrc]> lregs) in
-      let lr' := (<[src:=next_version_lword lwsrc]> lr) in
-      let vmap' := update_version_region_vmap la v vmap in
-      ⌜ is_valid_updated_lmemory lm lmem (finz.seq_between b e) v lmem'⌝ ∗
-        gen_heap_interp lr' ∗ gen_heap_interp lm' ∗
-        ⌜state_phys_log_corresponds σr σm lr' lm' vmap' ⌝%I ∗ ([∗ map] k↦y ∈ lregs', k ↦ᵣ y) ∗ ([∗ map] k↦y ∈ full_own_mem lmem', k ↦ₐ{y.1} y.2).
-  Proof. Admitted.
-
   Inductive EInit_fail (lregs : LReg) (lmem : LMem) (r_code r_data : RegName) (tidx : TIndex) (ot : OType) : Prop :=
   (* the code register is PC *)
   | EInit_fail_rcode_is_pc :
@@ -656,6 +627,8 @@ Section cap_lang_rules.
       iIntros (eid) "%Hlmeasure %Hmeasure".
       rewrite updatePC_incrementPC.
 
+      assert (r_code ≠ r_data) as Hneq_rcode_data by (intro ; simplify_map_eq).
+
       iApply wp_opt2_bind; iApply wp_opt2_eqn_both.
 
       iApply wp_opt2_mono2.
@@ -664,17 +637,55 @@ Section cap_lang_rules.
         iApply transiently_wp_opt2.
         iMod "Hσ" as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
         rewrite map_full_own.
-        iMod (update_state_interp_next_version with "[$Hσr $Hσm $Hregs $Hmem]") as
-          "(%Hvm & Hσr & Hσm & #Hcorr' & Hregs & Hmem)"; eauto.
-          {
-            admit. (* this follows from HrdataAllowEInit. *)
-          }
-
+        iMod (update_state_interp_next_version (src := r_data) with "[$Hσr $Hσm $Hregs $Hmem]") as
+          "(%Hvm & Hσr & Hσm & %Hcorr' & Hregs & Hmem)"; cycle 1; eauto.
         rewrite -map_full_own.
-        iMod (gen_heap_update_inSepM _ _ (f2,v0+1) (LSealRange (true, true) s_b s_e s_b) with "Hσm Hmem") as "(Hσm & Hmem)"; eauto.
-        admit. (* follows immediately from definition of update_version_region... *)
-        iMod (gen_heap_update_inSepM _ _ (f,v+1) (LCap RW f2 f3 f4 v0) with "Hσm Hmem") as "(Hσm & Hmem)"; eauto.
-        admit.
+        iMod (gen_heap_update_inSepM _ _ (f2,v0+1) (LSealRange (true, true) s_b s_e s_b) with
+               "Hσm Hmem") as "(Hσm & Hmem)"; eauto.
+        {
+          destruct Hvm as (_&_&_&Hall).
+          rewrite Forall_forall in Hall.
+          apply Hall; eauto.
+          apply elem_of_finz_seq_between; solve_addr.
+        }
+        rewrite map_full_own.
+        eapply (state_phys_log_corresponds_update_mem (la := (f2, v0+1))
+          (lw := LSealRange (true, true) s_b s_e s_b)) in Hcorr'; cycle 1.
+        { (* TODO turn into lemma *)
+          rewrite finz_seq_between_cons ; eauto.
+          cbn.
+          rewrite /is_cur_addr; cbn.
+          rewrite /update_version_addr_vmap.
+          by simplify_map_eq.
+        }
+        { by cbn. }
+        cbn in Hcorr'.
+        set (mem' := (<[f2:=WSealRange (true, true) s_b s_e s_b]> (mem σ))).
+        iMod (update_state_interp_next_version (src := r_code) (σm := mem') with "[$Hσr $Hσm $Hregs $Hmem]") as
+          "(%Hvm' & Hσr & Hσm & #Hcorr'' & Hregs & Hmem)"; eauto.
+        { (* TODO turn into lemma *)
+          subst mem'.
+          rewrite /sweep_reg in Hcode_sweep |- *.
+          apply andb_true_intro.
+          apply andb_true_iff in Hcode_sweep as [Hsweep ?]; split ; eauto.
+          rewrite /sweep_memory_reg in Hsweep |- *.
+          rewrite !Hccap  in Hsweep |- *.
+          rewrite bool_decide_eq_true_2; first done.
+          apply bool_decide_eq_true_1 in Hsweep.
+          cbn in *.
+          rewrite /unique_in_memory in Hsweep |- *.
+          apply map_Forall_insert_2; auto.
+        }
+        { by simplify_map_eq. }
+        { by simplify_eq. }
+        rewrite -map_full_own.
+        iMod (gen_heap_update_inSepM _ _ (f,v+1) (LCap RW f2 f3 f4 (v0+1)) with "Hσm Hmem") as "(Hσm & Hmem)"; eauto.
+        {
+          destruct Hvm' as (_&_&_&Hall).
+          rewrite Forall_forall in Hall.
+          apply Hall; eauto.
+          apply elem_of_finz_seq_between; solve_addr.
+        }
 
 
         (* mod update for <[(enumcur σ) := eid]> etable in CUR_TB *)
@@ -683,8 +694,19 @@ Section cap_lang_rules.
         rewrite fmap_insert.
         rewrite map_fmap_singleton.
         apply gmap.alloc_singleton_local_update.
-        { (* follows from HEC + Hdomtbcompl I believe *) admit. }
-        { admit. }
+        { clear -HEC Hdomtbcompl.
+          rewrite lookup_fmap.
+          apply fmap_None.
+          rewrite HEC in Hdomtbcompl.
+          rewrite dom_union_L in Hdomtbcompl.
+          rewrite -not_elem_of_dom.
+          assert (tidx ∉ dom cur_tb ∪ dom prev_tb); last set_solver.
+          rewrite Hdomtbcompl.
+          apply not_elem_of_list_to_set.
+          intro Htidx.
+          apply elem_of_seq in Htidx; lia.
+        }
+        { done. }
 
         (* mod update for <[(enumcur σ) := eid]> etable in ALL_TB *)
         iMod (own_update with "Hall_tb") as "(Hall_tb & Hall_frag)".
@@ -692,19 +714,33 @@ Section cap_lang_rules.
         rewrite fmap_insert.
         rewrite map_fmap_singleton.
         apply gmap.alloc_singleton_local_update.
-        { (* follows from HEC + Hdomtbcompl I believe *) admit. }
-        { admit. }
+        { clear -HEC Htbcompl Hdomtbcompl.
+          rewrite lookup_fmap.
+          apply fmap_None.
+          rewrite HEC in Hdomtbcompl.
+          rewrite dom_union_L in Hdomtbcompl.
+          rewrite -not_elem_of_dom.
+          rewrite -Htbcompl.
+          assert (tidx ∉ dom cur_tb ∪ dom prev_tb); last set_solver.
+          rewrite Hdomtbcompl.
+          apply not_elem_of_list_to_set.
+          intro Htidx.
+          apply elem_of_seq in Htidx; lia.
+        }
+        { done. }
         cbn.
         iCombine "Hecauth HECv" as "HEC".
         iMod (own_update with "HEC") as "(Hecauth & HECv)".
         apply (excl_auth_update _ _ (enumcur σ + 1)).
 
-        iMod (gen_heap_update_inSepM _ _ r_code (LCap machine_base.E f f0 (f ^+ 1)%a (v+1)) with "Hσr Hregs") as "(Hσr & Hregs)"; eauto.
-        rewrite lookup_insert_ne. easy.
-        (* TODO: create this assumption early, we need it often *)
-        admit.
+        iMod (gen_heap_update_inSepM _ _ r_code (LCap machine_base.E f f0 (f ^+ 1)%a (v+1)) with
+               "Hσr Hregs") as "(Hσr & Hregs)"; eauto.
+        { by simplify_map_eq. }
         iMod (gen_heap_update_inSepM _ _ r_data (LInt 0) with "Hσr Hregs") as "(Hσr & Hregs)"; eauto.
-        rewrite lookup_insert_ne. admit. admit.
+        { rewrite lookup_insert_ne; eauto.
+          rewrite lookup_insert_ne; eauto.
+          by simplify_map_eq.
+        }
         iDestruct (gen_heap_valid_inclSepM with "Hσr Hregs") as "%Hlr2sub".
 
 
@@ -716,18 +752,33 @@ Section cap_lang_rules.
         iApply (wp_opt2_frame with "Hall_frag").
         iApply (wp_opt2_frame with "Hecauth").
         iApply (wp_opt2_frame with "HECv").
-        iApply (wp_opt2_frame with "Hcorr'").
+        iApply (wp_opt2_frame with "Hcorr''").
         iModIntro.
-        iDestruct "Hcorr'" as "%Corr".
+        iDestruct "Hcorr''" as "%Corr".
 
         iApply (wp2_opt_incrementPC2 with "[Hσr Hregs]").
 
         { apply elem_of_dom. by repeat (rewrite lookup_insert_is_Some'; right). }
-        (* apply Hlr2sub. *) admit.
-        eapply (state_phys_log_corresponds_update_reg (lw := LInt 0)); eauto. constructor. (* ints are always current... *)
-        eapply (state_phys_log_corresponds_update_reg (lw := LCap machine_base.E f f0 (f ^+ 1)%a (v+1))); eauto.
-        Search is_cur_word. admit. (* after alloc of new address, this follows from updated vmap *)
-        iFrame. admit. }
+        { shelve. }
+        (* (* apply Hlr2sub. *) admit. *)
+        {
+          eapply (state_phys_log_corresponds_update_reg (lw := LInt 0)); eauto. constructor. (* ints are always current... *)
+          eapply (state_phys_log_corresponds_update_reg
+                    (lw := LCap machine_base.E f f0 (f ^+ 1)%a (v+1))); eauto.
+          cbn.
+          intros a Ha.
+          rewrite /update_version_addr_vmap.
+          apply update_version_region_vmap_lookup; auto.
+          apply finz_seq_between_NoDup.
+        }
+        {
+          iFrame.
+          rewrite insert_insert.
+          rewrite insert_commute; eauto.
+          rewrite insert_insert.
+          rewrite insert_commute; eauto.
+        }
+      }
 
       iSplit.
       iIntros "Hσ %Hincrement".

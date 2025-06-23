@@ -2155,5 +2155,122 @@ Qed.
     iApply (state_interp_max_tidx with "[$] [$] [$]").
   Qed.
 
+  Definition full_own_mem (lmem : LMem) : LMemF := (λ y : LWord, (DfracOwn 1, y)) <$> lmem.
+
+  (* TODO generalise and move *)
+  Lemma fmap_forall_inv (lmt : LMemF) :
+    map_Forall (λ (_ : LAddr) (a : dfrac * LWord), a.1 = DfracOwn 1) lmt ->
+    exists lm, lmt = (full_own_mem lm).
+  Proof.
+    induction lmt using map_ind; intro Hall.
+    - exists ∅. by rewrite /full_own_mem fmap_empty.
+    - assert (x.1 = DfracOwn 1) as Hx by (apply map_Forall_insert_1_1 in Hall; auto).
+      apply map_Forall_insert_1_2 in Hall; auto.
+      apply IHlmt in Hall.
+      destruct Hall as (lm' & Hall).
+      exists (<[i := (snd x)]> lm').
+      rewrite /full_own_mem fmap_insert /=.
+      by destruct x ; cbn in * ; subst.
+  Qed.
+
+
+  (* TODO generalise to not just LMem + find better name + move iris_extra *)
+  Lemma map_full_own (lm : LMem) :
+    ([∗ map] k↦y ∈ lm, k ↦ₐ y)%I
+    ⊣⊢ ([∗ map] la↦dw ∈ (full_own_mem lm), la ↦ₐ{dw.1} dw.2).
+  Proof.
+    induction lm using map_ind.
+    - rewrite /full_own_mem fmap_empty.
+      by iSplit; iIntros "Hmem".
+    - rewrite /full_own_mem fmap_insert.
+      iSplit; iIntros "Hmem".
+      + iDestruct (big_sepM_insert with "Hmem") as "[Hi Hmem]"; first done.
+        iDestruct (IHlm with "Hmem") as "Hmem".
+        iDestruct (big_sepM_insert with "[Hi Hmem]") as "Hmem"; try iFrame.
+        by rewrite lookup_fmap fmap_None.
+        by cbn.
+      + iDestruct (big_sepM_insert with "Hmem") as "[Hi Hmem]"
+        ; first (by rewrite lookup_fmap fmap_None).
+        iDestruct (IHlm with "Hmem") as "Hmem".
+        cbn.
+        by iDestruct (big_sepM_insert with "[Hi Hmem]") as "Hmem"; try iFrame.
+  Qed.
+
+  Lemma update_state_interp_next_version
+    {σr σm lr lm vmap lregs lmem src lwsrc p b e a v} :
+
+    let la := finz.seq_between b e in
+    la ## reserved_addresses ->
+    sweep_reg σm σr src = true ->
+    lregs !! src = Some lwsrc ->
+    get_wlcap_slcap lwsrc = Some (p, b, e, a, v) ->
+    gen_heap_interp lr ∗ gen_heap_interp lm ∗
+      ⌜state_phys_log_corresponds σr σm lr lm vmap⌝%I
+      ∗ ([∗ map] k↦y ∈ lregs, k ↦ᵣ y) ∗ ([∗ map] k↦y ∈ full_own_mem lmem, k ↦ₐ{y.1} y.2)
+      ⊢ |==>
+      let lmem' := update_version_region lm la v lmem in
+      let lm' := update_version_region lm la v lm in
+      let lregs' := (<[src:=next_version_lword lwsrc]> lregs) in
+      let lr' := (<[src:=next_version_lword lwsrc]> lr) in
+      let vmap' := update_version_region_vmap la v vmap in
+      ⌜ is_valid_updated_lmemory lm lmem (finz.seq_between b e) v lmem'⌝ ∗
+        gen_heap_interp lr' ∗ gen_heap_interp lm' ∗
+        ⌜state_phys_log_corresponds σr σm lr' lm' vmap' ⌝%I ∗ ([∗ map] k↦y ∈ lregs', k ↦ᵣ y) ∗ ([∗ map] k↦y ∈ full_own_mem lmem', k ↦ₐ{y.1} y.2).
+  Proof.
+    iIntros (la Hnotres' Hsweep Hlsrc Hlcap_wsrc) "(Hr & Hm & %Hcorr & Hregs & Hmem)".
+    assert (Forall (λ a0 : Addr, a0 ∉ reserved_addresses) la) as Notres.
+    {
+      rewrite Forall_forall ; intros x Hx Hx'.
+      eapply Hnotres'; eauto.
+    }
+    iDestruct (gen_heap_valid_inclSepM with "Hr Hregs") as "%Hlregs_incl".
+    iDestruct (map_full_own with "Hmem") as "Hmem".
+    iDestruct (gen_heap_valid_inclSepM with "Hm Hmem") as "%Hlmem_incl".
+    iMod ((gen_heap_update_inSepM _ _ src (next_version_lword lwsrc)) with "Hr Hregs") as
+      "[Hr Hregs]"; eauto.
+    assert (lr !! src = Some lwsrc) as Hsrc by (eapply lookup_weaken in Hlsrc ; eauto).
+    assert (HNoDup : NoDup (finz.seq_between b e)) by (apply finz_seq_between_NoDup).
+    opose proof
+      (state_corresponds_cap_all_current _ _ _ _ _ _ _ _ _ _ _ _ Hcorr _ Hsrc)
+      as HcurMap ; first (by cbn).
+    opose proof
+      (state_corresponds_last_version_lword_region _ _ _ _ _ _ _ _ _ _ _ _  Hcorr _ Hsrc)
+      as HmemMap_maxv; first (by cbn).
+    opose proof
+      (state_corresponds_access_lword_region _ _ _ _ _ _ _ _ _ _ _ _ Hcorr _ Hsrc)
+      as HmemMap; first (by cbn).
+    set (lmem' := update_version_region lm la v lmem).
+    set (lm' := update_version_region lm la v lm).
+    set (lregs' := <[src:=next_version_lword lwsrc]> lregs).
+    set (lr' := <[src:=next_version_lword lwsrc]> lr).
+    set (vmap' := update_version_region_vmap la v vmap).
+    iMod ((gen_heap_lmem_version_update lm lmem lm lmem' _ vmap _ (finz.seq_between b e) v)
+           with "Hm Hmem") as "[Hm Hmem]"; eauto.
+    iModIntro.
+    iSplitR.
+    { iPureIntro. now apply is_valid_updated_lmemory_update_version_region. }
+    iFrame.
+    iSplitR "Hmem"; last by rewrite map_full_own.
+    iPureIntro.
+    assert (lr !! src = Some lwsrc) as Hsrc' by (eapply lookup_weaken; eauto).
+    eapply sweep_true_specL in Hsweep; eauto.
+    split.
+    + rewrite (_: σr = (<[src:=(lword_get_word (next_version_lword lwsrc))]> σr)).
+      * eapply update_version_region_lreg_corresponds_src; eauto.
+        eapply update_version_word_region_update_lword; eauto.
+        eapply lreg_corresponds_read_iscur; eauto.
+        by destruct Hcorr.
+      * rewrite lword_get_word_next_version.
+        rewrite insert_id; first done.
+        eapply state_corresponds_reg_get_word; eauto.
+    + destruct (id Hcorr).
+      eapply update_version_region_preserves_mem_corresponds; eauto.
+      destruct (Hsweep Hsrc').
+      eapply unique_in_machine_no_accessL; eauto.
+      eapply lreg_corresponds_read_iscur; eauto.
+  Qed.
+
+
+
 
 End cap_lang_rules_opt.
