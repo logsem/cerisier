@@ -456,6 +456,7 @@ Section cap_lang_rules.
           iDestruct (gen_heap_valid_inclSepM with "Hσr Hregs") as "%Hlr2sub".
           iApply (wp_opt2_frame with "Hσm").
           iApply (wp_opt2_frame with "Hmem").
+          (* Framing a pure fact to use below in transiently_commit...*)
           iApply (wp_opt2_frame with "Hcorr'").
           iDestruct "Hcorr'" as "%Hcorr'".
           iApply (wp2_opt_incrementPC2 with "[$Hσr $Hregs]"); eauto.

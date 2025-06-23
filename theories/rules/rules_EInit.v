@@ -295,18 +295,27 @@ Section cap_lang_rules.
     (* regular path: PC does not equal r_code *)
     (* intro transient modality *)
 
+    iDestruct "Hσ" as "(%lr & %lm & %vmap & %cur_tb & %prev_tb & %all_tb & Hlr & Hlm & %Hetable & Hcur_tb & Hprev_tb & Hall_tb & Hecauth & %Hdomcurtb & %Hdomtbcompl & %Htbdisj & %Htbcompl & %Hcorr0)".
+
     iAssert (⌜enumcur σ = tidx⌝)%I as "%HEC".
-    { rewrite /state_interp_logical.
-      iDestruct "Hσ" as (??????) "(_&_&_&_&_&_&HEC&_)".
-      iCombine "HEC" "HECv" as "HEC".
+    { iCombine "Hecauth" "HECv" as "HEC".
       iDestruct (own_valid with "HEC") as "%HEC_valid".
-      by apply excl_auth.excl_auth_agree_L in HEC_valid.
-    }
-    iDestruct (state_interp_transient_intro_nodfracs (lr := lregs) (lm := lmem) with "[$Hregs $Hσ $Hmem]") as "Hσ".
+      by apply excl_auth.excl_auth_agree_L in HEC_valid. }
+
+    (* derive frag ⊆ auth *)
+    iDestruct (gen_heap_valid_inclSepM with "Hlm Hmem") as "%Hlmsub".
+    iDestruct (gen_heap_valid_inclSepM with "Hlr Hregs") as "%Hlrsub".
+    iCombine "Hlr Hlm Hregs Hmem Hcur_tb Hecauth HECv" as "Hσ".
+
+    iDestruct (transiently_intro with "Hσ") as "Hσ".
 
     iApply wp_opt2_bind; iApply wp_opt2_eqn_both.
-    iApply (wp2_reg_lookup with "[$Hσ Hφ HECv]"); first by set_solver.
-    iIntros (lccap) "Hσ %Hlccap %Hccap".
+    iApply wp_opt2_mono2.
+    iSplitR "".
+    2: { iApply wp2_reg_lookup5; eauto. set_solver. }
+    iSplit; first now iIntros "%Htr".
+
+    iIntros (lccap ccap) "-> %Hlccap %Hccap".
 
     iApply wp_opt2_bind.
 
@@ -317,18 +326,20 @@ Section cap_lang_rules.
     1: {
       iModIntro.
       iIntros.
-      iDestruct (state_interp_transient_elim_abort with "Hσ") as "($ & Hregs & Hmem)".
-      rewrite big_sepM_fmap. cbn.
-      iApply "Hφ". iFrame.
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iSplitR "Hφ Hregs Hmem HECv".
+      iExists lr, lm, vmap, _, _, _; now iFrame.
+      iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
       iRight. iSplit; try easy. iPureIntro.
       by eapply EInit_fail_ccap_not_a_cap.
     }
     2: {
       iModIntro.
       iIntros.
-      iDestruct (state_interp_transient_elim_abort with "Hσ") as "($ & Hregs & Hmem)".
-      rewrite big_sepM_fmap. cbn.
-      iApply "Hφ". iFrame.
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iSplitR "Hφ Hregs Hmem HECv".
+      iExists lr, lm, vmap, _, _, _; now iFrame.
+      iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
       iRight. iSplit; try easy. iPureIntro.
       by eapply EInit_fail_ccap_not_a_cap.
     }
@@ -337,9 +348,10 @@ Section cap_lang_rules.
     2: {
       iModIntro.
       iIntros.
-      iDestruct (state_interp_transient_elim_abort with "Hσ") as "($ & Hregs & Hmem)".
-      rewrite big_sepM_fmap. cbn.
-      iApply "Hφ". iFrame.
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iSplitR "Hφ Hregs Hmem HECv".
+      iExists lr, lm, vmap, _, _, _; now iFrame.
+      iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
       iRight. iSplit; try easy. iPureIntro.
       by eapply EInit_fail_ccap_not_a_cap.
     }
@@ -348,57 +360,68 @@ Section cap_lang_rules.
     destruct (decide (p = RX)).
 
     2: { (* we do not have RX permissions for ccap. *)
-      iDestruct (state_interp_transient_elim_abort with "Hσ") as "($ & Hregs & Hmem)". rewrite big_sepM_fmap. cbn.
-      iApply "Hφ". iFrame.
-      iRight. iModIntro. iSplit; try easy. iPureIntro.
+      iModIntro.
+      iIntros.
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iSplitR "Hφ Hregs Hmem HECv".
+      iExists lr, lm, vmap, _, _, _; now iFrame.
+      iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
+      iRight. iSplit; try easy. iPureIntro.
       by eapply EInit_fail_ccap_no_rx. }
 
     destruct (decide (f < f0)%a).
     2: { (* ccap is too small to store dcap at address b *)
-      iDestruct (state_interp_transient_elim_abort with "Hσ") as "($ & Hregs & Hmem)". rewrite big_sepM_fmap. cbn.
-      iApply "Hφ". iFrame.
-      iRight. iModIntro. iSplit; try easy. iPureIntro.
+      iModIntro.
+      iIntros.
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iSplitR "Hφ Hregs Hmem HECv".
+      iExists lr, lm, vmap, _, _, _; now iFrame.
+      iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
+      iRight. iSplit; try easy. iPureIntro.
       by eapply EInit_fail_ccap_small. }
 
     iApply wp_opt2_bind; iApply wp_opt2_eqn_both.
-    iApply (wp2_reg_lookup with "[$Hσ Hφ HECv]"); first by set_solver.
-    iIntros (ldcap) "Hσ %Hldcap %Hdcap".
+    iApply wp_opt2_mono2.
+    iSplitR "".
+    2: { iApply wp2_reg_lookup5; eauto. set_solver. }
+    iSplit; first now iIntros "%Htr".
+
+    iIntros (ldcap dcap) "-> %Hldcap %Hdcap".
 
     unfold get_wcap.
     destruct ldcap eqn:Hdcap_shape; cbn.
     1: {
+      iModIntro.
       iIntros.
-      iDestruct (state_interp_transient_elim_abort with "Hσ") as "($ & Hregs & Hmem)".
-      rewrite big_sepM_fmap. cbn.
-      iApply "Hφ". iFrame.
-      iRight. iModIntro. iSplit; try easy. iPureIntro.
-      by eapply EInit_fail_dcap_not_a_cap.
-    }
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iSplitR "Hφ Hregs Hmem HECv".
+      iExists lr, lm, vmap, _, _, _; now iFrame.
+      iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
+      iRight. iSplit; try easy. iPureIntro.
+      by eapply EInit_fail_dcap_not_a_cap. }
 
     (* is DCAP a cap? *)
     destruct sb0 eqn:Hsb0_shape; cbn.
 
     2: {
-
+      iModIntro.
       iIntros.
-      iDestruct (state_interp_transient_elim_abort with "Hσ") as "($ & Hregs & Hmem)".
-      rewrite big_sepM_fmap. cbn.
-      iApply "Hφ". iFrame.
-      iRight. iModIntro. iSplit; try easy. iPureIntro.
-      Search "EInit_fail_dcap".
-      by eapply EInit_fail_dcap_not_a_cap.
-    }
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iSplitR "Hφ Hregs Hmem HECv".
+      iExists lr, lm, vmap, _, _, _; now iFrame.
+      iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
+      iRight. iSplit; try easy. iPureIntro.
+      by eapply EInit_fail_dcap_not_a_cap. }
 
     2: {
-
+      iModIntro.
       iIntros.
-      iDestruct (state_interp_transient_elim_abort with "Hσ") as "($ & Hregs & Hmem)".
-      rewrite big_sepM_fmap. cbn.
-      iApply "Hφ". iFrame.
-      iRight. iModIntro. iSplit; try easy. iPureIntro.
-      Search "EInit_fail_dcap".
-      by eapply EInit_fail_dcap_not_a_cap.
-    }
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iSplitR "Hφ Hregs Hmem HECv".
+      iExists lr, lm, vmap, _, _, _; now iFrame.
+      iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
+      iRight. iSplit; try easy. iPureIntro.
+      by eapply EInit_fail_dcap_not_a_cap. }
 
     (* DCAP is now definitely a cap *)
 
@@ -407,16 +430,24 @@ Section cap_lang_rules.
     destruct (decide (p0 = RW)).
 
     2: {
-      iDestruct (state_interp_transient_elim_abort with "Hσ") as "($ & Hregs & Hmem)". rewrite big_sepM_fmap. cbn.
-      iApply "Hφ". iFrame.
-      iRight. iModIntro. iSplit; try easy. iPureIntro.
+      iModIntro.
+      iIntros.
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iSplitR "Hφ Hregs Hmem HECv".
+      iExists lr, lm, vmap, _, _, _; now iFrame.
+      iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
+      iRight. iSplit; try easy. iPureIntro.
       by eapply EInit_fail_dcap_no_rw. }
 
     destruct (decide (f2 < f3)%a).
     2: { (* dcap is too small to store seals at address b' *)
-      iDestruct (state_interp_transient_elim_abort with "Hσ") as "($ & Hregs & Hmem)". rewrite big_sepM_fmap. cbn.
-      iApply "Hφ". iFrame.
-      iRight. iModIntro. iSplit; try easy. iPureIntro.
+      iModIntro.
+      iIntros.
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iSplitR "Hφ Hregs Hmem HECv".
+      iExists lr, lm, vmap, _, _, _; now iFrame.
+      iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
+      iRight. iSplit; try easy. iPureIntro.
       by eapply EInit_fail_dcap_small. }
 
     destruct code_sweep eqn:Hcode_sweep; cbn.
@@ -428,8 +459,11 @@ Section cap_lang_rules.
       repeat rewrite andb_false_l.
       erewrite !(decide_False (H := Is_true_dec false)); eauto.
       iModIntro.
-      iDestruct (state_interp_transient_elim_abort with "Hσ") as "($ & Hregs & Hmem)". rewrite big_sepM_fmap. cbn.
-      iApply "Hφ". iFrame.
+      iIntros.
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iSplitR "Hφ Hregs Hmem HECv".
+      iExists lr, lm, vmap, _, _, _; now iFrame.
+      iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
       iRight. iSplit; try easy. iPureIntro.
       by eapply EInit_fail_ccap_dcap_not_unique. }
 
@@ -443,9 +477,13 @@ Section cap_lang_rules.
       rewrite andb_true_l.
       repeat rewrite andb_false_l.
       erewrite !(decide_False (H := Is_true_dec false)); eauto.
-      iDestruct (state_interp_transient_elim_abort with "Hσ") as "($ & Hregs & Hmem)". rewrite big_sepM_fmap. cbn.
-      iApply "Hφ". iFrame.
-      iRight. iModIntro. iSplit; try easy. iPureIntro.
+      iModIntro.
+      iIntros.
+      iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+      iSplitR "Hφ Hregs Hmem HECv".
+      iExists lr, lm, vmap, _, _, _; now iFrame.
+      iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
+      iRight. iSplit; try easy. iPureIntro.
       by eapply EInit_fail_ccap_dcap_not_unique. }
 
     (* Both CCAP and DCAP sweeps have succeeded, now to ensure no caps exist in CAP.. *)
@@ -461,9 +499,13 @@ Section cap_lang_rules.
         unfold code_sweep in Hcode_sweep.
         destruct (decide false). (* why doesn't this reduce ??? *)
         { cbn in i0. by exfalso. }
-        iDestruct (state_interp_transient_elim_abort with "Hσ") as "($ & Hregs & Hmem)". rewrite big_sepM_fmap. cbn.
-        iApply "Hφ". iFrame.
-        iRight. iModIntro. iSplit; try easy. iPureIntro.
+        iModIntro.
+        iIntros.
+        iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+        iSplitR "Hφ Hregs Hmem HECv".
+        iExists lr, lm, vmap, _, _, _; now iFrame.
+        iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
+        iRight. iSplit; try easy. iPureIntro.
         by eapply EInit_fail_ccap_dcap_not_unique. }
 
       iApply wp_opt2_bind. iApply wp_opt2_eqn_both.
@@ -471,8 +513,10 @@ Section cap_lang_rules.
       iSplit.
       1: {
         iIntros.
-        iDestruct (state_interp_transient_elim_abort with "Hσ") as "($ & Hregs & Hmem)". rewrite big_sepM_fmap. cbn.
-        iApply "Hφ". iFrame.
+        iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+        iSplitR "Hφ Hregs Hmem HECv".
+        iExists lr, lm, vmap, _, _, _; now iFrame.
+        iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
         iRight. iSplit; try easy. iPureIntro.
         rewrite -HEC.
         by eapply EInit_fail_enum_bound_exceeded. }
@@ -484,8 +528,10 @@ Section cap_lang_rules.
       iSplit.
       1: {
         iIntros.
-        iDestruct (state_interp_transient_elim_abort with "Hσ") as "($ & Hregs & Hmem)". rewrite big_sepM_fmap. cbn.
-        iApply "Hφ". iFrame.
+        iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+        iSplitR "Hφ Hregs Hmem HECv".
+        iExists lr, lm, vmap, _, _, _; now iFrame.
+        iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
         iRight. iSplit; try easy. iPureIntro.
         eapply (EInit_fail_otype_overflow _ _ _ _ tidx s_b).
         + rewrite -HEC /tid_of_otype.
@@ -501,96 +547,140 @@ Section cap_lang_rules.
 
       iIntros (s_e) "%Hs_e _".
 
-      subst.
-
       (* measure the enclave footprint *)
+
+      subst p p0.
 
       iApply wp_opt2_bind.
       iApply wp_opt2_eqn_both.
-      iDestruct (state_interp_transient_corr with "Hσ") as "%".
-      destruct H as (lrt & lmt & vm & Hlrt & Hlmt & Hcorr).
-      rewrite snd_fmap_pair_inv in Hlmt.
       unfold measure at 1, lmeasure at 1.
-
       erewrite lmeasure_weaken; eauto.
       2: {
         eapply incl_Forall; cycle 1.
         eapply HallowsMemory; eauto.
-        + admit. (* should be fine, from sweep_reg *)
+        + (* somehow this follows from the sweep succeeding. See lemma below... *) admit.
         + rewrite /incl.
-        intros a HIna.
-        rewrite -!elem_of_list_In !elem_of_finz_seq_between in HIna |- *.
-        solve_addr.
+          intros a HIna.
+          rewrite -!elem_of_list_In !elem_of_finz_seq_between in HIna |- *.
+          solve_addr.
+
+        Set Nested Proofs Allowed.
+        Lemma sweep_implies_no_pc {σ p pc_b pc_e pc_a r a v z} b e :
+          reg σ !! PC = Some (WCap p pc_b pc_e pc_a)
+          → mem σ !! pc_a = Some (WInt z)
+          → reg σ !! r = Some (WCap RX b e a)
+          → sweep_reg (mem σ) (reg σ) r = true
+          → r ≠ PC
+          → pc_a ∉ finz.seq_between b e.
+          Proof.
+            intros Hpc Hpc_a Hr Hsweep.
+            unfold sweep_reg, sweep_memory_reg, sweep_registers_reg in Hsweep.
+            rewrite Hr in Hsweep.
+            Search ((_ && _) = true).
+            rewrite andb_true_iff in Hsweep.
+            destruct Hsweep as [_ Hsweep].
+            unfold unique_in_registers in *.
+            rewrite bool_decide_eq_true in Hsweep.
+            (* rewrite map_Forall_lookup in Hsweep. *)
+            eapply map_Forall_lookup_1.
+            (* apply Hpc in Hsweep. *)
+            Search (bool_decide _ = true).
+          Admitted.
       }
 
-      erewrite (lmeasure_measure _ (mem σ)).
+      erewrite (lmeasure_measure _ (mem σ)); eauto.
       2: {
-        eapply (is_cur_lword_lea vm RX RX f (f ^+ 1)%a f0 f0 _ _ _ (LCap RX f f0 _ _)).
+        eapply (is_cur_lword_lea vmap RX RX f (f ^+ 1)%a f0 f0 _ _ _ (LCap RX f f0 _ _)).
         rewrite Is_true_true.
         apply isWithin_of_le.
         solve_addr.
         all: try easy.
 
         eapply lreg_corresponds_read_iscur.
-        by destruct Hcorr.
+        by destruct Hcorr0.
         by eapply lookup_weaken in Hlccap. }
 
-      2: eauto.
       iApply wp2_diag_univ.
       iSplit.
 
+      (* Need the gen_heap_interp for the incrementPC call below, use frame rule *)
+
       1: {
-        iIntros "%Hhash _".
-        iDestruct (state_interp_transient_elim_abort with "Hσ") as "($ & Hregs & Hmem)". rewrite big_sepM_fmap. cbn.
-        iApply "Hφ". iFrame.
-      iRight. iSplit; try easy. iPureIntro.
-      eapply EInit_fail_hash_fail.
-      - apply Hlccap.
-      - apply l.
-      - unfold lmeasure in Hhash.
-        destruct (hash_lmemory_range lmem (f ^+ 1)%a f0 v).
-        discriminate Hhash. exact eq_refl.
+        iIntros (Hhash Hlhash).
+        iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+        iSplitR "Hφ Hregs Hmem HECv".
+        iExists lr, lm, vmap, _, _, _; now iFrame.
+        iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
+        iRight. iSplit; try easy. iPureIntro.
+        eapply EInit_fail_hash_fail; eauto.
+        unfold lmeasure in Hhash.
+        by destruct (hash_lmemory_range lmem (f ^+ 1)%a f0 v).
       }
 
-    (* TODO: state update changes first, see rules_Store *)
-      (*    |>> update_reg r1 (WCap E b e (b^+1)%a) (* Position cursor at address b+1: entry point always at base address *) *)
-      (*    |>> update_reg r2 (WInt 0) (* Erase the supplied dcap from r2 *) *)
-      (*    |>> updatePC *)
-
-      (* φ  |>> update_mem b' seals    (* store seals at base address of enclave's data section *) *)
-      rewrite (update_state_interp_transient_from_mem_mod (f2, v0+1) (LSealRange (true, true) s_b s_e s_b) _).
-
-      (*    |>> update_mem b dcap      (* store dcap at base address of enclave's code section *) *)
-      rewrite (update_state_interp_transient_from_mem_mod (f, v+1) (LCap RW f2 f3 f4 v0) _).
-
-      (* TODO: *)
-      (*    |>> update_etable (enumcur φ) eid (* create a new index in the ETable *) *)
-      (*    |>> update_enumcur ((enumcur φ)+1)  (* increment EC := EC + 1 *) *)
-
-
-
-      rewrite big_sepM_fmap. cbn.
       iIntros (eid) "%Hlmeasure %Hmeasure".
       rewrite updatePC_incrementPC.
+
       iApply wp_opt2_bind; iApply wp_opt2_eqn_both.
-      iApply (wp2_opt_incrementPC with "[Hσ Hφ]").
-      { apply elem_of_dom. by repeat (rewrite lookup_insert_is_Some'; right). }
 
-      iSplitL "".
-
-      (* failure case: increment pc failed. *)
-        (* how do I prove the spatial goals without my transient state assump? (needed above for the incrementpc) *)
+      iApply wp_opt2_mono2.
+      iSplitL "Hφ Hall_tb Hprev_tb".
+      2: {
+        iApply transiently_wp_opt2.
+        iMod "Hσ" as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+        (* TODO: check isUnique: nieuwe addressen worden aangemaakt (v0+1 bestaat nog niet) *)
+        iMod (gen_heap_update_inSepM _ _ (f2,v0+1) (LSealRange (true, true) s_b s_e s_b) with "Hσm Hmem") as "(Hσm & Hmem)"; eauto.
         admit.
-        iApply "Hφ". iFrame. admit.
-      }
-      {
+        iMod (gen_heap_update_inSepM _ _ (f,v+1) (LCap RW f2 f3 f4 v0) with "Hσm Hmem") as "(Hσm & Hmem)"; eauto.
+        admit.
+
+        (* TODO: mod_update for <[(enumcur σ) := eid]> etable *)
+        (* TODO: also need an update for all_tb, in the same vein *)
+        (* use alloc lemma for frag in the table, own_update & excl_own_update *)
+
+        (* TODO: mod_update for (enumcur σ) := (enumcur σ + 1) *)
+        (* own_update & excl_own_update *)
+
+        iMod (gen_heap_update_inSepM _ _ r_code (LCap machine_base.E f f0 (f ^+ 1)%a (v+1)) with "Hσr Hregs") as "(Hσr & Hregs)"; eauto.
+        iMod (gen_heap_update_inSepM _ _ r_data (LInt 0) with "Hσr Hregs") as "(Hσr & Hregs)"; eauto.
+        admit. (* lookup_weaken_ne: follows from r_data ≠ r_code (their perms are different... )*)
+        iDestruct (gen_heap_valid_inclSepM with "Hσr Hregs") as "%Hlr2sub".
+
+        iApply (wp_opt2_frame with "Hσm").
+        iApply (wp_opt2_frame with "Hmem").
+        iApply (wp_opt2_frame with "Hcur_tb").
+        iApply (wp_opt2_frame with "Hecauth").
+        iApply (wp_opt2_frame with "HECv").
+        iModIntro.
+        iApply (wp2_opt_incrementPC2 with "[$Hσr $Hregs]").
+        { apply elem_of_dom. by repeat (rewrite lookup_insert_is_Some'; right). }
+        apply Hlr2sub.
+
+        apply state_phys_log_corresponds_update_reg; eauto. constructor. (* ints are always current... *)
+        apply state_phys_log_corresponds_update_reg; eauto. admit. (* after alloc of new address, this follows from updated vmap *) }
+
+      iSplit.
+      iIntros "Hσ %Hincrement".
+      { (* PC increment failed *)
         iIntros.
-        iApply wp2_val.
-        iModIntro. cbn.
-        (* Should work with the update lemmas below? *)
-        Search (state_interp_logical _).
-        admit.
-      }
+        iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hecauth & HECv)".
+        iSplitR "Hφ Hregs Hmem HECv".
+        iExists lr, lm, vmap, _, _, _; now iFrame.
+        iApply ("Hφ" with "[$Hregs $Hmem $HECv]").
+        iRight. iSplit; try easy. iPureIntro.
+        eapply  EInit_fail_pc_overflow; eauto. }
+
+      (* incr succeeds *)
+      iIntros (lregs' regs') "Hσ %Hlincrement %Hincrement".
+      iApply wp2_val.
+      iMod (transiently_commit with "Hσ") as "(Hσm & Hmem & Hcur_tb & Hecauth & HECv & [%lr' (Hσr' & %Hcorr' & Hregs')])".
+      iModIntro.
+      iSplitR " Hφ Hregs' Hmem".
+      iExists _, _, _, _, _, _; iFrame; cbn.
+      iSplit. iPureIntro. admit.
+      iSplit. iFrame. admit.
+      (*  *)
+      admit.
+
 
   Admitted.
 
