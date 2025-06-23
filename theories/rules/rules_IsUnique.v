@@ -370,12 +370,10 @@ Section cap_lang_rules.
 
     assert (lr !! src = Some lsrcv) as Hlrsrc by eapply (lookup_weaken _ _ _ _ Hlsrcv Hlrsub).
     iApply wp_opt2_bind; iApply wp_opt2_eqn_both.
-    iApply wp_opt2_mono2.
-    iSplitL "Hφ Hσ Hcur_tb Hprev_tb Hall_tb Hecauth".
-    2: now iApply (wp2_get_wcap_scap (Φf := True%I) (w := lsrcv) (Φs := fun _ _ => True)%I).
+    iApply (wp2_get_wcap_scap (w := lsrcv)).
     iSplit.
     { (* src register does not contain a capability *)
-      iIntros "_ %Hislcap %Hwicos".
+      iIntros "%Hislcap %Hwicos".
       iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem)".
       iSplitR "Hφ Hregs Hmem".
       iExists lr, lm, vmap, _, _, _; now iFrame.
@@ -385,9 +383,7 @@ Section cap_lang_rules.
       destruct lsrcv as [z|[? ? ? ? ?|? ? ? ?]|? [? ? ? ? ?|? ? ? ?] ];
         now inversion Hislcap.
     }
-    iIntros (u1 u2) "_ %Hlclsrcv %Hwicos".
-    destruct u1 as ((((p & b) & e) & a) & v).
-    destruct u2 as (((p' & b') & e') & a').
+    iIntros (p b e a v) "%Hlclsrcv %Hwicos".
     rewrite updatePC_incrementPC.
 
     destruct bsweep eqn:Hsweep.
