@@ -818,6 +818,7 @@ Section cap_lang_rules.
       { iApply ("Hφ" with "[$Hregs' $Hmem $HECv Hcur_frag Hall_frag]"). iLeft.
         unfold EInit_spec_success.
         iExists _, _, _, _, _, _, _, _, _, _, _, _.
+        rewrite !map_fmap_singleton; iFrame.
         admit. }
       Unshelve.
       all : try exact 0%ot.
