@@ -1,3 +1,4 @@
+# Cerisier: A Program Logic for Attestation
 This repository contains the Rocq mechanization accompanying the submission 
 "Cerisier: A Program Logic for Attestation".
 It provides a model of a capability machine with feature for local attestation and TEE,
