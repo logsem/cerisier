@@ -62,15 +62,15 @@ Fundamental Theorem.
 
 # Organization
 
-| *section in the paper*            | *Rocq files*                                        |
-|-----------------------------------|-----------------------------------------------------|
-| Operational semantics (3)         | `machine_base.v`, `cap_lang.v`                      |
-| Program Logic (4)                 | `logical_mapsto.v`, `rules/*.v`                     |
-| Logical Relation (5)              | `logrel.v`, `ftlr/*.v`, `fundamental.v`             |
-| Adequacy (6)                      | `examples/enclaves/template_adequacy_attestation.v` |
-| Case Study - SOC (7.1)            | `examples/enclaves/trusted_compute_*.v`             |
-| Case Study - Mutual Attest (7.2)  | `examples/enclaves/mutual_attestation_*.v`          |
-| Case Study - Sensor Readout (7.2) | `examples/enclaves/trusted_memory_readout_*.v`      |
+| *section in the paper*            | *Rocq files*                               |
+|-----------------------------------|--------------------------------------------|
+| Operational semantics (3)         | `machine_base.v`, `cap_lang.v`             |
+| Program Logic (4)                 | `logical_mapsto.v`, `rules/*.v`            |
+| Logical Relation (5)              | `logrel.v`, `ftlr/*.v`, `fundamental.v`    |
+| Adequacy (6)                      | `examples/template_adequacy_attestation.v` |
+| Case Study - SOC (7.1)            | `examples/soc/*.v`                         |
+| Case Study - Mutual Attest (7.2)  | `examples/mutual_attestation/*.v`          |
+| Case Study - Sensor Readout (7.2) | `examples/memory_readout/*.v`              |
 
 # Differences with the paper
 
