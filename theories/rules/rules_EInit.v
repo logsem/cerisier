@@ -819,7 +819,30 @@ Section cap_lang_rules.
         unfold EInit_spec_success.
         iExists _, _, _, _, _, _, _, _, _, _, _, _.
         rewrite !map_fmap_singleton; iFrame.
-        admit. }
+        repeat split; iPureIntro.
+        repeat split; try eassumption.
+        - set_solver.
+        - by rewrite HEC.
+        - admit.
+        - admit.
+        - unfold lmeasure in Hlmeasure.
+          (* follows from Hlmeasure *)
+          admit.
+        - admit.
+        - admit.
+        - admit.
+        - admit.
+        - admit.
+        - admit.
+        - admit.
+        - admit.
+        - admit.
+        - admit.
+        - admit.
+        - admit.
+        - admit.
+        - admit.
+      }
       Unshelve.
       all : try exact 0%ot.
       all : try exact 0%a.
