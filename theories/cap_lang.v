@@ -908,7 +908,6 @@ Section opsem.
       (* cf. Sail: https://github.com/proteus-core/cheritree/blob/e969919a30191a4e0ceec7282bb9ce982db0de73/sail/sail-cheri-riscv/src/cheri_insts.sail#L2414-L2428
        *)
   end.
-  Print exec_opt.
 
   Definition exec (i : instr) (φ : ExecConf) : Conf :=
     match exec_opt i φ with
