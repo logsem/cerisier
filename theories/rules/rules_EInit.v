@@ -968,10 +968,13 @@ Section cap_lang_rules.
         iSplit; first eauto.
         { iPureIntro.
           apply is_valid_updated_lmemory_update_version_region; eauto.
-          - admit.
-          - (* old one was current, so higher version didn't exist *) admit. (* check isUnique *)
-          - (* the old one existed because it was cur *) admit. }
-
+          - apply finz_seq_between_NoDup.
+          - eapply state_corresponds_last_version_lword_region; eauto; cycle 1.
+            ++ eapply lookup_weaken in Hldcap. apply Hldcap. apply Hlrsub.
+            ++ done.
+          - eapply state_corresponds_access_lword_region; eauto; cycle 1.
+            ++ eapply lookup_weaken in Hldcap. apply Hldcap. apply Hlrsub.
+            ++ done. }
         iSplit; first eauto.
         { iPureIntro.
           apply is_valid_updated_lmemory_update_version_region; eauto.
