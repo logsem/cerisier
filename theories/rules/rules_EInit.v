@@ -142,29 +142,29 @@ Section cap_lang_rules.
     eapply lookup_weaken in Hla; eauto.
   Qed.
 
-  Definition EInit_spec_success (lregs lregs' : LReg) (lmem lmem' : LMem) (tidx tidx_incr : TIndex)
+  Definition EInit_spec_success (lregs lregs' : LReg) (lmem1 lmem4 : LMem) (tidx tidx_incr : TIndex)
     (ot : OType) (r_code r_data : RegName) (retv : val) : iProp Σ :=
-    ∃ glmem lmem'' (code_b code_e code_a : Addr) (code_v : Version) (data_b data_e data_a : Addr)
+    ∃ glmem lmem2 lmem3 (code_b code_e code_a : Addr) (code_v : Version) (data_b data_e data_a : Addr)
       (data_v : Version) eid hash_instrs,
     ⌜r_code ≠ PC⌝ ∗
     ⌜(tidx+1)%nat = tidx_incr⌝ ∗
     ⌜tid_of_otype ot = tidx⌝ ∗
     ⌜Z.even ot = true⌝ ∗
-    ⌜ (hash_lmemory_range lmem (code_b ^+ 1)%a code_e code_v) = Some hash_instrs
+    ⌜ (hash_lmemory_range lmem1 (code_b ^+ 1)%a code_e code_v) = Some hash_instrs
     ∧ hash_concat (hash code_b) hash_instrs = eid⌝ ∗ (* eid = hash(code_b || mem[b+1::e]) *)
     ⌜(ot + 2)%ot = Some (ot ^+ 2)%ot ⌝ ∗ (* there are still otypes left in the pool *)
     ⌜lregs !! r_code = Some (LCap RX code_b code_e code_a code_v) ⌝ ∗ (* rcode contains a valid code capability *)
     ⌜lregs !! r_data = Some (LCap RW data_b data_e data_a data_v) ⌝ ∗ (* rdata contains a valid data capability *)
     ⌜ (code_b < code_e)%a ⌝ ∗ (* the code capability contains at least one address *)
     ⌜ (data_b < data_e)%a ⌝ ∗ (* the data capability contains at least one address *)
-    ⌜ is_valid_updated_lmemory glmem lmem (finz.seq_between code_b code_e) code_v lmem'' ⌝ ∗ (* all memory in the code capability is "current" w.r.t. revocation *)
-    ⌜ is_valid_updated_lmemory glmem lmem (finz.seq_between data_b data_e) data_v lmem'' ⌝ ∗ (* all memory in the data capability is "current" w.r.t. revocation *)
-    ⌜ lmem' =
+    ⌜ is_valid_updated_lmemory glmem lmem1 (finz.seq_between data_b data_e) data_v lmem2 ⌝ ∗ (* all memory in the data capability is "current" w.r.t. revocation *)
+    ⌜ is_valid_updated_lmemory (update_version_region glmem (finz.seq_between data_b data_e) data_v glmem) lmem2 (finz.seq_between code_b code_e) code_v lmem3 ⌝ ∗ (* all memory in the code capability is "current" w.r.t. revocation *)
+    ⌜ lmem4 =
     <[ ( data_b, (data_v+1)%nat ) := (LSealRange (true,true) ot (ot ^+ 2)%ot ot ) ]>
-      (<[ (code_b, (code_v+1)%nat ) := (LCap RW data_b data_e data_a (data_v + 1)%nat) ]> lmem'') ⌝ ∗
+      (<[ (code_b, (code_v+1)%nat ) := (LCap RW data_b data_e data_a (data_v + 1)%nat) ]> lmem3) ⌝ ∗
     ⌜unique_in_registersL lregs (Some r_code) (LCap RX code_b code_e code_a code_v) ⌝ ∗ (* the code capability is unique across all registers (except where it is stored: in `r_code`) *)
     ⌜unique_in_registersL lregs (Some r_data) (LCap RW data_b data_e data_a data_v) ⌝ ∗ (* the data capability is unique across all registers (except where it is stored: in `r_code`) *)
-    ⌜ ensures_is_zL lmem (code_b ^+ 1)%a code_e code_v ⌝ ∗
+    ⌜ ensures_is_zL lmem1 (code_b ^+ 1)%a code_e code_v ⌝ ∗
     ⌜ (finz.seq_between code_b code_e) ## reserved_addresses ⌝ ∗
     ⌜ (finz.seq_between data_b data_e) ## reserved_addresses ⌝ ∗
     ⌜incrementLPC (
@@ -935,10 +935,14 @@ Section cap_lang_rules.
         unfold EInit_spec_success.
         apply bind_Some in Hlmeasure as (lhash&Hlmeasure&Hlhash_range); simplify_eq.
         apply bind_Some in Hmeasure as (hash&Hmeasure&Hhash_range); simplify_eq.
-        set (lmem'' :=
-               (update_version_region (update_version_region lm (finz.seq_between f2 f3) v0 lm) (finz.seq_between f f0) v
+        set (lmem2 :=
+                  (update_version_region lm (finz.seq_between f2 f3) v0 lmem)).
+        set (lmem3 :=
+               (update_version_region
+                  (update_version_region lm (finz.seq_between f2 f3) v0 lm)
+                  (finz.seq_between f f0) v
                   (update_version_region lm (finz.seq_between f2 f3) v0 lmem))).
-        iExists _, lmem'', f, f0, f1, v, f2, f3, f4, v0, (hash_concat (machine_parameters.hash f) hash), lhash.
+        iExists lm, lmem2, lmem3, f, f0, f1, v, f2, f3, f4, v0, _, _.
         rewrite !map_fmap_singleton; iFrame.
         iSplit; first eauto.
         iSplit; first eauto.
@@ -956,18 +960,28 @@ Section cap_lang_rules.
         { iPureIntro. by eapply finz_even_mul2. }
         iSplit; first eauto.
         iSplit; first eauto.
-        { iPureIntro. solve_finz. }
+        { iPureIntro. solve_addr.}
         iSplit; first eauto.
         iSplit; first eauto.
         iSplit; first eauto.
         iSplit; first eauto.
-        iSplit; first eauto.
-        { admit. }
-        iSplit; first eauto.
-        { admit. }
         iSplit; first eauto.
         { iPureIntro.
-          subst lmem''.
+          apply is_valid_updated_lmemory_update_version_region; eauto.
+          - admit.
+          - (* old one was current, so higher version didn't exist *) admit. (* check isUnique *)
+          - (* the old one existed because it was cur *) admit. }
+
+        iSplit; first eauto.
+        { iPureIntro.
+          apply is_valid_updated_lmemory_update_version_region; eauto.
+          - (* transitively through lmem2 from lmem, mono of update_version_region? *) admit.
+          - (* a seq never has duplicates... *) admit.
+          - (* data and code don't overlap, moreover old version was cur in lm *) admit.
+          - (* the old one existed because it was cur *) admit. }
+        iSplit; first eauto.
+        { iPureIntro.
+          subst lmem2.
           Set Nested Proofs Allowed.
           assert (f2 ∉ finz.seq_between f f0).
           {
@@ -989,7 +1003,7 @@ Section cap_lang_rules.
           replace s_e with (s_b ^+ 2)%f by solve_finz.
           rewrite insert_commute; first done.
           intro ; simplify_eq
-          ; rewrite elem_of_finz_seq_between in H0
+          ; rewrite elem_of_finz_seq_between in H
           ; solve_finz.
         }
         iSplit; first eauto.
@@ -997,8 +1011,8 @@ Section cap_lang_rules.
            apply andb_prop in Hcode_sweep.
            eapply unique_in_registersL_mono; eauto.
            destruct Hcode_sweep.
-           eapply sweep_registers_reg_spec in H1; eauto.
-           cbn in H1.
+           eapply sweep_registers_reg_spec in H0; eauto.
+           cbn in H0.
            eapply state_corresponds_unique_in_registers; eauto.
            eapply lookup_weaken; eauto. }
         iSplit; first eauto.
@@ -1006,8 +1020,8 @@ Section cap_lang_rules.
            apply andb_prop in Hdata_sweep.
            eapply unique_in_registersL_mono; eauto.
            destruct Hdata_sweep.
-           eapply sweep_registers_reg_spec in H1; eauto.
-           cbn in H1.
+           eapply sweep_registers_reg_spec in H0; eauto.
+           cbn in H0.
            eapply state_corresponds_unique_in_registers; eauto.
            eapply lookup_weaken; eauto. }
         iSplit; first eauto.
