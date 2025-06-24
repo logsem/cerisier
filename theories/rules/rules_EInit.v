@@ -304,7 +304,7 @@ Section cap_lang_rules.
     unfold exec_optL_EInit.
 
     (* split on whether code cap register is PC... *)
-    destruct (decide (negb (bool_decide (r_code = PC)))) eqn:Hpc_eq; cbn in *; simplify_eq; rewrite Hpc_eq; clear Hpc_eq.
+    destruct (decide (negb (bool_decide (r_code = PC)))) eqn:Hpc_eqb; cbn in *; simplify_eq; rewrite Hpc_eqb; clear Hpc_eqb.
     all: revgoals.
     { (* case where they are equal: crash the machine *)
       unfold wp_opt2.
@@ -316,6 +316,12 @@ Section cap_lang_rules.
       iSplit. iPureIntro. constructor 1.
       - by apply negb_prop_classical, bool_decide_unpack in n.
       - easy. }
+    assert ( r_code ≠ PC ) as Hpc_neq_code.
+    { intro; simplify_eq.
+      rewrite -bool_decide_not in i.
+      apply bool_decide_unpack in i; done.
+    }
+    clear i.
 
     (* regular path: PC does not equal r_code *)
     (* intro transient modality *)
@@ -523,7 +529,7 @@ Section cap_lang_rules.
         unfold data_sweep in Hdata_sweep.
         unfold code_sweep in Hcode_sweep.
         destruct (decide false). (* why doesn't this reduce ??? *)
-        { cbn in i0. by exfalso. }
+        { cbn in i. by exfalso. }
         iModIntro.
         iIntros.
         iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
@@ -584,11 +590,8 @@ Section cap_lang_rules.
         eapply incl_Forall; cycle 1.
         eapply HallowsMemory; eauto.
         + eapply sweep_implies_no_pc; eauto.
-          *  intro ; simplify_eq.
-             rewrite -bool_decide_not in i.
-             done.
-          * eapply isCorrectPC_le_addr in Hcorrpc.
-            rewrite elem_of_finz_seq_between; solve_addr.
+          eapply isCorrectPC_le_addr in Hcorrpc.
+          rewrite elem_of_finz_seq_between; solve_addr.
         + rewrite /incl.
           intros a HIna.
           rewrite -!elem_of_list_In !elem_of_finz_seq_between in HIna |- *.
@@ -874,7 +877,6 @@ Section cap_lang_rules.
         rewrite !map_fmap_singleton; iFrame.
         repeat split; iPureIntro.
         repeat split; try eassumption.
-        - set_solver.
         - by rewrite HEC.
         - admit.
         - admit.
