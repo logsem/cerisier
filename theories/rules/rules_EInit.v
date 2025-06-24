@@ -131,6 +131,17 @@ Section cap_lang_rules.
     destruct lw ; eauto.
   Qed.
 
+  Lemma ensures_is_z_mono {lm lm'} {b e} {v}  :
+    lm ⊆ lm' →
+    ensures_is_zL lm' b e v -> ensures_is_zL lm b e v.
+  Proof.
+    intros Hsub Hensure_is_zL.
+    rewrite /ensures_is_zL in Hensure_is_zL |- *.
+    rewrite map_Forall_lookup.
+    intros [a v'] lw Hla [Hin ?] ; cbn in *; simplify_eq.
+    eapply lookup_weaken in Hla; eauto.
+  Qed.
+
   Definition EInit_spec_success (lregs lregs' : LReg) (lmem lmem' : LMem) (tidx tidx_incr : TIndex)
     (ot : OType) (r_code r_data : RegName) (retv : val) : iProp Σ :=
     ∃ glmem lmem'' (code_b code_e code_a : Addr) (code_v : Version) (data_b data_e data_a : Addr)
@@ -1001,17 +1012,15 @@ Section cap_lang_rules.
            eapply lookup_weaken; eauto. }
         iSplit; first eauto.
         { iPureIntro.
-          (* clear -i Hcorr0. *)
-          Set Nested Proofs Allowed.
-          Lemma ensures_is_z_mono {lm lm'} {b e} {v}  :
-            lm ⊆ lm' →
-            Forall (fun a => is_Some (lm !! (a, v))) (finz.seq_between b e) →
-            ensures_is_zL lm' b e v -> ensures_is_zL lm b e v.
-          Admitted.
           eapply ensures_is_z_mono; try eauto.
-          { admit. }
           eapply ensures_is_z_corresponds; eauto.
-          admit.
+          destruct Hcorr0 as [Hcorr0 _].
+          assert (lr !! r_code = Some (LCap RX f f0 f1 v) )
+            as Hlccap' by (eapply lookup_weaken ; eauto).
+          eapply lreg_corresponds_read_iscur in Hlccap'; eauto.
+          eapply is_cur_lword_lea; eauto; try done.
+          rewrite Is_true_true.
+          eapply isWithin_of_le;solve_addr.
         }
 
         iSplit; first eauto.
