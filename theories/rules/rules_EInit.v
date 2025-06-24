@@ -578,8 +578,27 @@ Section cap_lang_rules.
 
     (* Both CCAP and DCAP sweeps have succeeded, now to ensure no caps exist in CAP.. *)
 
+
       unfold data_sweep, code_sweep in *.
       rewrite Hcode_sweep Hdata_sweep !andb_true_l.
+
+      assert (r_code ≠ r_data) as Hneq_rcode_data by (intro ; simplify_map_eq).
+
+      assert (Hcode_data_disjoint :
+               (finz.seq_between f f0) ## (finz.seq_between f2 f3)).
+      { clear -Hneq_rcode_data Hccap Hdcap Hcode_sweep.
+        unfold sweep_reg, sweep_memory_reg, sweep_registers_reg in Hcode_sweep.
+        rewrite Hccap in Hcode_sweep.
+        rewrite andb_true_iff in Hcode_sweep.
+        destruct Hcode_sweep as [_ Hcode_sweep].
+        unfold unique_in_registers in *.
+        rewrite bool_decide_eq_true in Hcode_sweep.
+        rewrite map_Forall_lookup in Hcode_sweep.
+        eapply Hcode_sweep in Hdcap.
+        destruct (decide (r_data = r_code)); eauto.
+        simplify_eq.
+        apply overlap_word_disjoint in Hdcap.
+        done. }
 
       destruct (decide (ensures_is_z (mem σ) (f ^+ 1)%a f0)).
 
@@ -644,17 +663,19 @@ Section cap_lang_rules.
       iApply wp_opt2_bind.
       iApply wp_opt2_eqn_both.
       unfold measure at 1, lmeasure at 1.
+      assert (Hpc_notin_code : pc_a ∉ (finz.seq_between f f0)).
+      {   eapply sweep_implies_no_pc; eauto.
+          eapply isCorrectPC_le_addr in Hcorrpc.
+          rewrite elem_of_finz_seq_between; solve_addr. }
+
       erewrite lmeasure_weaken; eauto.
       2: {
         eapply incl_Forall; cycle 1.
         eapply HallowsMemory; eauto.
-        + eapply sweep_implies_no_pc; eauto.
-          eapply isCorrectPC_le_addr in Hcorrpc.
-          rewrite elem_of_finz_seq_between; solve_addr.
-        + rewrite /incl.
-          intros a HIna.
-          rewrite -!elem_of_list_In !elem_of_finz_seq_between in HIna |- *.
-          solve_addr.
+        rewrite /incl.
+        intros a HIna.
+        rewrite -!elem_of_list_In !elem_of_finz_seq_between in HIna |- *.
+        solve_addr.
       }
 
       erewrite (lmeasure_measure _ (mem σ)); eauto.
@@ -688,8 +709,6 @@ Section cap_lang_rules.
 
       iIntros (eid) "%Hlmeasure %Hmeasure".
       rewrite updatePC_incrementPC.
-
-      assert (r_code ≠ r_data) as Hneq_rcode_data by (intro ; simplify_map_eq).
 
       iApply wp_opt2_bind; iApply wp_opt2_eqn_both.
 
@@ -977,11 +996,36 @@ Section cap_lang_rules.
             ++ done. }
         iSplit; first eauto.
         { iPureIntro.
+        (* eauto using is_valid_updated_lmemory_update_version_region, lookup_weaken, finz_seq_between_NoDup, state_corresponds_last_version_lword_region, state_corresponds_access_lword_region. *)
           apply is_valid_updated_lmemory_update_version_region; eauto.
-          - (* transitively through lmem2 from lmem, mono of update_version_region? *) admit.
-          - (* a seq never has duplicates... *) admit.
-          - (* data and code don't overlap, moreover old version was cur in lm *) admit.
-          - (* the old one existed because it was cur *) admit. }
+          - by apply update_version_region_mono.
+          - apply finz_seq_between_NoDup.
+          - (* data and code don't overlap, moreover old version was cur in lm *)
+            assert (Hnovupdate : Forall (λ a : Addr,  lm !! (a, v + 1) = None)
+    (finz.seq_between f f0)).
+            { eapply (state_corresponds_last_version_lword_region); cycle 2.
+              + eapply lookup_weaken in Hlccap; eauto.
+              + eauto.
+              + done. }
+            rewrite Forall_forall in Hnovupdate.
+            rewrite Forall_forall.
+            intros a Hain.
+            rewrite update_version_region_notin_preserves_lmem.
+            by apply Hnovupdate.
+            by set_solver.
+
+          - rewrite Forall_forall.
+            intros a Hain.
+            rewrite update_version_region_notin_preserves_lmem.
+            2: by set_solver.
+            clear Hcorr'' Hcorr' Hcorr0 Hincrement Hlincrement.
+            apply HallowsMemory in Hlccap; eauto.
+            specialize (Hlccap Hpc_notin_code).
+            rewrite Forall_forall in Hlccap.
+            apply Hlccap in Hain.
+            eapply lookup_weaken_is_Some; eauto. }
+
+
         iSplit; first eauto.
         { iPureIntro.
           subst lmem2.
@@ -1050,7 +1094,9 @@ Section cap_lang_rules.
       all : try exact 0%a.
       all : try exact 0.
       all : try exact ∅.
+      try exact r_data.
+      try exact O.
 
-  Admitted.
+  Qed.
 
 End cap_lang_rules.
