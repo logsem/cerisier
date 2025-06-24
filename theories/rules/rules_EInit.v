@@ -100,8 +100,36 @@ Section cap_lang_rules.
     (* | EInit_fail_dcap_no_rw : *)
     (*   EInit_fail lregs lmem ot. *)
 
-  Definition ensures_is_zL lmem b e : Prop :=
-    map_Forall (fun la lw => (laddr_get_addr la) ∈ (finz.seq_between b e) -> is_zL lw) lmem.
+  Definition ensures_is_zL lmem b e v : Prop :=
+    map_Forall (fun la lw => (laddr_get_addr la) ∈ (finz.seq_between b e) ∧ (laddr_get_version la) = v
+                          -> is_zL lw) lmem.
+
+  Lemma ensures_is_z_corresponds {phr phm lr lm vmap} {r} {p} {b e a} {v} :
+    state_phys_log_corresponds phr phm lr lm vmap →
+    is_cur_word (LCap p b e a v) vmap ->
+    ensures_is_z phm b e →
+    ensures_is_zL lm b e v.
+  Proof.
+    intros Hcorr Hr Hensure_z.
+    rewrite /ensures_is_zL.
+    rewrite /ensures_is_z in Hensure_z.
+    apply bool_decide_unpack in Hensure_z.
+    destruct Hcorr as [ Hreg (? & ? & ?) ].
+    rewrite /is_cur_word in Hr.
+    rewrite /mem_vmap_root in H0.
+    rewrite /mem_current_version in H.
+    rewrite map_Forall_lookup in H.
+    rewrite map_Forall_lookup.
+    intros [a' v'] lw Hla [Hla_in ?]; cbn in *; simplify_eq.
+    specialize (Hr a' Hla_in).
+    rewrite map_Forall_lookup in H0; eauto.
+    eapply H0 in Hr.
+    destruct Hr as (?&?&?&?); cbn in *.
+    rewrite map_Forall_lookup in Hensure_z; eauto.
+    rewrite H2 in Hla; simplify_eq.
+    apply Hensure_z in H3; eauto.
+    destruct lw ; eauto.
+  Qed.
 
   Definition EInit_spec_success (lregs lregs' : LReg) (lmem lmem' : LMem) (tidx tidx_incr : TIndex)
     (ot : OType) (r_code r_data : RegName) (retv : val) : iProp Σ :=
@@ -125,7 +153,7 @@ Section cap_lang_rules.
       (<[ (code_b, (code_v+1)%nat ) := (LCap RW data_b data_e data_a (data_v + 1)%nat) ]> lmem'') ⌝ ∗
     ⌜unique_in_registersL lregs (Some r_code) (LCap RX code_b code_e code_a code_v) ⌝ ∗ (* the code capability is unique across all registers (except where it is stored: in `r_code`) *)
     ⌜unique_in_registersL lregs (Some r_data) (LCap RW data_b data_e data_a data_v) ⌝ ∗ (* the data capability is unique across all registers (except where it is stored: in `r_code`) *)
-    ⌜ ensures_is_zL lmem (code_b ^+ 1)%a code_e ⌝ ∗
+    ⌜ ensures_is_zL lmem (code_b ^+ 1)%a code_e code_v ⌝ ∗
     ⌜ (finz.seq_between code_b code_e) ## reserved_addresses ⌝ ∗
     ⌜ (finz.seq_between data_b data_e) ## reserved_addresses ⌝ ∗
     ⌜incrementLPC (
@@ -975,19 +1003,16 @@ Section cap_lang_rules.
         { iPureIntro.
           (* clear -i Hcorr0. *)
           Set Nested Proofs Allowed.
-          Lemma ensures_is_z_corresponds {phr phm lr lm vmap} {b e} :
-            state_phys_log_corresponds phr phm lr lm vmap →
-            ensures_is_z phm b e →
-            ensures_is_zL lm b e.
+          Lemma ensures_is_z_mono {lm lm'} {b e} {v}  :
+            lm ⊆ lm' →
+            Forall (fun a => is_Some (lm !! (a, v))) (finz.seq_between b e) →
+            ensures_is_zL lm' b e v -> ensures_is_zL lm b e v.
           Admitted.
-          Lemma ensures_is_z_mono {lm lm'} {b e}  :
-            lm' ⊆ lm →
-            (* (∀ a : Addr, a ∈ finz.seq_between b e ->  ... *)
-            ensures_is_zL lm b e →
-            ensures_is_zL lm' b e.
-          Admitted.
-          eapply ensures_is_z_mono; eauto.
-          eapply ensures_is_z_corresponds; eauto. }
+          eapply ensures_is_z_mono; try eauto.
+          { admit. }
+          eapply ensures_is_z_corresponds; eauto.
+          admit.
+        }
 
         iSplit; first eauto.
         iSplit; first eauto.

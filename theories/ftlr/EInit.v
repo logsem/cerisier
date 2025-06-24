@@ -13,7 +13,7 @@ Lemma map_Forall_all_P (w : LWord) (la : list Addr) (lws : list LWord) (v : Vers
   length lws = length la ->
   w ∈ lws ->
   map_Forall
-    (λ (a : LAddr) (lw : LWord), laddr_get_addr a ∈ la → P lw)
+    (λ (a : LAddr) (lw : LWord), laddr_get_addr a ∈ la ∧ (laddr_get_version a) = v  → P lw)
     (logical_region_map la lws v)
   -> P w.
 Proof.
