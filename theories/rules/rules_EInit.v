@@ -877,9 +877,12 @@ Section cap_lang_rules.
 
       { iApply ("Hφ" with "[$Hregs' $Hmem $HECv Hcur_frag Hall_frag]"). iLeft.
         unfold EInit_spec_success.
-          apply bind_Some in Hlmeasure as (Hlmeasure&Hlhash_range&?); simplify_eq.
-          apply bind_Some in Hmeasure as (Hmeasure&Hhash_range&?); simplify_eq.
-        iExists _, _, _, _, _, _, _, _, _, _, _, _.
+        apply bind_Some in Hlmeasure as (Hlmeasure&Hlhash_range&?); simplify_eq.
+        apply bind_Some in Hmeasure as (Hmeasure&Hhash_range&?); simplify_eq.
+        set (lmem'' :=
+               (update_version_region (update_version_region lm (finz.seq_between f2 f3) v0 lm) (finz.seq_between f f0) v
+                  (update_version_region lm (finz.seq_between f2 f3) v0 lmem))).
+        iExists _, lmem'', _, _, _, _, _, _, _, _, _, _.
         rewrite !map_fmap_singleton; iFrame.
         iSplit; first eauto.
         iSplit; first eauto.
@@ -907,7 +910,26 @@ Section cap_lang_rules.
         iSplit; first eauto.
         { admit. }
         iSplit; first eauto.
-        { admit. }
+        { iPureIntro.
+          subst lmem''.
+          replace (
+             (update_version_region
+                (<[(f2, v0 + 1):=LSealRange (true, true) s_b s_e s_b]> (update_version_region lm (finz.seq_between f2 f3) v0 lm))
+                (finz.seq_between f f0) v
+                (<[(f2, v0 + 1):=LSealRange (true, true) s_b s_e s_b]> (update_version_region lm (finz.seq_between f2 f3) v0 lmem)))
+            )
+            with
+             (<[(f2, v0 + 1):=LSealRange (true, true) s_b s_e s_b]>
+               ((update_version_region (update_version_region lm (finz.seq_between f2 f3) v0 lm))
+                (finz.seq_between f f0) v
+                (update_version_region lm (finz.seq_between f2 f3) v0 lmem))).
+          { rewrite insert_commute.
+            replace s_e with (s_b ^+ 2)%f by solve_finz.
+            done.
+            admit.
+          }
+          admit.
+        }
         iSplit; first eauto.
         { iPureIntro.
            apply andb_prop in Hcode_sweep.
