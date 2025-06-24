@@ -208,6 +208,23 @@ Section cap_lang_rules.
     eapply elem_of_disjoint; eauto.
   Qed.
 
+  Lemma update_version_region_insert (a : Addr) (la : list Addr) (v v' : Version) (lw : LWord) (glmem llmem : LMem ) :
+    a ∉ la ->
+    (<[(a, v):= lw]> (update_version_region glmem la v' llmem)) =
+    (update_version_region (<[(a, v):= lw]> glmem) la v' (<[(a, v):= lw]> llmem)).
+  Proof.
+    revert a v v' lw glmem llmem.
+    induction la; intros a' v v' lw glmem llmem Ha'; first set_solver.
+    cbn.
+    rewrite -/(update_version_region glmem la v' llmem).
+    rewrite -/(update_version_region (<[(a', v):=lw]> glmem) la v' (<[(a', v):=lw]> llmem)).
+    rewrite /update_version_addr.
+    rewrite lookup_insert_ne; last (intro; simplify_eq; set_solver).
+    destruct ( glmem !! (a, v') ) eqn:Ha_glmem; rewrite Ha_glmem.
+    - rewrite insert_commute; last (intro; simplify_eq; set_solver).
+      rewrite IHla; set_solver.
+    - rewrite IHla; set_solver.
+  Qed.
 
   Definition exec_optL_EInit {A}
     (lregs : LReg) (lmem : LMem)
@@ -912,23 +929,29 @@ Section cap_lang_rules.
         iSplit; first eauto.
         { iPureIntro.
           subst lmem''.
-          replace (
-             (update_version_region
-                (<[(f2, v0 + 1):=LSealRange (true, true) s_b s_e s_b]> (update_version_region lm (finz.seq_between f2 f3) v0 lm))
-                (finz.seq_between f f0) v
-                (<[(f2, v0 + 1):=LSealRange (true, true) s_b s_e s_b]> (update_version_region lm (finz.seq_between f2 f3) v0 lmem)))
-            )
-            with
-             (<[(f2, v0 + 1):=LSealRange (true, true) s_b s_e s_b]>
-               ((update_version_region (update_version_region lm (finz.seq_between f2 f3) v0 lm))
-                (finz.seq_between f f0) v
-                (update_version_region lm (finz.seq_between f2 f3) v0 lmem))).
-          { rewrite insert_commute.
-            replace s_e with (s_b ^+ 2)%f by solve_finz.
-            done.
-            admit.
+          Set Nested Proofs Allowed.
+          assert (f2 ∉ finz.seq_between f f0).
+          {
+          clear -Hcode_sweep Hdcap Hccap Hneq_rcode_data l l0.
+          eapply sweep_reg_spec in Hcode_sweep; eauto.
+          cbn in Hcode_sweep.
+          rewrite /unique_in_machine_reg in Hcode_sweep.
+          apply Hcode_sweep in Hccap as [Hunique _].
+          rewrite /unique_in_registers in Hunique.
+          eapply map_Forall_lookup_1 in Hunique; last eapply Hdcap.
+          rewrite decide_False in Hunique; auto.
+          cbn in Hunique.
+          intro; simplify_eq.
+          apply Hunique.
+          rewrite elem_of_finz_seq_between in H.
+          destruct (f <? f2)%a eqn:Hf2 ; try solve_addr.
           }
-          admit.
+          rewrite -update_version_region_insert; auto.
+          replace s_e with (s_b ^+ 2)%f by solve_finz.
+          rewrite insert_commute; first done.
+          intro ; simplify_eq
+          ; rewrite elem_of_finz_seq_between in H0
+          ; solve_finz.
         }
         iSplit; first eauto.
         { iPureIntro.
