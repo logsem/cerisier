@@ -100,6 +100,9 @@ Section cap_lang_rules.
     (* | EInit_fail_dcap_no_rw : *)
     (*   EInit_fail lregs lmem ot. *)
 
+  Definition ensures_is_zL lmem b e : Prop :=
+    map_Forall (fun la lw => (laddr_get_addr la) ∈ (finz.seq_between b e) -> is_zL lw) lmem.
+
   Definition EInit_spec_success (lregs lregs' : LReg) (lmem lmem' : LMem) (tidx tidx_incr : TIndex)
     (ot : OType) (r_code r_data : RegName) (retv : val) : iProp Σ :=
     ∃ glmem lmem'' (code_b code_e code_a : Addr) (code_v : Version) (data_b data_e data_a : Addr)
@@ -122,7 +125,7 @@ Section cap_lang_rules.
       (<[ (code_b, (code_v+1)%nat ) := (LCap RW data_b data_e data_a (data_v + 1)%nat) ]> lmem'') ⌝ ∗
     ⌜unique_in_registersL lregs (Some r_code) (LCap RX code_b code_e code_a code_v) ⌝ ∗ (* the code capability is unique across all registers (except where it is stored: in `r_code`) *)
     ⌜unique_in_registersL lregs (Some r_data) (LCap RW data_b data_e data_a data_v) ⌝ ∗ (* the data capability is unique across all registers (except where it is stored: in `r_code`) *)
-    ⌜ map_Forall (fun la lw => (laddr_get_addr la) ∈ (finz.seq_between (code_b ^+ 1)%a code_e) -> is_zL lw) lmem ⌝ ∗
+    ⌜ ensures_is_zL lmem (code_b ^+ 1)%a code_e ⌝ ∗
     ⌜ (finz.seq_between code_b code_e) ## reserved_addresses ⌝ ∗
     ⌜ (finz.seq_between data_b data_e) ## reserved_addresses ⌝ ∗
     ⌜incrementLPC (
@@ -221,7 +224,7 @@ Section cap_lang_rules.
           '(p', b', e', _) ← get_wcap (lword_get_word dcap);
           if decide (p' = RW) then
             if decide (b' < e')%a then
-              if decide (code_sweep && data_sweep && (ensures_no_cap m (b ^+ 1)%a e)) then
+              if decide (code_sweep && data_sweep && (ensures_is_z m (b ^+ 1)%a e)) then
                 s_b ← @finz.of_z zB (2 * Z.of_nat ec)%Z ;
                 s_e ← @finz.of_z zB (2 * Z.of_nat ec + 2)%Z ;
                 eid ← lmeasure lmem b e v;
@@ -522,7 +525,7 @@ Section cap_lang_rules.
       unfold data_sweep, code_sweep in *.
       rewrite Hcode_sweep Hdata_sweep !andb_true_l.
 
-      destruct (decide (ensures_no_cap (mem σ) (f ^+ 1)%a f0)).
+      destruct (decide (ensures_is_z (mem σ) (f ^+ 1)%a f0)).
 
       2: {
         (* no caps sweep was not successful. *)
@@ -670,6 +673,7 @@ Section cap_lang_rules.
           subst mem'.
           rewrite /sweep_reg in Hcode_sweep |- *.
           apply andb_true_intro.
+
           apply andb_true_iff in Hcode_sweep as [Hsweep ?]; split ; eauto.
           rewrite /sweep_memory_reg in Hsweep |- *.
           rewrite !Hccap  in Hsweep |- *.
@@ -905,11 +909,41 @@ Section cap_lang_rules.
         iSplit; first eauto.
         { admit. }
         iSplit; first eauto.
-        { admit. }
+        { iPureIntro.
+           apply andb_prop in Hcode_sweep.
+           eapply unique_in_registersL_mono; eauto.
+           destruct Hcode_sweep.
+           eapply sweep_registers_reg_spec in H1; eauto.
+           cbn in H1.
+           eapply state_corresponds_unique_in_registers; eauto.
+           eapply lookup_weaken; eauto. }
         iSplit; first eauto.
-        { admit. }
+        { iPureIntro.
+           apply andb_prop in Hdata_sweep.
+           eapply unique_in_registersL_mono; eauto.
+           destruct Hdata_sweep.
+           eapply sweep_registers_reg_spec in H1; eauto.
+           cbn in H1.
+           eapply state_corresponds_unique_in_registers; eauto.
+           eapply lookup_weaken; eauto. }
         iSplit; first eauto.
-        { admit. }
+        { iPureIntro.
+          (* clear -i Hcorr0. *)
+          Set Nested Proofs Allowed.
+          Lemma ensures_is_z_corresponds {phr phm lr lm vmap} {b e} :
+            state_phys_log_corresponds phr phm lr lm vmap →
+            ensures_is_z phm b e →
+            ensures_is_zL lm b e.
+          Admitted.
+          Lemma ensures_is_z_mono {lm lm'} {b e}  :
+            lm' ⊆ lm →
+            (* (∀ a : Addr, a ∈ finz.seq_between b e ->  ... *)
+            ensures_is_zL lm b e →
+            ensures_is_zL lm' b e.
+          Admitted.
+          eapply ensures_is_z_mono; eauto.
+          eapply ensures_is_z_corresponds; eauto. }
+
         iSplit; first eauto.
         iSplit; first eauto.
         iSplit; first eauto.

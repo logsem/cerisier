@@ -445,8 +445,8 @@ Section opsem.
     : Decision (contains_cap mem b e).
   Proof. apply map_Forall_dec. intros a w. destruct w; case_decide; solve_decision. Defined.
 
-  Definition ensures_no_cap (mem : Mem) (b: Addr) (e : Addr) : bool :=
-    bool_decide (not (contains_cap mem b e)).
+  Definition ensures_is_z (mem : Mem) (b: Addr) (e : Addr) : bool :=
+    bool_decide (map_Forall (fun a w => a ∈ (finz.seq_between b e) -> is_z w) mem).
 
   Definition retrieve_eid (i : TIndex) (tb : ETable) : option EIdentity :=
     match (tb !! i) with
@@ -850,7 +850,7 @@ Section opsem.
     (* MEMORY SWEEP *)
     when ( (sweep_reg (mem φ) (reg φ) r1) && (* sweep the machine excluding the data cap at register r1 *)
            (sweep_reg (mem φ) (reg φ) r2) && (* sweep the machine excluding the code cap in register r2 *)
-           (ensures_no_cap (mem φ) (b^+1)%a e) ) then (* ccap does not contain capabilities except dcap at addr b *)
+           (ensures_is_z (mem φ) (b^+1)%a e) ) then (* ccap only contains integers except dcap at addr b *)
 
     (* ALLOCATION OF THE ENCLAVE'S SEALS *)
     (* the EC register acts as a bump allocator for enclave otypes *)
