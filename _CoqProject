@@ -91,37 +91,37 @@ theories/ftlr/EStoreId.v
 theories/fundamental.v
 
 # Misc for examples
-theories/examples/addr_reg_sample.v
+theories/examples/macros/addr_reg_sample.v
 theories/proofmode/disjoint_regions_tactics.v
 theories/proofmode/mkregion_helpers.v
 
 # Common Cerise (assembly) macros
-theories/examples/malloc.v
-theories/examples/assert.v
-theories/examples/hash_cap.v
-theories/examples/macros.v
+theories/examples/macros/malloc.v
+theories/examples/macros/assert.v
+theories/examples/macros/hash_cap.v
+theories/examples/macros/macros.v
 
 # Template Adequacy
-theories/examples/enclaves/template_adequacy_attestation.v
+theories/examples/template_adequacy_attestation.v
 
 # Trusted Compute example
-theories/examples/enclaves/trusted_compute_code.v
-theories/examples/enclaves/trusted_compute_enclave_spec.v
-theories/examples/enclaves/trusted_compute_spec.v
-theories/examples/enclaves/trusted_compute_adequacy.v
+theories/examples/soc/trusted_compute_code.v
+theories/examples/soc/trusted_compute_enclave_spec.v
+theories/examples/soc/trusted_compute_spec.v
+theories/examples/soc/trusted_compute_adequacy.v
 
 # Trusted Memory Readout example
-theories/examples/enclaves/trusted_memory_readout_code.v
-theories/examples/enclaves/trusted_memory_readout_spec.v
-theories/examples/enclaves/trusted_memory_readout_enclaves_spec.v
-theories/examples/enclaves/trusted_memory_readout_client_spec.v
-theories/examples/enclaves/trusted_memory_readout_sensor_spec.v
-theories/examples/enclaves/trusted_memory_readout_main_spec.v
-theories/examples/enclaves/trusted_memory_readout_adequacy.v
+theories/examples/memory_readout/trusted_memory_readout_code.v
+theories/examples/memory_readout/trusted_memory_readout_spec.v
+theories/examples/memory_readout/trusted_memory_readout_enclaves_spec.v
+theories/examples/memory_readout/trusted_memory_readout_client_spec.v
+theories/examples/memory_readout/trusted_memory_readout_sensor_spec.v
+theories/examples/memory_readout/trusted_memory_readout_main_spec.v
+theories/examples/memory_readout/trusted_memory_readout_adequacy.v
 
 # Mutual attestation example
-theories/examples/enclaves/mutual_attestation_code.v
-theories/examples/enclaves/mutual_attestation_A_spec.v
-theories/examples/enclaves/mutual_attestation_B_spec.v
-theories/examples/enclaves/mutual_attestation_spec.v
-theories/examples/enclaves/mutual_attestation_adequacy.v
+theories/examples/mutual_attestation/mutual_attestation_code.v
+theories/examples/mutual_attestation/mutual_attestation_A_spec.v
+theories/examples/mutual_attestation/mutual_attestation_B_spec.v
+theories/examples/mutual_attestation/mutual_attestation_spec.v
+theories/examples/mutual_attestation/mutual_attestation_adequacy.v
