@@ -36,7 +36,7 @@ From cap_machine.rules Require Export
 
      ∀φ, P ∗ (Q -∗ WP Seq (Instr Executable) {{ φ }}) ⊢ WP Seq (Instr Executable) {{ φ }}
 
-    (see for instance [examples.macros_new.rclear_spec])
+    (see for instance [examples.macros.rclear_spec])
 
   - complete safe execution: instead of {P} ⇝ ∙, we write:
 

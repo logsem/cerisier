@@ -82,7 +82,7 @@ Section cap_lang_rules.
   Ltac wp2_remember := iApply wp_opt2_bind; iApply wp_opt2_eqn_both.
 
   Definition word_allows_deinit_or_true (lw : LWord) tidx :=
-    forall {σb σb2 σa},
+    forall (σb σb2 σa : OType),
       (σb + 2)%f = Some σb2 ->
       lw = LWSealable (LSSealRange (true, true) σb σb2 σa) ->
       tidx = Some (tid_of_otype σb).

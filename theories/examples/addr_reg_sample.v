@@ -12,14 +12,6 @@ Lemma r_stk_ne : r_stk ≠ PC. Proof. done. Qed.
 Section instr_encodings.
   Context `{MachineParameters}.
 
-  (* Restore code encodings *)
-  Definition w_1 := encodeInstr (Mov r_t1 (inr PC)).
-  Definition w_2 := encodeInstr (Lea r_t1 (inl 7%Z)).
-  Definition w_2_U := encodeInstr (Lea r_t1 (inl 6%Z)).
-  Definition w_3 := encodeInstr (Load r_stk r_t1).
-  Definition w_4a := encodeInstr (Sub r_t1 (inl 0%Z) (inl 1%Z)).
-  Definition w_4b := encodeInstr (Lea r_stk (inr r_t1)).
-  Definition w_4c := encodeInstr (Load PC r_stk).
   (* Instruction encodings *)
   Definition lea_z r z := encodeInstrW (Lea r (inl z)).
   Definition lea_r r1 r2 := encodeInstrW (Lea r1 (inr r2)).

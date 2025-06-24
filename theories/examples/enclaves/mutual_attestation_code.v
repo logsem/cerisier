@@ -1,6 +1,6 @@
 From iris.proofmode Require Import proofmode.
 From cap_machine Require Import logrel proofmode.
-From cap_machine Require Import macros_new hash_cap.
+From cap_machine Require Import macros hash_cap.
 
 (* -------------------------------------- *)
 (* --------------- AXIOMS --------------- *)

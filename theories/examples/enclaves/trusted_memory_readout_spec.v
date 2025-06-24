@@ -1,7 +1,7 @@
 From iris.proofmode Require Import proofmode.
 From cap_machine Require Import rules logrel fundamental.
 From cap_machine Require Import proofmode.
-From cap_machine Require Import assert macros_new.
+From cap_machine Require Import assert macros.
 From cap_machine Require Import
   trusted_memory_readout_code
   trusted_memory_readout_enclaves_spec

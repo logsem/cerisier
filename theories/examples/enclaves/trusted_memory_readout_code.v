@@ -4,7 +4,7 @@ Require Import Eqdep_dec List.
 From cap_machine Require Import rules seal_store.
 From cap_machine Require Import logrel fundamental.
 From cap_machine Require Import proofmode.
-From cap_machine Require Import macros_new.
+From cap_machine Require Import macros.
 Open Scope Z_scope.
 
 Class ClientSensor := {
