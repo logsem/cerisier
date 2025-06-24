@@ -662,7 +662,7 @@ Section cap_lang_rules.
         cbn in Hcorr'.
         set (mem' := (<[f2:=WSealRange (true, true) s_b s_e s_b]> (mem σ))).
         iMod (update_state_interp_next_version (src := r_code) (σm := mem') with "[$Hσr $Hσm $Hregs $Hmem]") as
-          "(%Hvm' & Hσr & Hσm & #Hcorr'' & Hregs & Hmem)"; eauto.
+          "(%Hvm' & Hσr & Hσm & %Hcorr'' & Hregs & Hmem)"; eauto.
         { (* TODO turn into lemma *)
           subst mem'.
           rewrite /sweep_reg in Hcode_sweep |- *.
@@ -685,6 +685,29 @@ Section cap_lang_rules.
           rewrite Forall_forall in Hall.
           apply Hall; eauto.
           apply elem_of_finz_seq_between; solve_addr.
+        }
+        eapply (state_phys_log_corresponds_update_mem (la := (f, v+1))
+          (lw := LCap RW f2 f3 f4 (v0 + 1))) in Hcorr''; cycle 1.
+        { (* TODO turn into lemma *)
+          rewrite finz_seq_between_cons ; eauto.
+          cbn.
+          rewrite /is_cur_addr; cbn.
+          rewrite /update_version_addr_vmap.
+          by simplify_map_eq.
+        }
+        { change ( LCap RW f2 f3 f4 (v0 + 1)) with ( next_version_lword ( LCap RW f2 f3 f4 v0)).
+          assert (
+              is_cur_word (next_version_lword (LCap RW f2 f3 f4 v0)) (update_version_region_vmap (finz.seq_between f2 f3) v0 vmap)
+            ) as ?.
+          { destruct Hcorr0 as [? _]; eauto.
+            eapply update_version_word_region_update_lword; eauto.
+            eapply lreg_corresponds_read_iscur; eauto.
+            eapply lookup_weaken ; eauto.
+          }
+          eapply (update_version_notin_is_cur_word _ _ _ _ _ _ _ _ (LCap RX f f0 f1 v))
+          ; eauto.
+          clear -Hcode_sweep Hccap Hdcap.
+          admit. (* TODO should be easy *)
         }
 
 
@@ -752,9 +775,10 @@ Section cap_lang_rules.
         iApply (wp_opt2_frame with "Hall_frag").
         iApply (wp_opt2_frame with "Hecauth").
         iApply (wp_opt2_frame with "HECv").
+        iAssert (⌜ _ ⌝)%I as "Hcorr''"; first (iPureIntro ; eapply Hcorr'').
         iApply (wp_opt2_frame with "Hcorr''").
         iModIntro.
-        iDestruct "Hcorr''" as "%Corr".
+        (* iDestruct "Hcorr''" as "%Hcorr''". *)
 
         iApply (wp2_opt_incrementPC2 with "[Hσr Hregs]"); cycle -1.
         {
@@ -803,17 +827,40 @@ Section cap_lang_rules.
       iModIntro.
       iSplitR " Hφ Hregs' Hmem HECv Hcur_frag Hall_frag".
       { subst.
-      iExists _, _, _, _, _, _; iFrame; cbn; iPureIntro; try exact eq_refl.
-      repeat split.
-        - admit.
-        - admit.
-        - admit.
-        - admit.
-        - admit.
-        - admit.
-        - admit.
-        - admit.
-        - admit. }
+        incrementPC_inv; simplify_map_eq.
+        iExists _, _, _, _, _, _; iFrame; cbn; iPureIntro.
+        split; first done.
+        split.
+        {
+          rewrite dom_insert_L disjoint_union_l; split ; auto.
+          rewrite disjoint_singleton_l.
+          assert (enumcur σ ∉ dom prev_tb ∪ dom (etable σ)) as H'; last set_solver+H'.
+          rewrite union_comm_L -dom_union_L Hdomtbcompl.
+          rewrite not_elem_of_list_to_set.
+          rewrite elem_of_seq; solve_finz+.
+        }
+        split.
+        {
+         rewrite dom_union_L dom_insert_L -union_assoc_L -dom_union_L Hdomtbcompl.
+          replace ( enumcur σ + 1) with (S (enumcur σ)) by lia.
+          rewrite seq_S; simpl.
+          rewrite list_to_set_app_L.
+          set_solver+.
+        }
+        split.
+        { rewrite map_disjoint_insert_l; split; last done.
+          rewrite -not_elem_of_dom.
+          assert (enumcur σ ∉ dom prev_tb ∪ dom (etable σ)) as H'; last set_solver+H'.
+          rewrite union_comm_L -dom_union_L Hdomtbcompl.
+          rewrite not_elem_of_list_to_set.
+          rewrite elem_of_seq; solve_finz+.
+        }
+        split.
+        { rewrite !insert_union_singleton_l.
+          by rewrite map_union_assoc.
+        }
+        eapply Hcorr'.
+      }
 
       { iApply ("Hφ" with "[$Hregs' $Hmem $HECv Hcur_frag Hall_frag]"). iLeft.
         unfold EInit_spec_success.
