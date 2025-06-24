@@ -706,8 +706,14 @@ Section cap_lang_rules.
           }
           eapply (update_version_notin_is_cur_word _ _ _ _ _ _ _ _ (LCap RX f f0 f1 v))
           ; eauto.
-          clear -Hcode_sweep Hccap Hdcap.
-          admit. (* TODO should be easy *)
+          clear -Hcode_sweep Hccap Hdcap Hneq_rcode_data.
+          eapply sweep_reg_spec in Hcode_sweep; eauto.
+          cbn in Hcode_sweep.
+          rewrite /unique_in_machine_reg in Hcode_sweep.
+          apply Hcode_sweep in Hccap as [Hunique _].
+          rewrite /unique_in_registers in Hunique.
+          eapply map_Forall_lookup_1 in Hunique; last eapply Hdcap.
+          rewrite decide_False in Hunique; auto.
         }
 
 
