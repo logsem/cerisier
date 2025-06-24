@@ -176,7 +176,7 @@ Section fundamental.
       iDestruct "Hspec" as "[Hspec | Hspec]".
       (* Contradiction *)
       + iDestruct "Hspec"
-          as (glmem lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
+          as (glmem lmem'_ lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
                "(%Hrcode_PC & %Htidx_next & %Htidx & %Htidx_even & [%Hhash_instrs %Heid] & %Hot
                & %Hrcode & %Hrdata & %Hcode_size & %Hdata_size
                & %Hvalid_update_code & %Hvalid_update_data & %Hlmem'
@@ -223,7 +223,7 @@ Section fundamental.
       iDestruct "Hspec" as "[Hspec | Hspec]".
       (* Contradiction *)
       + iDestruct "Hspec"
-          as (glmem lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
+          as (glmem lmem'_ lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
                "(%Hrcode_PC & %Htidx_next & %Htidx & %Htidx_even & [%Hhash_instrs %Heid] & %Hot
                & %Hrcode & %Hrdata & %Hcode_size & %Hdata_size
                & %Hvalid_update_code & %Hvalid_update_data & %Hlmem'
@@ -267,7 +267,7 @@ Section fundamental.
       iDestruct "Hspec" as "[Hspec | Hspec]".
       (* Contradiction *)
       + iDestruct "Hspec"
-          as (glmem lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
+          as (glmem lmem'_ lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
                "(%Hrcode_PC & %Htidx_next & %Htidx & %Htidx_even & [%Hhash_instrs %Heid] & %Hot
                & %Hrcode & %Hrdata & %Hcode_size & %Hdata_size
                & %Hvalid_update_code & %Hvalid_update_data & %Hlmem'
@@ -310,7 +310,7 @@ Section fundamental.
       iDestruct "Hspec" as "[Hspec | Hspec]".
       (* Contradiction *)
       + iDestruct "Hspec"
-          as (glmem lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
+          as (glmem lmem'_ lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
                "(%Hrcode_PC & %Htidx_next & %Htidx & %Htidx_even & [%Hhash_instrs %Heid] & %Hot
                & %Hrcode & %Hrdata & %Hcode_size & %Hdata_size
                & %Hvalid_update_code & %Hvalid_update_data & %Hlmem'
@@ -387,7 +387,7 @@ Section fundamental.
       iDestruct "Hspec" as "[Hspec | Hspec]".
       (* Contradiction *)
       + iDestruct "Hspec"
-          as (glmem lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
+          as (glmem lmem'_ lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
                "(%Hrcode_PC & %Htidx_next & %Htidx & %Htidx_even & [%Hhash_instrs %Heid] & %Hot
                & %Hrcode & %Hrdata & %Hcode_size & %Hdata_size
                & %Hvalid_update_code & %Hvalid_update_data & %Hlmem'
@@ -442,7 +442,7 @@ Section fundamental.
       iDestruct "Hspec" as "[Hspec | Hspec]".
       (* Contradiction *)
       + iDestruct "Hspec"
-          as (glmem lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
+          as (glmem lmem'_ lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
                "(%Hrcode_PC & %Htidx_next & %Htidx & %Htidx_even & [%Hhash_instrs %Heid] & %Hot
                & %Hrcode & %Hrdata & %Hcode_size & %Hdata_size
                & %Hvalid_update_code & %Hvalid_update_data & %Hlmem'
@@ -499,7 +499,7 @@ Section fundamental.
       iDestruct "Hspec" as "[Hspec | Hspec]".
       (* Contradiction *)
       + iDestruct "Hspec"
-          as (glmem lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
+          as (glmem lmem'_ lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
                "(%Hrcode_PC & %Htidx_next & %Htidx & %Htidx_even & [%Hhash_instrs %Heid] & %Hot
                & %Hrcode & %Hrdata & %Hcode_size & %Hdata_size
                & %Hvalid_update_code & %Hvalid_update_data & %Hlmem'
@@ -554,7 +554,7 @@ Section fundamental.
       iDestruct "Hspec" as "[Hspec | Hspec]".
       (* Contradiction *)
       + iDestruct "Hspec"
-          as (glmem lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
+          as (glmem lmem'_ lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
                "(%Hrcode_PC & %Htidx_next & %Htidx & %Htidx_even & [%Hhash_instrs %Heid] & %Hot
                & %Hrcode & %Hrdata & %Hcode_size & %Hdata_size
                & %Hvalid_update_code & %Hvalid_update_data & %Hlmem'
@@ -609,7 +609,7 @@ Section fundamental.
       iDestruct "Hspec" as "[Hspec | Hspec]".
       (* Contradiction *)
       + iDestruct "Hspec"
-          as (glmem lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
+          as (glmem lmem'_ lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
                "(%Hrcode_PC & %Htidx_next & %Htidx & %Htidx_even & [%Hhash_instrs %Heid] & %Hot
                & %Hrcode & %Hrdata & %Hcode_size & %Hdata_size
                & %Hvalid_update_code & %Hvalid_update_data & %Hlmem'
@@ -669,7 +669,7 @@ Section fundamental.
       iDestruct "Hspec" as "[Hspec | Hspec]".
       (* Contradiction *)
       + iDestruct "Hspec"
-          as (glmem lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
+          as (glmem lmem'_ lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
                "(%Hrcode_PC & %Htidx_next & %Htidx & %Htidx_even & [%Hhash_instrs %Heid] & %Hot
                & %Hrcode & %Hrdata & %Hcode_size & %Hdata_size
                & %Hvalid_update_code & %Hvalid_update_data & %Hlmem'
@@ -734,7 +734,7 @@ Section fundamental.
       iDestruct "Hspec" as "[Hspec | Hspec]".
       (* Contradiction *)
       + iDestruct "Hspec"
-          as (glmem lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
+          as (glmem lmem'_ lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
                "(%Hrcode_PC & %Htidx_next & %Htidx & %Htidx_even & [%Hhash_instrs %Heid] & %Hot
                & %Hrcode & %Hrdata & %Hcode_size & %Hdata_size
                & %Hvalid_update_code & %Hvalid_update_data & %Hlmem'
@@ -799,7 +799,7 @@ Section fundamental.
       iDestruct "Hspec" as "[Hspec | Hspec]".
       (* Contradiction *)
       + iDestruct "Hspec"
-          as (glmem lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
+          as (glmem lmem'_ lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
                "(%Hrcode_PC & %Htidx_next & %Htidx & %Htidx_even & [%Hhash_instrs %Heid] & %Hot
                & %Hrcode & %Hrdata & %Hcode_size & %Hdata_size
                & %Hvalid_update_code & %Hvalid_update_data & %Hlmem'
@@ -937,7 +937,7 @@ Section fundamental.
       iDestruct "Hspec" as "[Hspec | Hspec]".
       (* Contradiction *)
       + iDestruct "Hspec"
-          as (glmem lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
+          as (glmem lmem'_ lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
                "(%Hrcode_PC & %Htidx_next & %Htidx & %Htidx_even & [%Hhash_instrs %Heid] & %Hot
                & %Hrcode & %Hrdata & %Hcode_size & %Hdata_size
                & %Hvalid_update_code & %Hvalid_update_data & %Hlmem'
@@ -1107,10 +1107,10 @@ Section fundamental.
     clear Hpca_next Hhash_instrs'.
 
     iDestruct "Hspec"
-      as (glmem lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
+          as (glmem lmem'_ lmem'' code_b code_e code_a code_v data_b data_e data_a data_v hash_instrs eid)
            "(%Hrcode_PC & %Htidx_next & %Htidx & %Htidx_even & [%Hhash_instrs %Heid] & %Hot
                & %Hrcode & %Hrdata & %Hcode_size & %Hdata_size
-               & %Hvalid_update_code & %Hvalid_update_data & %Hlmem'
+               & %Hvalid_update_data & %Hvalid_update_code & %Hlmem'
                & %Hunique_regs_code & %Hunique_regs_data & %Hcode_z & %Hcode_reserved & %data_reserved
                & %Hincr & -> & Henclave_live & #Henclave_all)".
 
@@ -1154,6 +1154,7 @@ Section fundamental.
     (* Derive pure predicates about a_pc' *)
     assert ( lmem'' !! (a_pc', v_pc') = Some lw_pc ) as Hmem''_pca.
     { eapply is_valid_updated_lmemory_preserves_lmem; eauto.
+      eapply is_valid_updated_lmemory_preserves_lmem; eauto.
       by simplify_map_eq.
     }
     assert ( lmem' !! (a_pc', v_pc') = Some lw_pc ) as Hmem'_pca.
@@ -1179,6 +1180,21 @@ Section fundamental.
     end.
 
     (* Derive pure predicates about the previous code_region*)
+    assert ( logical_range_map b_code e_code (lws_code) v_code ⊆ lmem'_ )
+      as Hmem''_code_.
+    {
+
+      eapply is_valid_updated_lmemory_lmem_incl
+        with (la := (finz.seq_between b_data e_data))
+             (v:= v_data)
+      ; eauto.
+      eapply is_valid_updated_lmemory_lmem_subset; last eassumption.
+      eapply map_subseteq_trans; cycle 1.
+      + eapply insert_subseteq.
+        rewrite lookup_union.
+        rewrite !logical_region_notin; auto.
+      + eapply map_union_subseteq_l.
+    }
     assert ( logical_range_map b_code e_code (lws_code) v_code ⊆ lmem'' )
       as Hmem''_code.
     {
@@ -1187,11 +1203,7 @@ Section fundamental.
              (v:= v_code)
       ; eauto.
       eapply is_valid_updated_lmemory_lmem_subset; last eassumption.
-      eapply map_subseteq_trans; cycle 1.
-      + eapply insert_subseteq.
-        rewrite lookup_union.
-        rewrite !logical_region_notin; auto.
-      + eapply map_union_subseteq_l.
+      done.
     }
     assert ( logical_range_map b_code e_code (lws_code) v_code ⊆ lmem' )
       as Hmem'_code.
@@ -1233,7 +1245,7 @@ Section fundamental.
       (logical_range_map b_code e_code (lws_code1::lws_code) (v_code + 1) ⊆ lmem'')
       as Hmem''_code_next.
     {
-      clear -Hvalid_update_code
+      clear -Hvalid_update_code Hvalid_update_data
                Hlen_lws_code Hlen_lws_data
                Hlen_lws_code'
                Hcode_apc_disjoint
@@ -1249,6 +1261,7 @@ Section fundamental.
       eapply lookup_weaken; last eapply Hcompatibility.
       rewrite update_version_region_preserves_lmem_next; eauto.
       + eapply lookup_weaken;eauto.
+        eapply is_valid_updated_lmemory_preserves_lmem; eauto.
         rewrite lookup_insert_ne; last (intro ; simplify_eq;done).
         rewrite lookup_union.
         replace (
@@ -1261,15 +1274,10 @@ Section fundamental.
         }
         rewrite option_union_right_id.
         rewrite (logical_region_map_lookup_versions _ _ _ v_code) in Hlw'; eauto.
-      + rewrite lookup_insert_ne //=; last (intro ; set_solver).
-        rewrite lookup_union.
-        rewrite (logical_region_notin _ _ v_data); auto; cycle 1.
-        {
-          intro.
-          eapply elem_of_disjoint; eauto.
-        }
-        rewrite option_union_right_id.
-        eapply logical_range_version_neq; eauto; last lia.
+      +
+        destruct Hvalid_update_data as (Hcompatibility' & Hgl_llmem' & HmaxMem' & Hupdated').
+        rewrite Forall_forall in HmaxMem.
+        by eapply HmaxMem in Ha'_in_be.
     }
     assert
       (logical_range_map b_code e_code (LCap RW b_data e_data a_data (v_data + 1)::lws_code) (v_code + 1) ⊆ lmem')
@@ -1314,9 +1322,9 @@ Section fundamental.
     end.
 
     (* Derive pure predicates about the previous data_region*)
-    assert ( logical_range_map b_data e_data (lws_data) v_data ⊆ lmem'' )
-      as Hmem''_data.
-    {
+    assert ( logical_range_map b_data e_data (lws_data) v_data ⊆ lmem'_ )
+      as Hmem''_data_.
+   {
       eapply is_valid_updated_lmemory_lmem_incl
         with (la := (finz.seq_between b_data e_data))
              (v:= v_data)
@@ -1328,6 +1336,15 @@ Section fundamental.
         rewrite !logical_region_notin; auto.
       + eapply map_union_subseteq_r.
         apply logical_region_map_disjoint; auto.
+    }
+    assert ( logical_range_map b_data e_data (lws_data) v_data ⊆ lmem'' )
+      as Hmem''_data.
+    {
+      eapply is_valid_updated_lmemory_lmem_subset in Hvalid_update_code; eauto.
+      eapply is_valid_updated_lmemory_lmem_incl
+        with (la := (finz.seq_between b_code e_code))
+             (v:= v_code)
+      ; eauto.
     }
     assert ( logical_range_map b_data e_data (lws_data) v_data ⊆ lmem' )
       as Hmem'_data.
@@ -1382,10 +1399,10 @@ Section fundamental.
     assert (length (lws_data1 :: lws_data) = length (finz.seq_between b_data e_data))
       as Hlen_lws_data' by (rewrite finz_seq_between_cons // ; cbn ; f_equal; done).
     assert
-      (logical_range_map b_data e_data (lws_data1::lws_data) (v_data + 1) ⊆ lmem'')
-      as Hmem''_data_next.
+      (logical_range_map b_data e_data (lws_data1::lws_data) (v_data + 1) ⊆ lmem'_)
+      as Hmem''_data_next_.
     {
-      clear -Hvalid_update_data Hlen_lws_code Hlen_lws_data Hdata_apc_disjoint
+      clear -Hvalid_update_data Hvalid_update_code Hlen_lws_code Hlen_lws_data Hdata_apc_disjoint
                Hdata_apc_disjoint Hcode_data_disjoint
                Hb_code Hb_data.
       eapply map_subseteq_spec; intros [a' v'] lw' Hlw'.
@@ -1422,7 +1439,18 @@ Section fundamental.
         }
         rewrite option_union_left_id.
         eapply logical_range_version_neq; eauto; last lia.
-        rewrite finz_seq_between_cons //=; cbn ; by f_equal.
+        rewrite Hlen_lws_data.
+        rewrite (finz_seq_between_cons b_data); eauto.
+    }
+    assert
+      (logical_range_map b_data e_data (lws_data1::lws_data) (v_data + 1) ⊆ lmem'')
+      as Hmem''_data_next.
+    {
+      eapply is_valid_updated_lmemory_lmem_subset in Hvalid_update_code; eauto.
+      eapply is_valid_updated_lmemory_lmem_incl
+        with (la := (finz.seq_between b_code e_code))
+             (v:= v_code)
+      ; eauto.
     }
     assert
       (logical_range_map b_data e_data (LSealRange (true, true) ot_ec (ot_ec ^+ 2)%f ot_ec::lws_data) (v_data + 1) ⊆ lmem')
@@ -1485,9 +1513,9 @@ Section fundamental.
     ; first (eapply Hmem3_data_next).
     iClear "Hmem".
     clear
-      Hmem''_data_next Hmem'_data_next Hmem0_data_next Hmem1_data_next Hmem2_data_next Hmem3_data_next lmem3
-        Hmem''_data Hmem'_data Hmem0_data Hmem1_data Hmem2_data lmem2
-        Hmem''_code_next Hmem'_code_next Hmem0_code_next Hmem1_code_next lmem1
+      Hmem''_data_next_ Hmem''_data_next Hmem'_data_next Hmem0_data_next Hmem1_data_next Hmem2_data_next Hmem3_data_next lmem3
+        Hmem''_data_ Hmem''_data Hmem'_data Hmem0_data Hmem1_data Hmem2_data lmem2
+        Hmem''_code_ Hmem''_code_next Hmem'_code_next Hmem0_code_next Hmem1_code_next lmem1
         Hmem''_code Hmem'_code Hmem0_code lmem0
         Hmem''_pca Hmem'_pca lmem'
     .
