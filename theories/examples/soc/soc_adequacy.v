@@ -4,9 +4,9 @@ From cap_machine Require Import proofmode.
 From cap_machine Require Import assert macros.
 From cap_machine Require Import template_adequacy_attestation.
 From cap_machine Require Import
-  trusted_compute_code
-  trusted_compute_enclave_spec
-  trusted_compute_spec
+  soc_code
+  soc_enclave_spec
+  soc_spec
 .
 
 (** MEMORY LAYOUT: The end-to-end theorem only relies on this layout. *)
@@ -14,7 +14,7 @@ Class memory_layout `{MachineParameters} := {
   (* Verifier code *)
   verifier_start : Addr;
   verifier_end : Addr;
-  verifier_size: (verifier_start + trusted_compute_main_len = Some verifier_end)%a;
+  verifier_size: (verifier_start + soc_main_len = Some verifier_end)%a;
   verifier_region: list Addr;
   verifier_region_correct:
     verifier_region = (finz.seq_between verifier_start verifier_end);
@@ -62,8 +62,8 @@ Class memory_layout `{MachineParameters} := {
   adv_region ## link_table_region ∧
   l_assert_region ## link_table_region;
 
-  (* TC enclave *)
-  tc_enclave_start : Addr;
+  (* SOC enclave *)
+  soc_enclave_start : Addr;
 }.
 
 Definition link_cap `{memory_layout} :=
@@ -71,21 +71,21 @@ Definition link_cap `{memory_layout} :=
 
 (** Instantiation of the layout. *)
 
-(** 1) Instantiate the class specific to the TC enclave *)
-Local Instance trusted_compute_concrete `{memory_layout} : TrustedCompute.
-Proof. apply (Build_TrustedCompute tc_enclave_start). Defined.
+(** 1) Instantiate the class specific to the SOC enclave *)
+Local Instance soc_concrete `{memory_layout} : SecureOutsourcedCompute.
+Proof. apply (Build_SecureOutsourcedCompute soc_enclave_start). Defined.
 
 (** 2) Instantiate the verifier's program.
-    It is given by the code in `trusted_compute_main_code`
+    It is given by the code in `soc_main_code`
     followed by the link capability and a data capability.
  *)
-Program Definition tc_verifier_prog `{memory_layout} : prog :=
-  let a_data := (verifier_start ^+ trusted_compute_main_code_len)%a in
+Program Definition soc_verifier_prog `{memory_layout} : prog :=
+  let a_data := (verifier_start ^+ soc_main_code_len)%a in
   let data_cap := WCap RWX verifier_start verifier_end a_data  in
   {| prog_start := verifier_start ;
      prog_end := verifier_end ;
      prog_instrs :=
-      (lword_get_word <$> (trusted_compute_main_code 0))
+      (lword_get_word <$> (soc_main_code 0))
        ++ [link_cap ; data_cap];
      prog_size := _ |}.
 Next Obligation.
@@ -147,7 +147,7 @@ Definition link_tbl `{memory_layout} : assert_tbl :=
   |}.
 
 (** 6) Align the full_run_spec with the specification of the adequacy. *)
-Section tc_adequacy.
+Section soc_adequacy.
   Context {Σ:gFunctors}
           `{MP: MachineParameters}
           {ceriseg:ceriseG Σ} {sealsg: sealStoreG Σ}
@@ -155,12 +155,12 @@ Section tc_adequacy.
           {memlayout: memory_layout}
   .
 
-  Definition trusted_computeN : namespace := nroot .@ "trusted_compute".
-  Definition link_tableN := (trusted_computeN.@"link_table").
-  Definition tc_mainN := (trusted_computeN.@"main").
-  Lemma tc_correct ecur etbl :
+  Definition socN : namespace := nroot .@ "soc".
+  Definition link_tableN := (socN.@"link_table").
+  Definition soc_mainN := (socN.@"main").
+  Lemma soc_correct ecur etbl :
     let vinit := 0%nat in
-    let P := tc_verifier_prog in
+    let P := soc_verifier_prog in
     let Adv := adv_prog in
     let RA := reserved_addresses_assert AssertLib vinit in
     let r_adv := r_t0 in
@@ -260,10 +260,10 @@ Section tc_adequacy.
     }
 
     (* 4 - Allocate invariant of the code *)
-    set (a_data := (prog_start P ^+ length (trusted_compute_main_code 0))%a).
+    set (a_data := (prog_start P ^+ length (soc_main_code 0))%a).
     set (link_capL := word_to_lword link_cap vinit).
-    iMod (na_inv_alloc logrel_nais ⊤ tc_mainN
-           (codefrag (prog_start P) vinit (trusted_compute_main_code 0)
+    iMod (na_inv_alloc logrel_nais ⊤ soc_mainN
+           (codefrag (prog_start P) vinit (soc_main_code 0)
             ∗ (a_data, vinit) ↦ₐ link_capL
             ∗ ((a_data ^+ 1)%a, vinit) ↦ₐ LCap RWX (prog_start P) (prog_end P) a_data vinit)
          with "[Hprog]") as "#Hprog".
@@ -271,12 +271,12 @@ Section tc_adequacy.
       replace (prog_region P)
         with
         (mkregion verifier_start verifier_end
-                 ((lword_get_word <$> trusted_compute_main_code 0) ++
+                 ((lword_get_word <$> soc_main_code 0) ++
                  [link_cap;
-                  WCap RWX verifier_start verifier_end (verifier_start ^+ trusted_compute_main_code_len)%a])
+                  WCap RWX verifier_start verifier_end (verifier_start ^+ soc_main_code_len)%a])
               ) by done.
       pose proof verifier_size as Hsize_verifier.
-      rewrite /trusted_compute_main_len in Hsize_verifier.
+      rewrite /soc_main_len in Hsize_verifier.
       rewrite mkregion_app; last done.
       rewrite memory_to_lmemory_union.
       iDestruct (big_sepM_union with "Hprog") as "[Hprog Hdata]".
@@ -286,7 +286,7 @@ Section tc_adequacy.
         + rewrite fmap_length.
           rewrite finz_seq_between_length.
           apply finz_dist_add.
-          exists (verifier_start ^+ length (trusted_compute_main_code 0))%a.
+          exists (verifier_start ^+ length (soc_main_code 0))%a.
           cbn in *.
           solve_addr.
         + apply Forall_forall.
@@ -304,8 +304,8 @@ Section tc_adequacy.
             rewrite finz_dist_0; last solve_addr.
             done.
       }
-      replace ([link_cap; WCap RWX verifier_start verifier_end (verifier_start ^+ trusted_compute_main_code_len)%a])
-        with ([link_cap]++[WCap RWX verifier_start verifier_end (verifier_start ^+ trusted_compute_main_code_len)%a]); last by cbn.
+      replace ([link_cap; WCap RWX verifier_start verifier_end (verifier_start ^+ soc_main_code_len)%a])
+        with ([link_cap]++[WCap RWX verifier_start verifier_end (verifier_start ^+ soc_main_code_len)%a]); last by cbn.
       rewrite mkregion_app; last solve_addr.
       rewrite memory_to_lmemory_union.
       iDestruct (big_sepM_union with "Hdata") as "[Hdata1 Hdata2]".
@@ -355,8 +355,8 @@ Section tc_adequacy.
         rewrite finz_seq_between_empty; last solve_addr.
         iDestruct (big_sepM_insert_delete with "Hdata2") as "[$ _]".
     }
-    iAssert (tc_main_inv verifier_start verifier_end vinit (trusted_compute_main_code 0) a_data
-               link_capL tc_mainN) with "Hprog" as "#Hprog_inv".
+    iAssert (soc_main_inv verifier_start verifier_end vinit (soc_main_code 0) a_data
+               link_capL soc_mainN) with "Hprog" as "#Hprog_inv".
 
     (* 5 - Allocate invariant of the assert *)
     iAssert (assert_inv (assert_start AssertLib) (assert_flag AssertLib) (assert_end AssertLib)
@@ -386,7 +386,7 @@ Section tc_adequacy.
     }
 
     pose proof ( verifier_size ) as Hverifier_size.
-    replace verifier_end with (verifier_start ^+ trusted_compute_main_len)%a by solve_addr.
+    replace verifier_end with (verifier_start ^+ soc_main_len)%a by solve_addr.
 
     (* 6 - Apply the full_run spec *)
     iApply (wp_wand _ _ _
@@ -395,18 +395,18 @@ Section tc_adequacy.
                                         ∗ na_own logrel_nais ⊤) ∨ ⌜v0 = FailedV⌝)%I
              with "[-]")
     ; last (by iIntros (v) "H").
-    iApply (trusted_compute_full_run_spec with
+    iApply (soc_full_run_spec with
              "[$Hadv $Hsystem_inv $Hinv_link $Hassert $Hprog_inv $Hflag_inv ] [ $HPC $Hown $Hr_adv $Hrmap]"); auto.
     + solve_ndisj.
     + solve_ndisj.
     + solve_ndisj.
-    + subst P; rewrite /tc_verifier_prog /=.
+    + subst P; rewrite /soc_verifier_prog /=.
       solve_addr.
     + rewrite /SubBounds.
       split; first solve_addr.
       split; last solve_addr.
-      subst P; rewrite /tc_verifier_prog /=.
-      rewrite /trusted_compute_main_len.
+      subst P; rewrite /soc_verifier_prog /=.
+      rewrite /soc_main_len.
       solve_addr.
     + pose proof link_table_size.
       cbn; solve_addr.
@@ -417,16 +417,16 @@ Section tc_adequacy.
       by rewrite dom_fmap_L.
   Qed.
 
-End tc_adequacy.
+End soc_adequacy.
 
 
 (** END-TO-END THEOREM *)
-Theorem tc_enclaves_adequacy `{memory_layout}
+Theorem soc_enclaves_adequacy `{memory_layout}
     (m m': Mem) (reg reg': Reg) (etbl etbl' : ETable) (ecur ecur' : ENum)
     (es: list cap_lang.expr):
-  is_initial_memory tc_verifier_prog adv_prog AssertLib link_tbl m →
+  is_initial_memory soc_verifier_prog adv_prog AssertLib link_tbl m →
   is_complete_memory m →
-  is_initial_registers tc_verifier_prog adv_prog AssertLib link_tbl reg r_t0 →
+  is_initial_registers soc_verifier_prog adv_prog AssertLib link_tbl reg r_t0 →
   is_complete_registers reg m →
   is_initial_etable etbl ecur →
   Forall (λ w, is_z w = true \/ in_region w adv_start adv_end) (prog_instrs adv_prog) →
@@ -437,10 +437,10 @@ Theorem tc_enclaves_adequacy `{memory_layout}
 Proof.
   intros ? ? ? ? ? Hints.
   set (Σ' := #[]).
-  pose proof (template_adequacy Σ' tc_verifier_prog adv_prog AssertLib link_tbl) as Hadequacy.
+  pose proof (template_adequacy Σ' soc_verifier_prog adv_prog AssertLib link_tbl) as Hadequacy.
   eapply Hadequacy;eauto.
   - eapply adequacy_flag_inv_is_initial_memory; eauto.
   - intros Σ ? ? ? ? ? ?.
     iIntros "(?&?&?&?&?&?&?&?&?&?&?)".
-    iApply tc_correct; eauto; last iFrame.
+    iApply soc_correct; eauto; last iFrame.
 Qed.

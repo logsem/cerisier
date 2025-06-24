@@ -104,11 +104,11 @@ theories/examples/macros/macros.v
 # Template Adequacy
 theories/examples/template_adequacy_attestation.v
 
-# Trusted Compute example
-theories/examples/soc/trusted_compute_code.v
-theories/examples/soc/trusted_compute_enclave_spec.v
-theories/examples/soc/trusted_compute_spec.v
-theories/examples/soc/trusted_compute_adequacy.v
+# Secure Outsources Computation (SOC) example
+theories/examples/soc/soc_code.v
+theories/examples/soc/soc_enclave_spec.v
+theories/examples/soc/soc_spec.v
+theories/examples/soc/soc_adequacy.v
 
 # Trusted Memory Readout example
 theories/examples/memory_readout/trusted_memory_readout_code.v
@@ -119,7 +119,7 @@ theories/examples/memory_readout/trusted_memory_readout_sensor_spec.v
 theories/examples/memory_readout/trusted_memory_readout_main_spec.v
 theories/examples/memory_readout/trusted_memory_readout_adequacy.v
 
-# Mutual attestation example
+# Mutual Attestation example
 theories/examples/mutual_attestation/mutual_attestation_code.v
 theories/examples/mutual_attestation/mutual_attestation_A_spec.v
 theories/examples/mutual_attestation/mutual_attestation_B_spec.v

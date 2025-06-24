@@ -2,21 +2,21 @@ From iris.proofmode Require Import proofmode.
 From cap_machine Require Import logrel proofmode.
 From cap_machine Require Import macros hash_cap.
 
-Class TrustedCompute := {
-    tc_addr : Addr;
+Class SecureOutsourcedCompute := {
+    soc_addr : Addr;
   }.
 
-Section trusted_example.
+Section soc_example.
   Context {Σ:gFunctors} {ceriseg:ceriseG Σ} {sealsg : sealStoreG Σ}
     `{reservedaddresses : ReservedAddresses}
     {nainv: logrel_na_invs Σ} `{MP: MachineParameters}.
-  Context {TC : TrustedCompute}.
+  Context {SOC : SecureOutsourcedCompute}.
 
   (* --------------------------------- *)
-  (* --- TRUSTED COMPUTE *ENCLAVE* --- *)
+  (* --------- SOC *ENCLAVE* --------- *)
   (* --------------------------------- *)
 
-  Definition trusted_compute_enclave_instrs : list instr :=
+  Definition soc_enclave_instrs : list instr :=
     [
       (* get signing sealing key *)
       Mov r_t1 PC;
@@ -44,24 +44,24 @@ Section trusted_example.
       Restrict r_t1 (encodeSealPerms (false, true)); (* restrict r1 U *)
       Jmp r_t0
     ].
-  Definition trusted_compute_enclave_code : list Word :=
-    encodeInstrsW trusted_compute_enclave_instrs.
+  Definition soc_enclave_code : list Word :=
+    encodeInstrsW soc_enclave_instrs.
 
-  Definition trusted_compute_enclave_lcode : list LWord :=
-    encodeInstrsLW trusted_compute_enclave_instrs.
+  Definition soc_enclave_lcode : list LWord :=
+    encodeInstrsLW soc_enclave_instrs.
 
-  Definition trusted_compute_enclave_code_len : Z :=
-    Eval cbv in length trusted_compute_enclave_code.
+  Definition soc_enclave_code_len : Z :=
+    Eval cbv in length soc_enclave_code.
 
-  Definition hash_trusted_compute_enclave : Z :=
-    hash_concat (hash tc_addr) (hash trusted_compute_enclave_code).
+  Definition hash_soc_enclave : Z :=
+    hash_concat (hash soc_addr) (hash soc_enclave_code).
 
 
   (* ---------------------------------- *)
-  (* ----- TRUSTED COMPUTE *MAIN* ----- *)
+  (* ----------- SOC *MAIN* ----------- *)
   (* ---------------------------------- *)
 
-  Definition trusted_compute_main_code_init0 (main callback data : Z) : list LWord :=
+  Definition soc_main_code_init0 (main callback data : Z) : list LWord :=
     (* main: *)
     encodeInstrsLW [
         Mov r_t1 PC;      (* rt1 := (RWX, main, main_end, main) *)
@@ -75,7 +75,7 @@ Section trusted_example.
       ].
 
   (* Expect PC := (RWX, main, main_end, callback) *)
-  Definition trusted_compute_main_code_callback0
+  Definition soc_main_code_callback0
     (callback fails : Z)
     (hash_enclave : Z)
     (assert_lt_offset : Z)
@@ -115,29 +115,29 @@ Section trusted_example.
       ++ encodeInstrsLW [Mov r_t0 0 ; Mov r_t3 0 ; Halt]
       ++ (* fails: *) encodeInstrsLW [Fail].
 
-  Definition trusted_compute_main_init_len : Z :=
-    Eval cbv in (length (trusted_compute_main_code_init0 0%Z 0%Z 0%Z)).
+  Definition soc_main_init_len : Z :=
+    Eval cbv in (length (soc_main_code_init0 0%Z 0%Z 0%Z)).
 
-  Definition trusted_compute_main_callback_len : Z :=
-    Eval cbv in (length (trusted_compute_main_code_callback0 0%Z 0%Z 0%Z 0%Z)).
+  Definition soc_main_callback_len : Z :=
+    Eval cbv in (length (soc_main_code_callback0 0%Z 0%Z 0%Z 0%Z)).
 
-  Definition trusted_compute_main_code (assert_lt_offset : Z) : list LWord :=
+  Definition soc_main_code (assert_lt_offset : Z) : list LWord :=
     let init     := 0%Z in
-    let callback := trusted_compute_main_init_len in
-    let data     := (trusted_compute_main_init_len + trusted_compute_main_callback_len)%Z in
+    let callback := soc_main_init_len in
+    let data     := (soc_main_init_len + soc_main_callback_len)%Z in
     let fails    := (data - 1)%Z in
-    (trusted_compute_main_code_init0 init callback data) ++
-    (trusted_compute_main_code_callback0 callback fails hash_trusted_compute_enclave assert_lt_offset).
+    (soc_main_code_init0 init callback data) ++
+    (soc_main_code_callback0 callback fails hash_soc_enclave assert_lt_offset).
 
-  Definition trusted_compute_main_code_len : Z :=
-    Eval cbv in trusted_compute_main_init_len + trusted_compute_main_callback_len.
+  Definition soc_main_code_len : Z :=
+    Eval cbv in soc_main_init_len + soc_main_callback_len.
 
-  Definition trusted_compute_main_data_len : Z := 2.
-  Definition trusted_compute_main_len :=
-    Eval cbv in (trusted_compute_main_code_len + trusted_compute_main_data_len)%Z.
+  Definition soc_main_data_len : Z := 2.
+  Definition soc_main_len :=
+    Eval cbv in (soc_main_code_len + soc_main_data_len)%Z.
 
 
-  (* Sealed predicate for TC enclave *)
+  (* Sealed predicate for SOC enclave *)
 
   Program Definition f42 : Addr := (finz.FinZ 42 eq_refl eq_refl).
   Definition sealed_42 : LWord → iProp Σ :=
@@ -156,23 +156,23 @@ Section trusted_example.
     by rewrite fixpoint_interp1_eq /=.
   Qed.
 
-  (* TC Custom Predicates *)
-  Definition tc_enclave_pred : CustomEnclave :=
+  (* SOC Custom Predicates *)
+  Definition soc_enclave_pred : CustomEnclave :=
     @MkCustomEnclave Σ
-      trusted_compute_enclave_code
-      tc_addr
+      soc_enclave_code
+      soc_addr
       (λ w, False%I)
       sealed_42.
 
-  Definition tcenclaves_map : custom_enclaves_map :=
-   {[hash_trusted_compute_enclave := tc_enclave_pred]}.
+  Definition soc_enclaves_map : custom_enclaves_map :=
+   {[hash_soc_enclave := soc_enclave_pred]}.
 
-  Lemma wf_tc_enclaves_map :
-    custom_enclaves_map_wf tcenclaves_map.
+  Lemma wf_soc_enclaves_map :
+    custom_enclaves_map_wf soc_enclaves_map.
   Proof.
-    rewrite /custom_enclaves_map_wf /tcenclaves_map.
+    rewrite /custom_enclaves_map_wf /soc_enclaves_map.
     split.
-    - by rewrite map_Forall_singleton /hash_trusted_compute_enclave /=.
+    - by rewrite map_Forall_singleton /hash_soc_enclave /=.
     - rewrite map_Forall_singleton; cbn.
       rewrite /encodeInstrW.
       apply Forall_forall.
@@ -181,7 +181,7 @@ Section trusted_example.
       by rewrite elem_of_nil in Hw.
   Qed.
 
-  Definition contract_tc_enclaves_map :=
-    MkCustomEnclavesMap tcenclaves_map wf_tc_enclaves_map.
+  Definition contract_soc_enclaves_map :=
+    MkCustomEnclavesMap soc_enclaves_map wf_soc_enclaves_map.
 
-End trusted_example.
+End soc_example.

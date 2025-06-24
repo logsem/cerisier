@@ -3,19 +3,19 @@ From cap_machine Require Import rules logrel fundamental.
 From cap_machine Require Import proofmode.
 From cap_machine Require Import assert macros.
 From cap_machine Require Import
-  trusted_compute_code
-  trusted_compute_enclave_spec
+  soc_code
+  soc_enclave_spec
 .
 
-Section trusted_compute_main.
+Section soc_main.
   Context {Σ:gFunctors} {ceriseg:ceriseG Σ} {sealsg: sealStoreG Σ}
           {nainv: logrel_na_invs Σ}
           {reservedaddresses : ReservedAddresses}
           `{MP: MachineParameters}.
-  Context {TC: TrustedCompute}.
+  Context {SOC : SecureOutsourcedCompute}.
 
   (* ---------------------------------- *)
-  (* ----- TRUSTED COMPUTE *MAIN* ----- *)
+  (* ----------- SOC *MAIN* ----------- *)
   (* ---------------------------------- *)
 
   (* Expect:
@@ -24,27 +24,27 @@ Section trusted_compute_main.
    *)
 
   (** Specification init code *)
-  Lemma trusted_compute_main_init_spec
+  Lemma soc_main_init_spec
     (b_main : Addr)
     (pc_v : Version)
     (assert_lt_offset : Z)
     (w1 wadv : LWord)
     φ :
 
-    let e_main := (b_main ^+ trusted_compute_main_len)%a in
-    let a_callback := (b_main ^+ trusted_compute_main_init_len)%a in
-    let a_data := (b_main ^+ trusted_compute_main_code_len)%a in
+    let e_main := (b_main ^+ soc_main_len)%a in
+    let a_callback := (b_main ^+ soc_main_init_len)%a in
+    let a_data := (b_main ^+ soc_main_code_len)%a in
 
-    let trusted_compute_main := trusted_compute_main_code assert_lt_offset in
-    ContiguousRegion b_main trusted_compute_main_len ->
+    let soc_main := soc_main_code assert_lt_offset in
+    ContiguousRegion b_main soc_main_len ->
     ⊢ ((
-          codefrag b_main pc_v trusted_compute_main
+          codefrag b_main pc_v soc_main
 
           ∗ PC ↦ᵣ LCap RWX b_main e_main b_main pc_v
           ∗ r_t0 ↦ᵣ wadv
           ∗ r_t1 ↦ᵣ w1
           (* NOTE this post-condition stops after jumping to the adversary *)
-          ∗ ▷ ( codefrag b_main pc_v trusted_compute_main
+          ∗ ▷ ( codefrag b_main pc_v soc_main
                 ∗ PC ↦ᵣ updatePcPermL wadv
                 ∗ r_t0 ↦ᵣ wadv
                 ∗ r_t1 ↦ᵣ (LCap E b_main e_main a_callback pc_v)
@@ -57,10 +57,10 @@ Section trusted_compute_main.
       repeat (lazymatch goal with x := _ |- _ => subst x end)
       ; repeat (match goal with
                   | H: ContiguousRegion _ _  |- _ =>
-                      rewrite /ContiguousRegion /trusted_compute_main_len in H
+                      rewrite /ContiguousRegion /soc_main_len in H
                 end)
-      ; rewrite !/trusted_compute_main_code_len /trusted_compute_main_len
-          /trusted_compute_main_init_len /trusted_compute_main_callback_len
+      ; rewrite !/soc_main_code_len /soc_main_len
+          /soc_main_init_len /soc_main_callback_len
       ; solve_addr.
 
     intros ???? Hregion.
@@ -91,7 +91,7 @@ Section trusted_compute_main.
     inv flag_assertN ((a_flag,v_flag) ↦ₐ LInt 0%Z).
 
 
-  Lemma trusted_compute_callback_code_spec
+  Lemma soc_callback_code_spec
     (E : coPset) (assertN flag_assertN link_tableN : namespace)
     (b_main pc_b pc_e : Addr)
     (pc_v : Version)
@@ -105,12 +105,12 @@ Section trusted_compute_main.
     let v_link := pc_v in
     let link_cap := LCap RO b_link e_link a_link v_link in
 
-    let e_main := (b_main ^+ trusted_compute_main_len)%a in
-    let a_callback := (b_main ^+ trusted_compute_main_init_len)%a in
-    let a_data := (b_main ^+ trusted_compute_main_code_len)%a in
+    let e_main := (b_main ^+ soc_main_len)%a in
+    let a_callback := (b_main ^+ soc_main_init_len)%a in
+    let a_data := (b_main ^+ soc_main_code_len)%a in
 
-    let trusted_compute_main := trusted_compute_main_code assert_lt_offset in
-    ContiguousRegion b_main trusted_compute_main_len ->
+    let soc_main := soc_main_code assert_lt_offset in
+    ContiguousRegion b_main soc_main_len ->
 
     ↑link_tableN ⊆ E ->
     ↑assertN ⊆ E ->
@@ -125,11 +125,11 @@ Section trusted_compute_main.
        assert_entry b_assert e_assert v_assert link_tableN
     ∗ assert_inv b_assert a_flag e_assert v_assert assertN
     ∗ flag_inv a_flag v_assert flag_assertN)
-    ∗ system_inv (enclaves_map := contract_tc_enclaves_map)
+    ∗ system_inv (enclaves_map := contract_soc_enclaves_map)
     ∗ interp w1
     ∗ interp w0
 
-    ⊢ (( codefrag b_main pc_v trusted_compute_main
+    ⊢ (( codefrag b_main pc_v soc_main
           ∗ ((a_data)%a, pc_v) ↦ₐ link_cap
           ∗ ((a_data ^+ 1)%a, pc_v) ↦ₐ (LCap RWX b_main e_main a_data pc_v)
           ∗ PC ↦ᵣ LCap RX pc_b pc_e a_callback pc_v
@@ -141,7 +141,7 @@ Section trusted_compute_main.
           ∗ r_t5 ↦ᵣ w5
           ∗ na_own logrel_nais E
 
-          ∗ ▷ ( codefrag b_main pc_v trusted_compute_main
+          ∗ ▷ ( codefrag b_main pc_v soc_main
                 ∗ ((a_data)%a, pc_v) ↦ₐ link_cap
                 ∗ ((a_data ^+ 1)%a, pc_v) ↦ₐ (LCap RWX b_main e_main a_data pc_v)
 
@@ -163,10 +163,10 @@ Section trusted_compute_main.
       repeat (lazymatch goal with x := _ |- _ => subst x end)
       ; repeat (match goal with
                   | H: ContiguousRegion _ _  |- _ =>
-                      rewrite /ContiguousRegion /trusted_compute_main_len in H
+                      rewrite /ContiguousRegion /soc_main_len in H
                 end)
-      ; rewrite !/trusted_compute_main_code_len /trusted_compute_main_len
-          /trusted_compute_main_init_len /trusted_compute_main_callback_len
+      ; rewrite !/soc_main_code_len /soc_main_len
+          /soc_main_init_len /soc_main_callback_len
       ; solve_addr.
 
     intros ?????? Hregion HE HE' HE_disj Hassert Hlink Hpcbounds.
@@ -214,14 +214,14 @@ Section trusted_compute_main.
     iNext.
     iIntros (retv) "H".
     iDestruct "H" as "(Hi & Hr2 & HEC & [(-> & HPC & H)|(-> & HPC & Hr4)])".
-    1: iDestruct "H" as (I tid) "(Hr4 & #Htc_env & [%Hseal %Htidx])".
+    1: iDestruct "H" as (I tid) "(Hr4 & #Hsoc_env & [%Hseal %Htidx])".
     all: iMod ("Hclose" with "[HEC ECn_OTn Hallocated_seals Hfree_seals Hcemap]") as "_"
     ; [ iExists ECn, OTn; iFrame "HEC Hcemap ECn_OTn Hallocated_seals Hfree_seals"; eauto | iModIntro].
     all: wp_pure; iInstr_close "Hcode".
     2:{ wp_end; by iRight. }
 
     iInstr "Hcode". (* Sub *)
-    destruct (decide (I = hash_trusted_compute_enclave)) as [-> | HnI]
+    destruct (decide (I = hash_soc_enclave)) as [-> | HnI]
     ; cycle 1.
     { (* Not the right enclave *)
       iInstr "Hcode". (* Jnz *)
@@ -255,23 +255,23 @@ Section trusted_compute_main.
 
     iAssert (
         if Z.even a
-        then seal_pred a (Penc tc_enclave_pred)
-             ∗ seal_pred (a ^+ 1)%f (Psign tc_enclave_pred)
-        else seal_pred (a ^+ -1)%f (Penc tc_enclave_pred)
-             ∗ seal_pred a (Psign tc_enclave_pred)
-      )%I as "Htc".
+        then seal_pred a (Penc soc_enclave_pred)
+             ∗ seal_pred (a ^+ 1)%f (Psign soc_enclave_pred)
+        else seal_pred (a ^+ -1)%f (Penc soc_enclave_pred)
+             ∗ seal_pred a (Psign soc_enclave_pred)
+      )%I as "Hsoc".
     {
       iApply "Hcemap"; iFrame "%#∗".
-      iPureIntro. rewrite /tcenclaves_map.
+      iPureIntro. rewrite /soc_enclaves_map.
       by simplify_map_eq.
     }
 
     destruct (Z.even (finz.to_z a)) eqn:HEven_a
-    ; iDestruct "Htc" as "[Htc_Penc Htc_Psign]"
-    ; iEval (cbn) in "Htc_Penc"
-    ; iEval (cbn) in "Htc_Psign".
+    ; iDestruct "Hsoc" as "[Hsoc_Penc Hsoc_Psign]"
+    ; iEval (cbn) in "Hsoc_Penc"
+    ; iEval (cbn) in "Hsoc_Psign".
     {
-      iDestruct (seal_pred_valid_sealed_eq with "[$Htc_Penc] Hseal_valid") as "Heqv".
+      iDestruct (seal_pred_valid_sealed_eq with "[$Hsoc_Penc] Hseal_valid") as "Heqv".
       iAssert (▷ False)%I as ">%Hcontra"; last done.
       iDestruct "Hseal_valid" as (sb') "(%Heq & _ & _ & HΦ)".
       inversion Heq; subst.
@@ -280,7 +280,7 @@ Section trusted_compute_main.
       by iRewrite "Heqv".
     }
 
-    iDestruct (seal_pred_valid_sealed_eq with "[$Htc_Psign] Hseal_valid") as "Heqv".
+    iDestruct (seal_pred_valid_sealed_eq with "[$Hsoc_Psign] Hseal_valid") as "Heqv".
     iAssert (▷ sealed_42 (LWSealable sb))%I as (fb fe fv) ">%Hseal42".
     { iDestruct "Hseal_valid" as (sb') "(%Heq & _ & _ & HΦ)".
       inversion Heq; subst.
@@ -289,7 +289,7 @@ Section trusted_compute_main.
       iRewrite "Heqv".
       iFrame "HΦ". }
     destruct sb ; simplify_eq.
-    iClear "Heqv Htc_Penc Hcemap Hcemap_inv".
+    iClear "Heqv Hsoc_Penc Hcemap Hcemap_inv".
 
     iInstr "Hcode". (* Mov *)
     iInstr "Hcode". (* GetA *)
@@ -298,10 +298,10 @@ Section trusted_compute_main.
     iInstr "Hcode". (* Lea *)
     iInstr "Hcode". (* Load *)
 
-    subst trusted_compute_main.
-    rewrite /trusted_compute_main_code /trusted_compute_main_code_callback0.
+    subst soc_main.
+    rewrite /soc_main_code /soc_main_code_callback0.
     subst a_callback.
-    rewrite /trusted_compute_main_init_len.
+    rewrite /soc_main_init_len.
 
     subst e_main.
     focus_block 2%nat "Hcode" as addr_block2 Haddr_block2 "Hblock" "Hcode'".
@@ -325,14 +325,14 @@ Section trusted_compute_main.
     iApply "Hcont"; iFrame.
   Qed.
 
-  Definition tc_main_inv b_main e_main pc_v main_code a_data link_cap tc_mainN
-    := na_inv logrel_nais tc_mainN
+  Definition soc_main_inv b_main e_main pc_v main_code a_data link_cap soc_mainN
+    := na_inv logrel_nais soc_mainN
          (codefrag b_main pc_v main_code
           ∗ (a_data, pc_v) ↦ₐ link_cap
           ∗ ((a_data ^+ 1)%a, pc_v) ↦ₐ LCap RWX b_main e_main a_data pc_v).
 
-  Lemma trusted_compute_callback_code_sentry
-    (b_main : Addr) (pc_v : Version) (tc_mainN : namespace)
+  Lemma soc_callback_code_sentry
+    (b_main : Addr) (pc_v : Version) (soc_mainN : namespace)
 
     (b_link a_link e_link assert_entry : Addr) (link_tableN : namespace) (* linking *)
     (assert_lt_offset : Z)
@@ -342,19 +342,19 @@ Section trusted_compute_main.
     let v_link := pc_v in
     let link_cap := LCap RO b_link e_link a_link v_link in
 
-    let e_main := (b_main ^+ trusted_compute_main_len)%a in
-    let a_callback := (b_main ^+ trusted_compute_main_init_len)%a in
-    let a_data := (b_main ^+ trusted_compute_main_code_len)%a in
+    let e_main := (b_main ^+ soc_main_len)%a in
+    let a_callback := (b_main ^+ soc_main_init_len)%a in
+    let a_data := (b_main ^+ soc_main_code_len)%a in
 
-    let trusted_compute_main := trusted_compute_main_code assert_lt_offset in
+    let soc_main := soc_main_code assert_lt_offset in
 
     assertN ## link_tableN ->
-    assertN ## tc_mainN ->
-    link_tableN ## tc_mainN ->
+    assertN ## soc_mainN ->
+    link_tableN ## soc_mainN ->
 
-    ContiguousRegion b_main trusted_compute_main_len ->
-    SubBounds b_main (b_main ^+ trusted_compute_main_len)%a b_main
-      (b_main ^+ trusted_compute_main_len)%a ->
+    ContiguousRegion b_main soc_main_len ->
+    SubBounds b_main (b_main ^+ soc_main_len)%a b_main
+      (b_main ^+ soc_main_len)%a ->
 
     (a_link + assert_lt_offset)%a = Some assert_entry →
     withinBounds b_link e_link assert_entry = true ->
@@ -363,11 +363,11 @@ Section trusted_compute_main.
        assert_entry b_assert e_assert v_assert link_tableN
      ∗ assert_inv b_assert a_flag e_assert v_assert assertN
      ∗ flag_inv a_flag v_assert flag_assertN
-     ∗ tc_main_inv b_main e_main pc_v (trusted_compute_main_code assert_lt_offset) a_data link_cap tc_mainN
+     ∗ soc_main_inv b_main e_main pc_v (soc_main_code assert_lt_offset) a_data link_cap soc_mainN
     )
-    ∗ (system_inv (enclaves_map := contract_tc_enclaves_map))
-    ⊢ interp (LCap E b_main (b_main ^+ trusted_compute_main_len)%a
-                (b_main ^+ trusted_compute_main_init_len)%a pc_v).
+    ∗ (system_inv (enclaves_map := contract_soc_enclaves_map))
+    ⊢ interp (LCap E b_main (b_main ^+ soc_main_len)%a
+                (b_main ^+ soc_main_init_len)%a pc_v).
   Proof.
     intros ????????? HcontRegion HsubBounds Hassert Hlink.
     iIntros "[#(HlinkInv & HassertInv & HflagInv & HcodeInv) #Hcemap_inv]".
@@ -406,7 +406,7 @@ Section trusted_compute_main.
     - iMod (na_inv_acc with "HcodeInv Hna") as "[>(Hcode & Hdata & Hdata') [Hna Hcls] ]"
       ;[solve_ndisj|solve_ndisj|].
 
-      iApply ( (trusted_compute_callback_code_spec (⊤ ∖ ↑tc_mainN))
+      iApply ( (soc_callback_code_spec (⊤ ∖ ↑soc_mainN))
                with "[$HlinkInv $HassertInv $HflagInv $Hcemap_inv Hinterp_w0 Hinterp_w1]
                  [$HPC $Hr0 $Hr1 $Hr2 $Hr3 $Hr4 $Hr5 $Hcode $Hdata $Hdata' $Hna Hcls Hrmap]")
       ; eauto
@@ -454,8 +454,8 @@ Section trusted_compute_main.
       by iApply "H".
   Qed.
 
-  Lemma trusted_compute_full_run_spec
-    (b_main : Addr) (pc_v : Version) (tc_mainN : namespace)
+  Lemma soc_full_run_spec
+    (b_main : Addr) (pc_v : Version) (soc_mainN : namespace)
 
     (b_link a_link e_link assert_entry : Addr) (link_tableN : namespace) (* linking *)
     (assert_lt_offset : Z)
@@ -468,19 +468,19 @@ Section trusted_compute_main.
     let v_link := pc_v in
     let link_cap := LCap RO b_link e_link a_link v_link in
 
-    let e_main := (b_main ^+ trusted_compute_main_len)%a in
-    let a_callback := (b_main ^+ trusted_compute_main_init_len)%a in
-    let a_data := (b_main ^+ trusted_compute_main_code_len)%a in
+    let e_main := (b_main ^+ soc_main_len)%a in
+    let a_callback := (b_main ^+ soc_main_init_len)%a in
+    let a_data := (b_main ^+ soc_main_code_len)%a in
 
-    let trusted_compute_main := trusted_compute_main_code assert_lt_offset in
+    let soc_main := soc_main_code assert_lt_offset in
 
     assertN ## link_tableN ->
-    assertN ## tc_mainN ->
-    link_tableN ## tc_mainN ->
+    assertN ## soc_mainN ->
+    link_tableN ## soc_mainN ->
 
-    ContiguousRegion b_main trusted_compute_main_len ->
-    SubBounds b_main (b_main ^+ trusted_compute_main_len)%a b_main
-      (b_main ^+ trusted_compute_main_len)%a ->
+    ContiguousRegion b_main soc_main_len ->
+    SubBounds b_main (b_main ^+ soc_main_len)%a b_main
+      (b_main ^+ soc_main_len)%a ->
 
 
     (a_link + assert_lt_offset)%a = Some assert_entry →
@@ -493,9 +493,9 @@ Section trusted_compute_main.
        assert_entry b_assert e_assert v_assert link_tableN
     ∗ assert_inv b_assert a_flag e_assert v_assert assertN
     ∗ flag_inv a_flag v_assert flag_assertN
-    ∗ tc_main_inv b_main e_main pc_v (trusted_compute_main_code assert_lt_offset) a_data link_cap tc_mainN
+    ∗ soc_main_inv b_main e_main pc_v (soc_main_code assert_lt_offset) a_data link_cap soc_mainN
     )
-    ∗ (system_inv (enclaves_map := contract_tc_enclaves_map))
+    ∗ (system_inv (enclaves_map := contract_soc_enclaves_map))
     ∗ interp wadv
 
     ⊢ (PC ↦ᵣ LCap RWX b_main e_main b_main pc_v
@@ -515,13 +515,13 @@ Section trusted_compute_main.
     { iSplit; last iFrame "Hcemap_inv".
       iModIntro.
       iApply custom_enclave_contract_inv.
-      iApply tc_enclave_contract.
+      iApply soc_enclave_contract.
     }
     iMod (na_inv_acc with "HcodeInv Hna") as "[>(Hcode & Hadata & Hadata') [Hna Hcls] ]"
     ;[solve_ndisj|solve_ndisj|].
 
     iExtract "Hrmap" r_t1 as "[Hr1 _]".
-    iApply (trusted_compute_main_init_spec with "[-]"); eauto; iFrame.
+    iApply (soc_main_init_spec with "[-]"); eauto; iFrame.
     iNext; iIntros "(Hcode & HPC & Hr0 & Hr1)".
     iMod ("Hcls" with "[$Hcode $Hadata $Hadata' $Hna]") as "Hna".
 
@@ -534,7 +534,7 @@ Section trusted_compute_main.
     }
 
     (* Show the content of r1 is safe *)
-    iDestruct (trusted_compute_callback_code_sentry
+    iDestruct (soc_callback_code_sentry
                 with "[$HlinkInv $HassertInv $HflagInv $HcodeInv $Hcemap_inv]")
       as "Hinterp_wret"; eauto.
     (* Cannot use iInsert, because Qed is too long *)
@@ -552,4 +552,4 @@ Section trusted_compute_main.
     - iIntros (v) "H"; by iLeft.
   Qed.
 
-End trusted_compute_main.
+End soc_main.
