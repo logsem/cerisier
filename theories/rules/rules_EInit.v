@@ -922,12 +922,12 @@ Section cap_lang_rules.
 
       { iApply ("Hφ" with "[$Hregs' $Hmem $HECv Hcur_frag Hall_frag]"). iLeft.
         unfold EInit_spec_success.
-        apply bind_Some in Hlmeasure as (Hlmeasure&Hlhash_range&?); simplify_eq.
-        apply bind_Some in Hmeasure as (Hmeasure&Hhash_range&?); simplify_eq.
+        apply bind_Some in Hlmeasure as (lhash&Hlmeasure&Hlhash_range); simplify_eq.
+        apply bind_Some in Hmeasure as (hash&Hmeasure&Hhash_range); simplify_eq.
         set (lmem'' :=
                (update_version_region (update_version_region lm (finz.seq_between f2 f3) v0 lm) (finz.seq_between f f0) v
                   (update_version_region lm (finz.seq_between f2 f3) v0 lmem))).
-        iExists _, lmem'', _, _, _, _, _, _, _, _, _, _.
+        iExists _, lmem'', f, f0, f1, v, f2, f3, f4, v0, (hash_concat (machine_parameters.hash f) hash), lhash.
         rewrite !map_fmap_singleton; iFrame.
         iSplit; first eauto.
         iSplit; first eauto.
