@@ -17,18 +17,21 @@ machine_utils/theories/solve_pure.v
 machine_utils/theories/tactics.v
 
 # Extras
-theories/iris_extra.v
-theories/stdpp_extra.v
-theories/proofmode/map_simpl.v
-theories/addr_reg.v
-theories/proofmode/solve_addr.v
+theories/utils/iris_extra.v
+theories/utils/stdpp_extra.v
+theories/utils/machine_utils_extra.v
+theories/utils/map_simpl.v
+theories/utils/NamedProp.v
 
 # Capability Machine Model
-theories/machine_base.v
-theories/machine_parameters.v
-theories/cap_lang.v
+theories/opsem/addr_reg.v
+theories/proofmode/solve_addr.v
+theories/opsem/machine_base.v
+theories/opsem/machine_parameters.v
+theories/opsem/cap_lang.v
 
-theories/logical_mapsto.v
+# Program logic: Logical layer
+theories/program_logic/logical_mapsto.v
 
 # Misc for automation and notations
 theories/proofmode/classes.v
@@ -38,90 +41,93 @@ theories/proofmode/region.v
 theories/proofmode/register_tactics.v
 
 # Program logic: Unary WP rules
-theories/rules/rules_base.v
-theories/rules/rules_Get.v
-theories/rules/rules_Load.v
-theories/rules/rules_Store.v
-theories/rules/rules_AddSubLt.v
-theories/rules/rules_Lea.v
-theories/rules/rules_Mov.v
-theories/rules/rules_Restrict.v
-theories/rules/rules_Jmp.v
-theories/rules/rules_Jnz.v
-theories/rules/rules_Subseg.v
-theories/rules/rules_Seal.v
-theories/rules/rules_UnSeal.v
-theories/rules/rules_EInit.v
-theories/rules/rules_EDeInit.v
-theories/rules/rules_EStoreId.v
-theories/rules/rules_IsUnique.v
-theories/rules/rules_Hash.v
-theories/rules.v
+theories/program_logic/transiently.v
+theories/program_logic/wp_opt.v
+theories/program_logic/base_logic.v
+theories/program_logic/rules_base.v
+theories/program_logic/rules_fail.v
+theories/program_logic/rules/rules_Get.v
+theories/program_logic/rules/rules_Load.v
+theories/program_logic/rules/rules_Store.v
+theories/program_logic/rules/rules_AddSubLt.v
+theories/program_logic/rules/rules_Lea.v
+theories/program_logic/rules/rules_Mov.v
+theories/program_logic/rules/rules_Restrict.v
+theories/program_logic/rules/rules_Jmp.v
+theories/program_logic/rules/rules_Jnz.v
+theories/program_logic/rules/rules_Subseg.v
+theories/program_logic/rules/rules_Seal.v
+theories/program_logic/rules/rules_UnSeal.v
+theories/program_logic/rules/rules_EInit.v
+theories/program_logic/rules/rules_EDeInit.v
+theories/program_logic/rules/rules_EStoreId.v
+theories/program_logic/rules/rules_IsUnique.v
+theories/program_logic/rules/rules_Hash.v
+theories/program_logic/rules.v
 
 # Cerise Proofmode
 theories/proofmode/contiguous.v
 theories/proofmode/tactics_helpers.v
 theories/proofmode/solve_pure.v
-theories/proofmode/NamedProp.v
 theories/proofmode/proofmode_instr_rules.v
 theories/proofmode/proofmode.v
 
 # Unary Logical Relation
-theories/seal_store.v
-theories/logrel.v
-theories/ftlr/ftlr_base.v
-theories/ftlr/interp_weakening.v
-theories/ftlr/Get.v
-theories/ftlr/Hash.v
-theories/ftlr/Load.v
-theories/ftlr/Store.v
-theories/ftlr/AddSubLt.v
-theories/ftlr/Lea.v
-theories/ftlr/Mov.v
-theories/ftlr/Restrict.v
-theories/ftlr/Jmp.v
-theories/ftlr/Jnz.v
-theories/ftlr/Subseg.v
-theories/ftlr/Seal.v
-theories/ftlr/UnSeal.v
-theories/ftlr/IsUnique.v
-theories/ftlr/EInit.v
-theories/ftlr/EDeInit.v
-theories/ftlr/EStoreId.v
-theories/fundamental.v
+theories/logrel/seal_store.v
+theories/logrel/logrel.v
+theories/logrel/ftlr/ftlr_base.v
+theories/logrel/ftlr/interp_weakening.v
+theories/logrel/ftlr/Get.v
+theories/logrel/ftlr/Hash.v
+theories/logrel/ftlr/Load.v
+theories/logrel/ftlr/Store.v
+theories/logrel/ftlr/AddSubLt.v
+theories/logrel/ftlr/Lea.v
+theories/logrel/ftlr/Mov.v
+theories/logrel/ftlr/Restrict.v
+theories/logrel/ftlr/Jmp.v
+theories/logrel/ftlr/Jnz.v
+theories/logrel/ftlr/Subseg.v
+theories/logrel/ftlr/Seal.v
+theories/logrel/ftlr/UnSeal.v
+theories/logrel/ftlr/IsUnique.v
+theories/logrel/ftlr/EInit.v
+theories/logrel/ftlr/EDeInit.v
+theories/logrel/ftlr/EStoreId.v
+theories/logrel/fundamental.v
 
 # Misc for examples
-theories/examples/macros/addr_reg_sample.v
+theories/case_studies/macros/addr_reg_sample.v
 theories/proofmode/disjoint_regions_tactics.v
 theories/proofmode/mkregion_helpers.v
 
 # Common Cerise (assembly) macros
-theories/examples/macros/malloc.v
-theories/examples/macros/assert.v
-theories/examples/macros/hash_cap.v
-theories/examples/macros/macros.v
+theories/case_studies/macros/malloc.v
+theories/case_studies/macros/assert.v
+theories/case_studies/macros/hash_cap.v
+theories/case_studies/macros/macros.v
 
 # Template Adequacy
-theories/examples/template_adequacy_attestation.v
+theories/case_studies/template_adequacy_attestation.v
 
 # Secure Outsources Computation (SOC) example
-theories/examples/soc/soc_code.v
-theories/examples/soc/soc_enclave_spec.v
-theories/examples/soc/soc_spec.v
-theories/examples/soc/soc_adequacy.v
+theories/case_studies/soc/soc_code.v
+theories/case_studies/soc/soc_enclave_spec.v
+theories/case_studies/soc/soc_spec.v
+theories/case_studies/soc/soc_adequacy.v
 
 # Trusted Memory Readout example
-theories/examples/memory_readout/trusted_memory_readout_code.v
-theories/examples/memory_readout/trusted_memory_readout_spec.v
-theories/examples/memory_readout/trusted_memory_readout_enclaves_spec.v
-theories/examples/memory_readout/trusted_memory_readout_client_spec.v
-theories/examples/memory_readout/trusted_memory_readout_sensor_spec.v
-theories/examples/memory_readout/trusted_memory_readout_main_spec.v
-theories/examples/memory_readout/trusted_memory_readout_adequacy.v
+theories/case_studies/memory_readout/trusted_memory_readout_code.v
+theories/case_studies/memory_readout/trusted_memory_readout_spec.v
+theories/case_studies/memory_readout/trusted_memory_readout_enclaves_spec.v
+theories/case_studies/memory_readout/trusted_memory_readout_client_spec.v
+theories/case_studies/memory_readout/trusted_memory_readout_sensor_spec.v
+theories/case_studies/memory_readout/trusted_memory_readout_main_spec.v
+theories/case_studies/memory_readout/trusted_memory_readout_adequacy.v
 
 # Mutual Attestation example
-theories/examples/mutual_attestation/mutual_attestation_code.v
-theories/examples/mutual_attestation/mutual_attestation_A_spec.v
-theories/examples/mutual_attestation/mutual_attestation_B_spec.v
-theories/examples/mutual_attestation/mutual_attestation_spec.v
-theories/examples/mutual_attestation/mutual_attestation_adequacy.v
+theories/case_studies/mutual_attestation/mutual_attestation_code.v
+theories/case_studies/mutual_attestation/mutual_attestation_A_spec.v
+theories/case_studies/mutual_attestation/mutual_attestation_B_spec.v
+theories/case_studies/mutual_attestation/mutual_attestation_spec.v
+theories/case_studies/mutual_attestation/mutual_attestation_adequacy.v

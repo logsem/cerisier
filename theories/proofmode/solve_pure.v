@@ -2,7 +2,7 @@ From Coq Require Import ZArith Lia ssreflect.
 From stdpp Require Import base.
 From cap_machine Require Import machine_base machine_parameters addr_reg solve_addr logical_mapsto.
 From cap_machine Require Export solve_addr_extra classes class_instances.
-From cap_machine.rules Require Import rules_Get rules_AddSubLt.
+From cap_machine.program_logic Require Import rules_Get rules_AddSubLt.
 From machine_utils Require Export solve_pure.
 
 Ltac solve_pure_addr := solve_pure_finz.

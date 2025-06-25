@@ -1,5 +1,5 @@
 From cap_machine Require Export stdpp_extra cap_lang.
-From cap_machine Require Export logical_mapsto.
+From cap_machine Require Export base_logic.
 From cap_machine Require Export cap_lang iris_extra stdpp_extra.
 
 (* From cap_machine Require Import rules_binary_base. *)
