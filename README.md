@@ -62,15 +62,16 @@ Fundamental Theorem.
 
 # Organization
 
-| *section in the paper*            | *Rocq files*                               |
-|-----------------------------------|--------------------------------------------|
-| Operational semantics (3)         | `machine_base.v`, `cap_lang.v`             |
-| Program Logic (4)                 | `logical_mapsto.v`, `rules/*.v`            |
-| Logical Relation (5)              | `logrel.v`, `ftlr/*.v`, `fundamental.v`    |
-| Adequacy (6)                      | `examples/template_adequacy_attestation.v` |
-| Case Study - SOC (7.1)            | `examples/soc/*.v`                         |
-| Case Study - Mutual Attest (7.2)  | `examples/mutual_attestation/*.v`          |
-| Case Study - Sensor Readout (7.2) | `examples/memory_readout/*.v`              |
+| *section in the paper*            | *Rocq files*                                   |
+|-----------------------------------|------------------------------------------------|
+| Operational semantics (3)         | `opsem/*`                                      |
+| Program Logic (4)                 | `program_logic/*`                              |
+| Adequacy (5)                      | `case_studies/template_adequacy_attestation.v` |
+| Logical Relation (6)              | `logrel/.v`                                    |
+| FTLR (6.3)                        | `logrel/ftlr/*`, `fundamental.v`               |
+| Case Study - SOC (7.1)            | `case_studies/soc/*.v`                         |
+| Case Study - Mutual Attest (7.2)  | `case_studies/mutual_attestation/*.v`          |
+| Case Study - Sensor Readout (7.3) | `case_studies/memory_readout/*.v`              |
 
 # Differences with the paper
 
@@ -96,6 +97,6 @@ In the program logic:
 | *name in paper*                | *name in mechanization* |
 |--------------------------------|-------------------------|
 | EC(ecn)                        | EC⤇ ecn                 |
-| tidx $\mapsto_{E}^{\square}$ I | enclave_all             |
-| tidx $\mapsto_{E}$ I           | enclave_cur             |
-| DeInitialized(tidx)            | enclave_prev            |
+| tidx $\mapsto_{E}^{\square}$ I | enclave_all tidx I      |
+| tidx $\mapsto_{E}$ I           | enclave_cur tidx I      |
+| DeInitialized(tidx)            | enclave_prev tidx       |
