@@ -53,13 +53,6 @@ make -jN  # replace N with the number of CPU cores of your machine
 It is possible to run `make fundamental` to only build files up to the
 Fundamental Theorem.
 
-<!-- # Documentation -->
-
-<!-- An HTML rendering of the development can be browsed online at -->
-<!-- [logsem.github.io/cerise/dev/](https://logsem.github.io/cerise/dev/). In -->
-<!-- particular, the index page provides an overview of the organisation of the -->
-<!-- formalization. -->
-
 # Organization
 
 | *section in the paper*            | *Rocq files*                                   |

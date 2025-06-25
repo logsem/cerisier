@@ -13,22 +13,18 @@
       in
         rec {
           packages.default = coqPackages.mkCoqDerivation {
-              pname = "cerise";
+              pname = "cerisier";
               version = "0.0.0";
 
               coq-version = "8.18";
 
               src = ./.;
-              # src = builtins.fetchGit {
-              #   url = ./.;
-              #   submodules = true;
-              # };
 
               buildInputs = with coqPackages; [ equations iris stdpp ];
 
               meta = with pkgs.lib; {
-                description = "Cerise, Coq mechanization of a capability machine and principles to reason about the interaction of known and unknown code";
-                homepage = "https://github.com/logsem/cerise";
+                description = "Cerisier: A Program Logic for Attestation";
+                homepage = "https://github.com/logsem/cerisier";
                 license = licenses.bsd3;
               };
             };
