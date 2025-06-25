@@ -763,8 +763,7 @@ Section cap_lang_rules.
           rewrite lookup_fmap.
           apply fmap_None.
           apply not_elem_of_dom.
-          enough (tidx ∉ dom cur_tb ∪ dom prev_tb) by set_solver.
-          rewrite dom_union_L in Hdomtbcompl.
+          enough (tidx ∉ dom (cur_tb ∪ prev_tb)) by set_solver.
           rewrite Hdomtbcompl.
           apply not_elem_of_list_to_set.
           intro Htidx.
@@ -781,10 +780,8 @@ Section cap_lang_rules.
           rewrite lookup_fmap.
           apply fmap_None.
           rewrite HEC in Hdomtbcompl.
-          rewrite dom_union_L in Hdomtbcompl.
-          rewrite -not_elem_of_dom.
-          rewrite -Htbcompl.
-          assert (tidx ∉ dom cur_tb ∪ dom prev_tb); last set_solver.
+          apply not_elem_of_dom.
+          enough (tidx ∉ dom (cur_tb ∪ prev_tb)) by set_solver.
           rewrite Hdomtbcompl.
           apply not_elem_of_list_to_set.
           intro Htidx.
@@ -869,17 +866,17 @@ Section cap_lang_rules.
         {
           rewrite dom_insert_L disjoint_union_l; split ; auto.
           rewrite disjoint_singleton_l.
-          assert (enumcur σ ∉ dom prev_tb ∪ dom (etable σ)) as H'; last set_solver+H'.
-          rewrite union_comm_L -dom_union_L Hdomtbcompl.
-          rewrite not_elem_of_list_to_set.
+          enough (enumcur σ ∉ dom ((etable σ) ∪ prev_tb)) by set_solver.
+          rewrite Hdomtbcompl.
+          apply not_elem_of_list_to_set.
           rewrite elem_of_seq; solve_finz+.
         }
         {
-         rewrite dom_union_L dom_insert_L -union_assoc_L -dom_union_L Hdomtbcompl.
           replace ( enumcur σ + 1) with (S (enumcur σ)) by lia.
           rewrite seq_S; simpl.
           rewrite list_to_set_app_L.
-          set_solver+.
+          rewrite -Hdomtbcompl.
+          now set_solver.
         }
         { rewrite map_disjoint_insert_l; split; last done.
           rewrite -not_elem_of_dom.
