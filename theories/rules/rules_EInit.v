@@ -804,27 +804,25 @@ Section cap_lang_rules.
         eapply (auth_update_alloc (Excl <$> cur_tb) (Excl <$> (<[tidx := eid]> cur_tb)) (Excl <$> {[ tidx := eid ]})).
         rewrite fmap_insert.
         rewrite map_fmap_singleton.
-        apply gmap.alloc_singleton_local_update.
+        apply gmap.alloc_singleton_local_update; try easy.
         { clear -HEC Hdomtbcompl.
           rewrite lookup_fmap.
           apply fmap_None.
-          rewrite HEC in Hdomtbcompl.
+          apply not_elem_of_dom.
+          enough (tidx ∉ dom cur_tb ∪ dom prev_tb) by set_solver.
           rewrite dom_union_L in Hdomtbcompl.
-          rewrite -not_elem_of_dom.
-          assert (tidx ∉ dom cur_tb ∪ dom prev_tb); last set_solver.
           rewrite Hdomtbcompl.
           apply not_elem_of_list_to_set.
           intro Htidx.
           apply elem_of_seq in Htidx; lia.
         }
-        { done. }
 
         (* mod update for <[(enumcur σ) := eid]> etable in ALL_TB *)
         iMod (own_update with "Hall_tb") as "(Hall_tb & Hall_frag)".
         eapply (auth_update_alloc (to_agree <$> all_tb) (to_agree <$> (<[tidx := eid]> all_tb)) (to_agree <$> {[ tidx := eid ]})).
         rewrite fmap_insert.
         rewrite map_fmap_singleton.
-        apply gmap.alloc_singleton_local_update.
+        apply gmap.alloc_singleton_local_update; try easy.
         { clear -HEC Htbcompl Hdomtbcompl.
           rewrite lookup_fmap.
           apply fmap_None.
@@ -838,11 +836,10 @@ Section cap_lang_rules.
           intro Htidx.
           apply elem_of_seq in Htidx; lia.
         }
-        { done. }
         cbn.
-        iCombine "Hecauth HECv" as "HEC".
-        iMod (own_update with "HEC") as "(Hecauth & HECv)".
-        apply (excl_auth_update _ _ (enumcur σ + 1)).
+
+        iMod (own_update_2 with "Hecauth HECv") as "(Hecauth & HECv)".
+        { apply (excl_auth_update _ _ (enumcur σ + 1)). }
 
         iMod (gen_heap_update_inSepM _ _ r_code (LCap machine_base.E f f0 (f ^+ 1)%a (v+1)) with
                "Hσr Hregs") as "(Hσr & Hregs)"; eauto.
@@ -872,17 +869,14 @@ Section cap_lang_rules.
         {
           iFrame.
           rewrite !insert_insert.
-          iEval (rewrite insert_commute; eauto) in "Hregs".
-          rewrite !insert_insert.
-          iEval (rewrite insert_commute; eauto) in "Hregs".
-          iFrame.
+          iEval (rewrite (insert_commute _ r_code); eauto) in "Hregs".
+          now rewrite !insert_insert.
         }
         { apply elem_of_dom. by repeat (rewrite lookup_insert_is_Some'; right). }
         {
           rewrite insert_insert.
-          rewrite insert_commute; auto.
+          rewrite (insert_commute _ r_code); auto.
           rewrite insert_insert.
-          rewrite insert_commute; auto.
           by do 2 (apply insert_mono).
         }
         {
@@ -917,8 +911,7 @@ Section cap_lang_rules.
       { subst.
         incrementPC_inv; simplify_map_eq.
         iExists _, _, _, _, _, _; iFrame; cbn; iPureIntro.
-        split; first done.
-        split.
+        intuition eauto.
         {
           rewrite dom_insert_L disjoint_union_l; split ; auto.
           rewrite disjoint_singleton_l.
@@ -927,7 +920,6 @@ Section cap_lang_rules.
           rewrite not_elem_of_list_to_set.
           rewrite elem_of_seq; solve_finz+.
         }
-        split.
         {
          rewrite dom_union_L dom_insert_L -union_assoc_L -dom_union_L Hdomtbcompl.
           replace ( enumcur σ + 1) with (S (enumcur σ)) by lia.
@@ -935,7 +927,6 @@ Section cap_lang_rules.
           rewrite list_to_set_app_L.
           set_solver+.
         }
-        split.
         { rewrite map_disjoint_insert_l; split; last done.
           rewrite -not_elem_of_dom.
           assert (enumcur σ ∉ dom prev_tb ∪ dom (etable σ)) as H'; last set_solver+H'.
@@ -943,11 +934,9 @@ Section cap_lang_rules.
           rewrite not_elem_of_list_to_set.
           rewrite elem_of_seq; solve_finz+.
         }
-        split.
         { rewrite !insert_union_singleton_l.
           by rewrite map_union_assoc.
         }
-        eapply Hcorr'.
       }
 
       { iApply ("Hφ" with "[$Hregs' $Hmem $HECv Hcur_frag Hall_frag]"). iLeft.
