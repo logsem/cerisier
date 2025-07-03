@@ -57,14 +57,14 @@ Fundamental Theorem.
 
 | *section in the paper*            | *Rocq files*                                   |
 |-----------------------------------|------------------------------------------------|
-| Operational semantics (3)         | `opsem/*`                                      |
-| Program Logic (4)                 | `program_logic/*`                              |
-| Adequacy (5)                      | `case_studies/template_adequacy_attestation.v` |
-| Logical Relation (6)              | `logrel/.v`                                    |
-| FTLR (6.3)                        | `logrel/ftlr/*`, `fundamental.v`               |
-| Case Study - SOC (7.1)            | `case_studies/soc/*.v`                         |
-| Case Study - Mutual Attest (7.2)  | `case_studies/mutual_attestation/*.v`          |
-| Case Study - Sensor Readout (7.3) | `case_studies/memory_readout/*.v`              |
+| Operational semantics (4)         | `opsem/*`                                      |
+| Program Logic (5)                 | `program_logic/*`                              |
+| Adequacy (6)                      | `case_studies/template_adequacy_attestation.v` |
+| Logical Relation (7)              | `logrel/.v`                                    |
+| FTLR (7.3)                        | `logrel/ftlr/*`, `fundamental.v`               |
+| Case Study - SOC (8.1)            | `case_studies/soc/*.v`                         |
+| Case Study - Mutual Attest (8.2)  | `case_studies/mutual_attestation/*.v`          |
+| Case Study - Sensor Readout (8.3) | `case_studies/memory_readout/*.v`              |
 
 # Differences with the paper
 
@@ -74,11 +74,11 @@ Some definitions have different names from the paper.
 
 In the operational semantics:
 
-| *name in paper*   | *name in mechanization*   |
-|-------------------|---------------------------|
-| Executable        | Instr Executable          |
-| Halted            | Instr Halted              |
-| Failed            | Instr Failed              |
+| *name in paper* | *name in mechanization* |
+|-----------------|-------------------------|
+| Running         | Instr Executable        |
+| Halted          | Instr Halted            |
+| Failed          | Instr Failed            |
 
 For technical reasons (so that Iris considers a single instruction as an atomic step), 
 the execution mode is interweaved with the "Instr Next" mode, which reduces to a value.
