@@ -22,7 +22,7 @@ To install those, two options:
 - **Option 1**: create a fresh *local* opam switch with everything needed:
 
 ```
-opam switch create -y --repositories=default,coq-released=https://coq.inria.fr/opam/released . ocaml-base-compiler.4.14.0
+opam switch create -y --repositories=default,coq-released=https://coq.inria.fr/opam/released . ocaml-base-compiler.4.14.2
 eval $(opam env)
 ```
 
