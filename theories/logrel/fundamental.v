@@ -333,11 +333,76 @@ Section fundamental.
     all: iApply (region_valid_in_regionL with "H"); eauto.
   Qed.
 
+  Lemma big_sepL_exists {Σ'} `{EqDecision A, Countable A} {B} {P : A -> B -> iProp Σ'} {l : list A} {Hnodup : NoDup l} :
+    ([∗ list] x ∈ l, ∃ y, P x y)%I ⊣⊢ ∃ m : gmap A B, ⌜ dom m = list_to_set l ⌝ ∗ [∗ map] x ↦ y ∈ m, P x y.
+  Proof.
+    induction l; cbn.
+    - iSplit; iIntros "H"; last done.
+      iExists ∅; now iSplit.
+    - rewrite NoDup_cons in Hnodup.
+      destruct (Hnodup) as [Hal Hnodup'].
+      specialize (IHl Hnodup').
+      rewrite IHl.
+      iSplit.
+      + iIntros "[(%y & Hy) (%m & %Hm & HPs)]".
+        iExists (insert a y m).
+        iSplitR.
+        { iPureIntro. rewrite (dom_insert_L m a y). now f_equal. }
+        rewrite big_opM_insert; last (apply not_elem_of_dom; set_solver).
+        now iFrame.
+      + iIntros "(%m & %Hm & HPs)".
+        assert (a ∈ dom m) as Ha by set_solver.
+        apply elem_of_dom in Ha.
+        destruct Ha as [y Hay].
+        rewrite (big_sepM_delete _ m a y Hay).
+        iDestruct "HPs" as "(HPay & HPs)".
+        iSplitL "HPay"; first now iExists _.
+        iExists _; iFrame; iPureIntro.
+        rewrite dom_delete_L Hm; set_solver.
+  Qed.
+
+  Lemma big_sepS_exists {Σ'} `{EqDecision A, Countable A} {B} {P : A -> B -> iProp Σ'} {l : gset A} :
+    ([∗ set] x ∈ l, ∃ y, P x y)%I ⊣⊢ ∃ m : gmap A B, ⌜ dom m = l ⌝ ∗ [∗ map] x ↦ y ∈ m, P x y.
+  Proof.
+    rewrite big_opS_elements.
+    rewrite big_sepL_exists; last now apply NoDup_elements.
+    iSplit; iIntros "(%m & %Heq & HPs)";
+      iExists m; iFrame; iPureIntro;
+      now rewrite Heq list_to_set_elements_L.
+  Qed.
+
   Theorem fundamental' :
     (□ custom_enclave_contract_gen) ∗ system_inv ∗ na_own logrel_nais ⊤
       ⊢ ([∗ list] r ∈ all_registers, (∃ v, interp v ∗ r ↦ᵣ v)%I) -∗
         interp_conf.
   Proof.
     iIntros "(#Hencs & Hinv & Hnais) Hregs".
-  Admitted.
+    rewrite <-(big_sepS_list_to_set _ _ all_registers_NoDup).
+    assert (PC ∈ list_to_set (C := gset RegName) all_registers) as Hpc
+        by eapply elem_of_list_to_set, all_registers_correct.
+    rewrite (big_sepS_delete (fun x => ∃ v, interp v ∗ x ↦ᵣ v)%I _ PC Hpc).
+    iDestruct "Hregs" as "[(%w & Hw & HPC) Hregs]".
+    rewrite big_sepS_exists.
+    iDestruct "Hregs" as "(%lregs & %Hlregs & Hlregs)".
+    rewrite  big_sepM_sep.
+    iDestruct "Hlregs" as "(Hslregs & Hlregs)".
+    iDestruct (fundamental _ (insert PC (LWInt 0) lregs) with "[$Hencs $Hinv] Hw") as "Hwe".
+    iApply ("Hwe" with "[$Hnais HPC Hslregs Hlregs]").
+    iSplitL "Hslregs".
+    - iSplitR; first iPureIntro.
+      { intros. cbn. eapply lookup_insert_is_Some'.
+        destruct (decide (PC = x)); first now left.
+        right. apply elem_of_dom. rewrite Hlregs.
+        now set_solver. }
+      iIntros (r lv HrnPC Hlkp).
+      rewrite lookup_insert_ne in Hlkp; last done.
+      iApply (big_sepM_lookup with "Hslregs"); done.
+    - rewrite insert_insert.
+      unfold registers_mapsto.
+      rewrite big_sepM_insert.
+      now iFrame.
+      apply not_elem_of_dom.
+      rewrite Hlregs.
+      set_solver.
+  Qed.
 End fundamental.
