@@ -55,16 +55,16 @@ Fundamental Theorem.
 
 # Organization
 
-| *section in the paper*            | *Rocq files*                                   |
-|-----------------------------------|------------------------------------------------|
-| Operational semantics (4)         | `opsem/*`                                      |
-| Program Logic (5)                 | `program_logic/*`                              |
-| Adequacy (6)                      | `case_studies/template_adequacy_attestation.v` |
-| Logical Relation (7)              | `logrel/.v`                                    |
-| FTLR (7.3)                        | `logrel/ftlr/*`, `fundamental.v`               |
-| Case Study - SOC (8.1)            | `case_studies/soc/*.v`                         |
-| Case Study - Mutual Attest (8.2)  | `case_studies/mutual_attestation/*.v`          |
-| Case Study - Sensor Readout (8.3) | `case_studies/memory_readout/*.v`              |
+| *technical section*         | *Rocq files*                                   |
+|-----------------------------|------------------------------------------------|
+| Operational semantics       | `opsem/*`                                      |
+| Program Logic               | `program_logic/*`                              |
+| Adequacy                    | `case_studies/template_adequacy_attestation.v` |
+| Logical Relation            | `logrel/.v`                                    |
+| FTLR                        | `logrel/ftlr/*`, `fundamental.v`               |
+| Case Study - SOC            | `case_studies/soc/*.v`                         |
+| Case Study - Mutual Attest  | `case_studies/mutual_attestation/*.v`          |
+| Case Study - Sensor Readout | `case_studies/memory_readout/*.v`              |
 
 # Differences with the paper
 
