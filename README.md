@@ -55,16 +55,32 @@ Fundamental Theorem.
 
 # Organization
 
-| *technical section*         | *Rocq files*                                   |
-|-----------------------------|------------------------------------------------|
-| Operational semantics       | `opsem/*`                                      |
-| Program Logic               | `program_logic/*`                              |
-| Adequacy                    | `case_studies/template_adequacy_attestation.v` |
-| Logical Relation            | `logrel/.v`                                    |
-| FTLR                        | `logrel/ftlr/*`, `fundamental.v`               |
-| Case Study - SOC            | `case_studies/soc/*.v`                         |
-| Case Study - Mutual Attest  | `case_studies/mutual_attestation/*.v`          |
-| Case Study - Sensor Readout | `case_studies/memory_readout/*.v`              |
+TODO: is there a better way to following present the tables
+
+| *technical section*                | *Rocq files*                                   |
+|------------------------------------|------------------------------------------------|
+| Operational semantics              | `opsem/*`                                      |
+| Program Logic                      | `program_logic/*`                              |
+| Logical Relation (Fig 8, §4.4)     | `logrel/logrel.v`                              |
+| FTLR (§4.5, §4.6)                  | `logrel/ftlr/*`, `fundamental.v`               |
+| Adequacy (§4.7)                    | `case_studies/template_adequacy_attestation.v` |
+| Case Study - SOC (§5.1)            | `case_studies/soc/*.v`                         |
+| Case Study - Mutual Attest (§5.2)  | `case_studies/mutual_attestation/*.v`          |
+| Case Study - Sensor Readout (§5.3) | `case_studies/memory_readout/*.v`              |
+
+| *figure*                       | *Rocq definition/theorem*                                | remark                                                |
+|--------------------------------|----------------------------------------------------------|-------------------------------------------------------|
+| Figures 2 and 15               | `case_studies/soc/soc_code.v`                            |                                                       |
+| Figures 3, 5, 9, 10, 12, 13,14 | XXX `opsem/*`                                            |                                                       |
+| Figure 7                       | `program_logic/rules/rules_Load:wp_load_success`         | The Rocq implementation also contains logical version |
+| Figure 8                       | `logrel/logrel.v:interp`                                 |                                                       |
+| Theorem 3.1                    | ---                                                      | Theorem 3.1 comes from Cerise                         |
+| Figure 11                      | `program_logic/rules/rules_IsUnique:wp_isunique_success` |                                                       |
+| Figure 16                      | `program_logic/rules/rules_EInit`                        | TODO: we should derive the exact rules                |
+| Figure 17                      | `logrel/logrel.v:system_inv`                             |                                                       |
+| Figure 18                      | `logrel/logrel.v:custom_enclave_contract`                |                                                       |
+| Theorem 4.1                    | `logrel/fundamental:fundamental'`                        | TODO: the implement is different from the paper       |
+
 
 # Differences with the paper
 
@@ -93,3 +109,4 @@ In the program logic:
 | tidx $\mapsto_{E}^{\square}$ I | enclave_all tidx I      |
 | tidx $\mapsto_{E}$ I           | enclave_cur tidx I      |
 | DeInitialized(tidx)            | enclave_prev tidx       |
+| I(M)                           | system_inv              |
