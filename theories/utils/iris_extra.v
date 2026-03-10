@@ -629,6 +629,46 @@ Proof.
     ; rewrite /equiv_zip_fnt' ; intros; cbn in *; by eapply Hequiv.
 Qed.
 
+
+Lemma big_sepL_exists {Σ'} `{EqDecision A, Countable A} {B} {P : A -> B -> iProp Σ'} {l : list A} {Hnodup : NoDup l} :
+  ([∗ list] x ∈ l, ∃ y, P x y)%I ⊣⊢ ∃ m : gmap A B, ⌜ dom m = list_to_set l ⌝ ∗ [∗ map] x ↦ y ∈ m, P x y.
+Proof.
+  induction l; cbn.
+  - iSplit; iIntros "H"; last done.
+    iExists ∅; now iSplit.
+  - rewrite NoDup_cons in Hnodup.
+    destruct (Hnodup) as [Hal Hnodup'].
+    specialize (IHl Hnodup').
+    rewrite IHl.
+    iSplit.
+    + iIntros "[(%y & Hy) (%m & %Hm & HPs)]".
+      iExists (insert a y m).
+      iSplitR.
+      { iPureIntro. rewrite (dom_insert_L m a y). now f_equal. }
+      rewrite big_opM_insert; last (apply not_elem_of_dom; set_solver).
+      now iFrame.
+    + iIntros "(%m & %Hm & HPs)".
+      assert (a ∈ dom m) as Ha by set_solver.
+      apply elem_of_dom in Ha.
+      destruct Ha as [y Hay].
+      rewrite (big_sepM_delete _ m a y Hay).
+      iDestruct "HPs" as "(HPay & HPs)".
+      iSplitL "HPay"; first now iExists _.
+      iExists _; iFrame; iPureIntro.
+      rewrite dom_delete_L Hm; set_solver.
+Qed.
+
+Lemma big_sepS_exists {Σ'} `{EqDecision A, Countable A} {B} {P : A -> B -> iProp Σ'} {l : gset A} :
+  ([∗ set] x ∈ l, ∃ y, P x y)%I ⊣⊢ ∃ m : gmap A B, ⌜ dom m = l ⌝ ∗ [∗ map] x ↦ y ∈ m, P x y.
+Proof.
+  rewrite big_opS_elements.
+  rewrite big_sepL_exists; last now apply NoDup_elements.
+  iSplit; iIntros "(%m & %Heq & HPs)";
+    iExists m; iFrame; iPureIntro;
+    now rewrite Heq list_to_set_elements_L.
+Qed.
+
+
 Ltac iHide0 irisH rocqH :=
   let rocqH := fresh rocqH in
   match goal with
