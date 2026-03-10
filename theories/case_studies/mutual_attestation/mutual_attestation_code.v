@@ -1,15 +1,11 @@
 From iris.proofmode Require Import proofmode.
 From cap_machine Require Import logrel proofmode.
-From cap_machine Require Import macros hash_cap.
+From cap_machine Require Import macros.
+From cap_machine Require Export hash_cap.
 
 (* -------------------------------------- *)
 (* --------------- AXIOMS --------------- *)
 (* -------------------------------------- *)
-
-Axiom hash_concat_app : forall `{MachineParameters} {A : Type} (la la' : list A),
-  hash (la++la') = hash_concat (hash la) (hash la').
-Axiom hash_concat_assoc : forall `{MachineParameters}, Assoc eq hash_concat.
-Instance hash_concat_Assoc `{MachineParameters} : Assoc eq hash_concat := hash_concat_assoc.
 
 Class MutualAttestation := {
     ma_addr_A : Addr;

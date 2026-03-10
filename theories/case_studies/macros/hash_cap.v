@@ -16,7 +16,7 @@ Section HashCap.
   Axiom hash_concat_assoc : forall `{MachineParameters}, Assoc eq hash_concat.
   Axiom hash_singleton : forall `{MachineParameters} {A : Type} (a : A),
     hash ([a]) = hash a.
-  Instance hash_concat_Assoc `{MachineParameters} : Assoc eq hash_concat := hash_concat_assoc.
+  #[export] Instance hash_concat_Assoc `{MachineParameters} : Assoc eq hash_concat := hash_concat_assoc.
 
   (* first we will define the list of Words making up the mclear macro *)
   Definition hash_cap_instrs :=
