@@ -13,6 +13,8 @@ FUNDAMENTAL		:=	 theories/fundamental.v
 COQMAKEFILE 	?=   Makefile.coq
 COQ_PROJ 		?= _CoqProject
 
+SRCS := $(shell egrep '^.*\.v$$' _CoqProject | grep -v '^#')
+
 all: $(COQMAKEFILE)
 		+@$(MAKE) -f $^ $@
 
@@ -25,6 +27,9 @@ fundamental: $(COQMAKEFILE) only
 
 $(COQMAKEFILE): $(COQ_PROJ)
 		coq_makefile -f $^ -o $@
+
+count-lines:
+		coqwc $(SRCS)
 
 .PHONY: all fundamental ci
 

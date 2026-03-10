@@ -4,15 +4,24 @@ This repository contains the Rocq mechanization accompanying the submission
 It provides a model of a capability machine with feature for local attestation and TEE,
 and principles to reason about the interaction of known, unknown, and attested code.
 
+
+# Getting Started Guide
+
+TODO
+
+> The Getting Started Guide should contain setup instructions (including, for example, a pointer to the VM player software, its version, passwords if needed, etc.) and basic testing of your artifact that you expect a reviewer to be able to complete in 30 minutes. Reviewers will follow all the steps in the guide during an initial kick-the-tires phase. The Getting Started Guide should be as simple as possible, and yet it should stress the key elements of your artifact. Anyone who has followed the Getting Started Guide should have no technical difficulties with the rest of your artifact.
+
+## With Docker
+## Without Docker
+
+### Building the proofs
+
 The repository depends on the submodule `machine_utils`.
 After cloning Cerisier, you can load the submodule using
 ```
 git submodule update --init
 ```
-
-# Building the proofs
-
-## Installing the dependencies
+#### Installing the dependencies
 
 You need to have [opam](https://opam.ocaml.org/) >= 2.0 installed.
 
@@ -38,13 +47,13 @@ eval $(opam env)
     opam install coq-iris.4.1.0
 ```
 
-### Troubleshooting
+#### Troubleshooting
 
 If the `opam switch` invocation fails at some point, either remove the `_opam`
 directory and re-run the command (this will redo everything), or do `eval $(opam
 env)` and then `opam install -y .` (this will continue from where it failed).
 
-## Building
+#### Building
 
 ```
 make -jN  # replace N with the number of CPU cores of your machine
@@ -52,6 +61,16 @@ make -jN  # replace N with the number of CPU cores of your machine
 
 It is possible to run `make fundamental` to only build files up to the
 Fundamental Theorem.
+
+
+# Step by step Instructions
+
+TODO
+> The Step by Step Instructions explain how to reproduce any experiments or other activities that support the conclusions in your paper. Write this for readers who have a deep interest in your work and are studying it to improve it or compare against it. If your artifact runs for more than a few minutes, point this out and explain how to run it on smaller inputs.
+
+Claims:
+- LoC (paper: line 963): `make count-lines`
+- mechanised proofs:  `make`
 
 # Assumptions
 
@@ -66,6 +85,7 @@ The mutual attestation requires some additional algebraic assumptions on hash (P
 Compiling `assumption.v` should output the following:
 
 ``` text
+COQC theories/Assumptions.v
 Assumptions of fundamental theorem:
 Closed under the global context
 
