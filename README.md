@@ -53,6 +53,53 @@ make -jN  # replace N with the number of CPU cores of your machine
 It is possible to run `make fundamental` to only build files up to the
 Fundamental Theorem.
 
+# Assumptions
+
+The typeclass `MachineParameters` in `opsem/machine_parameters.v` contains the assumptions
+on the machine, in particular:
+- `encode` and `decode` functions for instructions, permissions and sealing permissions.
+  Encoding is injective. Decoding is the inverse of encoding. (Assumptions from Cerise)
+- `hash` and `hash_concat` functions. They are both injective. (Paper: lines 519-521)
+
+The file `assumption.v` shows which axioms are required for each theorems.
+The mutual attestation requires some additional algebraic assumptions on hash (Paper: lines 883-885)
+Compiling `assumption.v` should output the following:
+
+``` text
+Assumptions of fundamental theorem:
+Closed under the global context
+
+Assumptions of SOC end-to-end theorem:
+Axioms:
+FunctionalExtensionality.functional_extensionality_dep
+  : forall (A : Type) (B : A -> Type) (f g : forall x : A, B x),
+    (forall x : A, f x = g x) -> f = g
+
+Assumptions of trusted memory readout end-to-end theorem:
+Axioms:
+FunctionalExtensionality.functional_extensionality_dep
+  : forall (A : Type) (B : A -> Type) (f g : forall x : A, B x),
+    (forall x : A, f x = g x) -> f = g
+
+Assumptions of mutual attestation end-to-end theorem:
+Axioms:
+hash_cap.hash_singleton
+  : forall (H : machine_parameters.MachineParameters) (A : Type) (a : A),
+    machine_parameters.hash (a :: nil)%list = machine_parameters.hash a
+hash_cap.hash_concat_assoc
+  : forall H : machine_parameters.MachineParameters,
+    base.Assoc eq machine_parameters.hash_concat
+hash_cap.hash_concat_app
+  : forall (H : machine_parameters.MachineParameters)
+      (A : Type) (la la' : list A),
+    machine_parameters.hash (la ++ la')%list =
+    machine_parameters.hash_concat (machine_parameters.hash la)
+      (machine_parameters.hash la')
+FunctionalExtensionality.functional_extensionality_dep
+  : forall (A : Type) (B : A -> Type) (f g : forall x : A, B x),
+    (forall x : A, f x = g x) -> f = g
+```
+
 # Organization
 
 TODO: is there a better way to following present the tables

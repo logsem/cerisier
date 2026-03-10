@@ -131,3 +131,5 @@ theories/case_studies/mutual_attestation/mutual_attestation_A_spec.v
 theories/case_studies/mutual_attestation/mutual_attestation_B_spec.v
 theories/case_studies/mutual_attestation/mutual_attestation_spec.v
 theories/case_studies/mutual_attestation/mutual_attestation_adequacy.v
+
+theories/assumptions.v
