@@ -333,7 +333,7 @@ Section fundamental.
     all: iApply (region_valid_in_regionL with "H"); eauto.
   Qed.
 
-  Theorem fundamental' :
+  Theorem cerisier_universal_contract :
     (□ custom_enclave_contract_gen) ∗ system_inv ∗ na_own logrel_nais ⊤
       ⊢ ([∗ list] r ∈ all_registers, (∃ v, interp v ∗ r ↦ᵣ v)%I) -∗
         interp_conf.
