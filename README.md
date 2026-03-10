@@ -101,8 +101,61 @@ FunctionalExtensionality.functional_extensionality_dep
 ```
 
 # Organization
+All path below are under the `theories/` repository.
 
-TODO: is there a better way to following present the tables
+## Organization of the repository
+
+### Utils `utils/`
+This folder contains a collection of additional Iris and stdpp utilitary lemmas.
+
+### Operational Semantics `opsem/`
+- `addr_reg.v`: Defines registers, the set of (finite) memory addresses and the set of (finite) otypes.
+- `machine_base.v`: Contains the syntax (permissions, capability, instructions, ...) of the capability machine.
+- `machine_parameters.v`: Defines a number of "settings" for the machine, that parameterize the whole development (e.g. the specific encoding scheme for instructions, etc.).
+- `cap_lang.v`: Defines the operational semantics of the machine, and the embedding of the capability machine language into Iris 
+
+### Program Logic `program_logic`
+- `transiently.v`: Contains a definition of the transiently modality, a convenient modality to prove the program logic rules.
+- `wp_opt.v`: Defines a custom WP, built on top of the transiently modality and the regular Iris WP.
+- `logical_mapsto.v`: Defines the logical version layer to reason about revocation, inspired by Hur et al.
+- `base_logic.v`: Defines the resources of the program logic: registers and memory points-to
+  predicates, enclave resources, and their associated lemmas to manipulate them.
+- `rules_base.v`: Contains a collection of lemma about WP to prove the rules of the program logic.
+- `rules_fail.v`: Contains the Hoare triple rules for the fail cases.
+- `rules/*.v`: Contains the Hoare triple rules for each instructions.
+- `rules.v`: Imports all the Hoare triple rules for each instruction. These rules are separated into separate files (located in the rules/ folder).
+
+### Logical Relation `logrel/`
+- `seal_store.v`: Defines the ... for sealing predicates, inspired by Skorstensgaard et al.
+- `logrel.v`: Defines the logical relation, the system invariant and the custom enclave contract.
+- `ftlr/ftlr_base.v`: Contains the induction hypothesis of the proof of FTLR.
+- `ftlr/interp_weakening.v`: Contains utility lemmas for FTLR. More precisely, it shows that the
+value relation still holds when weakening the permissions of a capability.
+- `ftlr/*.v`: Proof of FTLR for each instructions.
+- `fundamental.v`: Contains the proof of the FTLR / universal contract.
+
+### Proofmode `proofmode/`
+This folder contains the setup for a Cerisier proofmode.
+A description of the proofmode can be found in [proofmode.md](proofmode.md).
+
+### Case Studies `case_studies/`
+- `template_adequacy_attestation.v`: Contains the Cerisier adequacy, used as a template for the
+  end-to-end theorems.
+- `macros/*.v*`: Defines macros used in the examples, and their specifications. In particular:
+  + `macros/assert.v`: Defines the `assert` macros. It is used in all our case studies.
+  + `macros/hash_cap.v`: Defines a `hash` macros to hash capabilities. It is used in the mutual
+    attestation case study.
+- `soc/*.v`: Contains the Secure Outsourced Computation (SOC) case study.
+- `mutual_attestation/*.v`: Contains the Mutual Attestation case study.
+- `memory_readout/*.v`: Contains the Secure Memory Readout case study.
+
+For each case study: 
+- `*_code.v`: Contains the assembly code of the case study.
+- `*_spec.v`: Contains the specification (and proof of the specification), phrased in terms of the program logic.
+- `*_adequacy.v`: Contains the end-to-end specification of the case study, phrased in terms of the
+  operational semantics.
+
+## Link and difference with the paper
 
 | *technical section*                | *Rocq files*                                   |
 |------------------------------------|------------------------------------------------|
@@ -115,23 +168,21 @@ TODO: is there a better way to following present the tables
 | Case Study - Mutual Attest (§5.2)  | `case_studies/mutual_attestation/*.v`          |
 | Case Study - Sensor Readout (§5.3) | `case_studies/memory_readout/*.v`              |
 
-| *figure*                       | *Rocq definition/theorem*                                | remark                                                |
-|--------------------------------|----------------------------------------------------------|-------------------------------------------------------|
-| Figures 2 and 15               | `case_studies/soc/soc_code.v`                            |                                                       |
-| Figures 3, 5, 9, 10, 12, 13,14 | XXX `opsem/*`                                            |                                                       |
-| Figure 7                       | `program_logic/rules/rules_Load:wp_load_success`         | The Rocq implementation also contains logical version |
-| Figure 8                       | `logrel/logrel.v:interp`                                 |                                                       |
-| Theorem 3.1                    | ---                                                      | Theorem 3.1 comes from Cerise                         |
-| Figure 11                      | `program_logic/rules/rules_IsUnique:wp_isunique_success` |                                                       |
-| Figure 16                      | `program_logic/rules/rules_EInit`                        | TODO: we should derive the exact rules                |
-| Figure 17                      | `logrel/logrel.v:system_inv`                             |                                                       |
-| Figure 18                      | `logrel/logrel.v:custom_enclave_contract`                |                                                       |
-| Theorem 4.1                    | `logrel/fundamental:fundamental'`                        | TODO: the implement is different from the paper       |
+| *figure*                       | *Rocq definition/theorem*                                | remark                                                                               |
+|--------------------------------|----------------------------------------------------------|--------------------------------------------------------------------------------------|
+| Figures 2 and 15               | `case_studies/soc/soc_code.v`                            |                                                                                      |
+| Figures 3, 5, 9, 10, 12, 13,14 | `opsem/*`                                                |                                                                                      |
+| Figure 7                       | `program_logic/rules/rules_Load:wp_load_success`         | The Rocq implementation uses points-to with logical versions, discussed in §3.4.     |
+| Figure 8                       | `logrel/logrel.v:interp`                                 |                                                                                      |
+| Theorem 3.1                    | ---                                                      | Theorem 3.1 comes from Cerise. Our version is Theorem 4.1.                           |
+| Figure 11                      | `program_logic/rules/rules_IsUnique:wp_isunique_success` |                                                                                      |
+| Figure 16                      | `program_logic/rules/rules_EInit`                        | The rules presented in the implementation is more general than the one in the paper. |
+| Figure 17                      | `logrel/logrel.v:system_inv`                             |                                                                                      |
+| Figure 18                      | `logrel/logrel.v:custom_enclave_contract`                |                                                                                      |
+| Theorem 4.1                    | `logrel/fundamental:cerisier_universal_contract`         |                                                                                      |
 
 
-# Differences with the paper
-
-Some definitions have different names from the paper.  
+Some definitions have different names from the paper.
 
 *name in paper => name in mechanization*
 
