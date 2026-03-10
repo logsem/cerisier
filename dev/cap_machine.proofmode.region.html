@@ -240,151 +240,14 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">iFrame</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">_</span><a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ssr.ssreflect.html#::core_scope:x_':'_x"><span class="id" title="notation">:</span></a> (<span class="id" title="var">b</span> <a class="idref" href="cap_machine.opsem.addr_reg.html#58e53c8acf01fb8822eb5bae448055ec"><span class="id" title="notation">^+</span></a> <a class="idref" href="machine_utils.finz_interval.html#finz.dist"><span class="id" title="definition">finz.dist</span></a> <span class="id" title="var">b</span> <span class="id" title="var">a</span>)%<span class="id" title="var">a</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">a</span>)...<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">_</span><a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ssr.ssreflect.html#::core_scope:x_':'_x"><span class="id" title="notation">:</span></a> <a class="idref" href="machine_utils.finz_interval.html#finz.dist"><span class="id" title="definition">finz.dist</span></a> <span class="id" title="var">a</span> <span class="id" title="var">e</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="machine_utils.finz_interval.html#finz.dist"><span class="id" title="definition">finz.dist</span></a> <span class="id" title="var">b</span> <span class="id" title="var">e</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Init.Peano.html#::nat_scope:x_'-'_x"><span class="id" title="notation">-</span></a> <a class="idref" href="machine_utils.finz_interval.html#finz.dist"><span class="id" title="definition">finz.dist</span></a> <span class="id" title="var">b</span> <span class="id" title="var">a</span>)...<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">(*&nbsp;todo:&nbsp;turn&nbsp;these&nbsp;two&nbsp;into&nbsp;lemmas&nbsp;*)</span><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">iIntros</span> "[Hba Hae]".<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> /<a class="idref" href="cap_machine.proofmode.region.html#region_mapsto"><span class="id" title="definition">region_mapsto</span></a> /<a class="idref" href="machine_utils.finz_interval.html#finz.seq_between"><span class="id" title="definition">finz.seq_between</span></a>. <span class="comment">(*&nbsp;todo:&nbsp;use&nbsp;a&nbsp;proper&nbsp;region&nbsp;splitting&nbsp;lemma&nbsp;*)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> /<a class="idref" href="cap_machine.proofmode.region.html#region_mapsto"><span class="id" title="definition">region_mapsto</span></a> /<a class="idref" href="machine_utils.finz_interval.html#finz.seq_between"><span class="id" title="definition">finz.seq_between</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<a class="idref" href="machine_utils.finz_interval.html#finz_seq_decomposition"><span class="id" title="lemma">finz_seq_decomposition</span></a> (<a class="idref" href="machine_utils.finz_interval.html#finz.dist"><span class="id" title="definition">finz.dist</span></a> <span class="id" title="var">b</span> <span class="id" title="var">e</span>) <span class="id" title="var">_</span> (<a class="idref" href="machine_utils.finz_interval.html#finz.dist"><span class="id" title="definition">finz.dist</span></a> <span class="id" title="var">b</span> <span class="id" title="var">a</span>))...<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Lists.List.html#map_app"><span class="id" title="lemma">map_app</span></a>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">iApply</span> <span class="id" title="notation">(</span><span class="id" title="lemma">big_sepL2_app</span> <span class="id" title="notation">with</span> "Hba [Hae]"<span class="id" title="notation">)</span>; <span class="id" title="var">cbn</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">_</span><a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ssr.ssreflect.html#::core_scope:x_':'_x"><span class="id" title="notation">:</span></a> (<span class="id" title="var">b</span> <a class="idref" href="cap_machine.opsem.addr_reg.html#58e53c8acf01fb8822eb5bae448055ec"><span class="id" title="notation">^+</span></a> <a class="idref" href="machine_utils.finz_interval.html#finz.dist"><span class="id" title="definition">finz.dist</span></a> <span class="id" title="var">b</span> <span class="id" title="var">a</span>)%<span class="id" title="var">a</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <span class="id" title="var">a</span>)...<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">_</span><a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.ssr.ssreflect.html#::core_scope:x_':'_x"><span class="id" title="notation">:</span></a> <a class="idref" href="machine_utils.finz_interval.html#finz.dist"><span class="id" title="definition">finz.dist</span></a> <span class="id" title="var">b</span> <span class="id" title="var">e</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Init.Peano.html#::nat_scope:x_'-'_x"><span class="id" title="notation">-</span></a> <a class="idref" href="machine_utils.finz_interval.html#finz.dist"><span class="id" title="definition">finz.dist</span></a> <span class="id" title="var">b</span> <span class="id" title="var">a</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="machine_utils.finz_interval.html#finz.dist"><span class="id" title="definition">finz.dist</span></a> <span class="id" title="var">a</span> <span class="id" title="var">e</span>)...<br/>
 &nbsp;&nbsp;&nbsp;<span class="id" title="var">Unshelve</span>. <span class="id" title="var">Fail</span> <span class="id" title="tactic">idtac</span>. <span class="id" title="var">Admitted</span>.<br/>
-
-<br/>
-&nbsp;&nbsp;&nbsp;<span class="comment">(*--------------------------------------------------------------------------*)</span><br/>
-
-<br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Definition&nbsp;region_mapsto_spec&nbsp;(b&nbsp;e&nbsp;:&nbsp;Addr)&nbsp;(ws&nbsp;:&nbsp;list&nbsp;Word)&nbsp;:&nbsp;iProp&nbsp;Σ&nbsp;:=&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">list</span></span>&nbsp;k↦y1;y2&nbsp;∈&nbsp;(finz.seq_between&nbsp;b&nbsp;e);ws,&nbsp;y1&nbsp;↣ₐ&nbsp;y2)*)</span><br/>
-
-<br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Lemma&nbsp;mapsto_decomposition_spec:&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;forall&nbsp;l1&nbsp;l2&nbsp;ws1&nbsp;ws2,&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;length&nbsp;l1&nbsp;=&nbsp;length&nbsp;ws1&nbsp;-&gt;&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">list</span></span>&nbsp;k&nbsp;↦&nbsp;y1;y2&nbsp;∈&nbsp;(l1&nbsp;++&nbsp;l2);(ws1&nbsp;++&nbsp;ws2),&nbsp;y1&nbsp;↣ₐ&nbsp;y2)*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">list</span></span>&nbsp;k&nbsp;↦&nbsp;y1;y2&nbsp;∈&nbsp;l1;ws1,&nbsp;y1&nbsp;↣ₐ&nbsp;y2)I.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Proof.&nbsp;intros.&nbsp;rewrite&nbsp;big_sepL2_app'&nbsp;//.&nbsp;Qed.&nbsp;*)</span><br/>
-
-<br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Lemma&nbsp;extract_from_region_spec&nbsp;b&nbsp;e&nbsp;a&nbsp;ws&nbsp;φ&nbsp;:&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;let&nbsp;n&nbsp;:=&nbsp;length&nbsp;(finz.seq_between&nbsp;b&nbsp;a)&nbsp;in&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;(b&nbsp;&lt;=&nbsp;a&nbsp;∧&nbsp;a&nbsp;&lt;&nbsp;e)*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;(region_mapsto_spec&nbsp;b&nbsp;e&nbsp;ws&nbsp;∗&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">list</span></span>&nbsp;w&nbsp;∈&nbsp;ws,&nbsp;φ&nbsp;w))&nbsp;⊣⊢&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;(∃&nbsp;w,&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⌜ws&nbsp;=&nbsp;take&nbsp;n&nbsp;ws&nbsp;++&nbsp;(w::drop&nbsp;(S&nbsp;n)&nbsp;ws)⌝&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∗&nbsp;region_mapsto_spec&nbsp;b&nbsp;a&nbsp;(take&nbsp;n&nbsp;ws)&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∗&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">list</span></span>&nbsp;w&nbsp;∈&nbsp;(take&nbsp;n&nbsp;ws),&nbsp;φ&nbsp;w)&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∗&nbsp;a&nbsp;↣ₐ&nbsp;w&nbsp;∗&nbsp;φ&nbsp;w&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∗&nbsp;region_mapsto_spec&nbsp;(a^+1)*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∗&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">list</span></span>&nbsp;w&nbsp;∈&nbsp;(drop&nbsp;(S&nbsp;n)&nbsp;ws),&nbsp;φ&nbsp;w)*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Proof.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;intros.&nbsp;iSplit.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;-&nbsp;iIntros&nbsp;"<span class="inlinecode"><span class="id" title="var">A</span></span> <span class="inlinecode"><span class="id" title="var">B</span></span>".&nbsp;unfold&nbsp;region_mapsto_spec.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iDestruct&nbsp;(big_sepL2_length&nbsp;with&nbsp;"A")&nbsp;as&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;(finz_seq_between_decomposition&nbsp;b&nbsp;a&nbsp;e)&nbsp;//.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert&nbsp;(Hlnws:&nbsp;n&nbsp;=&nbsp;length&nbsp;(take&nbsp;n&nbsp;ws)).&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;rewrite&nbsp;take_length.&nbsp;rewrite&nbsp;Nat.min_l;&nbsp;auto.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;&lt;-&nbsp;Hlen.&nbsp;subst&nbsp;n.&nbsp;rewrite&nbsp;!finz_seq_between_length&nbsp;/finz.dist.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;solve_addr.&nbsp;}&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;generalize&nbsp;(take_drop&nbsp;n&nbsp;ws).&nbsp;intros&nbsp;HWS.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;&lt;-&nbsp;HWS.&nbsp;simpl.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iDestruct&nbsp;"B"&nbsp;as&nbsp;"<span class="inlinecode"><span class="id" title="var">HB1</span></span> <span class="inlinecode"><span class="id" title="var">HB2</span></span>".&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iDestruct&nbsp;(mapsto_decomposition_spec&nbsp;_&nbsp;_&nbsp;_&nbsp;_&nbsp;Hlnws&nbsp;with&nbsp;"A")&nbsp;as&nbsp;"<span class="inlinecode"><span class="id" title="var">HA1</span></span> <span class="inlinecode"><span class="id" title="var">HA2</span></span>".&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case_eq&nbsp;(drop&nbsp;n&nbsp;ws);&nbsp;intros.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;auto.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;iDestruct&nbsp;"HA2"&nbsp;as&nbsp;"<span class="inlinecode"><span class="id" title="var">HA2</span></span> <span class="inlinecode"><span class="id" title="var">HA3</span></span>".&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iDestruct&nbsp;"HB2"&nbsp;as&nbsp;"<span class="inlinecode"><span class="id" title="var">HB2</span></span> <span class="inlinecode"><span class="id" title="var">HB3</span></span>".&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;generalize&nbsp;(drop_S'&nbsp;_&nbsp;_&nbsp;_&nbsp;_&nbsp;_&nbsp;H3).&nbsp;intros&nbsp;Hdws.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;&lt;-&nbsp;H3.&nbsp;rewrite&nbsp;HWS.&nbsp;rewrite&nbsp;Hdws.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iExists&nbsp;w.&nbsp;iFrame.&nbsp;by&nbsp;rewrite&nbsp;&lt;-&nbsp;H3.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;-&nbsp;iIntros&nbsp;"A".&nbsp;iDestruct&nbsp;"A"&nbsp;as&nbsp;(w&nbsp;Hws)&nbsp;"<span class="inlinecode"><span class="id" title="var">A1</span></span> <span class="inlinecode">[<span class="id" title="var">B1</span></span> <span class="inlinecode">[<span class="id" title="var">A2</span></span> <span class="inlinecode">[<span class="id" title="var">B2</span></span> <span class="inlinecode"><span class="id" title="var">AB</span>]]]</span>".&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unfold&nbsp;region_mapsto_spec.&nbsp;rewrite&nbsp;(finz_seq_between_decomposition&nbsp;b&nbsp;a&nbsp;e)&nbsp;//.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iDestruct&nbsp;"AB"&nbsp;as&nbsp;"<span class="inlinecode"><span class="id" title="var">A3</span></span> <span class="inlinecode"><span class="id" title="var">B3</span></span>".&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;{5}Hws.&nbsp;iFrame.&nbsp;rewrite&nbsp;{3}Hws.&nbsp;iFrame.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Qed.&nbsp;*)</span><br/>
-
-<br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Lemma&nbsp;extract_from_region_spec'&nbsp;b&nbsp;e&nbsp;a&nbsp;ws&nbsp;φ&nbsp;`{!∀&nbsp;x,&nbsp;Persistent&nbsp;(φ&nbsp;x)}:&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;let&nbsp;n&nbsp;:=&nbsp;length&nbsp;(finz.seq_between&nbsp;b&nbsp;a)&nbsp;in&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;(b&nbsp;&lt;=&nbsp;a&nbsp;∧&nbsp;a&nbsp;&lt;&nbsp;e)*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;(region_mapsto_spec&nbsp;b&nbsp;e&nbsp;ws&nbsp;∗&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">list</span></span>&nbsp;w&nbsp;∈&nbsp;ws,&nbsp;φ&nbsp;w))&nbsp;⊣⊢&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;(∃&nbsp;w,&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⌜ws&nbsp;=&nbsp;take&nbsp;n&nbsp;ws&nbsp;++&nbsp;(w::drop&nbsp;(S&nbsp;n)&nbsp;ws)⌝&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∗&nbsp;region_mapsto_spec&nbsp;b&nbsp;a&nbsp;(take&nbsp;n&nbsp;ws)&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∗&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">list</span></span>&nbsp;w&nbsp;∈&nbsp;ws,&nbsp;φ&nbsp;w)&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∗&nbsp;a&nbsp;↣ₐ&nbsp;w&nbsp;∗&nbsp;φ&nbsp;w&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∗&nbsp;region_mapsto_spec&nbsp;(a^+1)I.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Proof.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;intros.&nbsp;iSplit.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;-&nbsp;iIntros&nbsp;"H".&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iDestruct&nbsp;(extract_from_region_spec&nbsp;with&nbsp;"H")&nbsp;as&nbsp;(w&nbsp;Hws)&nbsp;"(?&amp;?&amp;?&amp;Hφ&?&?)"; eauto. *)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iExists&nbsp;_.&nbsp;iFrame.&nbsp;iSplitR.&nbsp;iPureIntro.&nbsp;by&nbsp;rewrite&nbsp;{1}Hws&nbsp;//.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;{3}Hws.&nbsp;iFrame.&nbsp;iSplit;&nbsp;iApply&nbsp;"Hφ".&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;-&nbsp;iIntros&nbsp;"H".&nbsp;iApply&nbsp;(extract_from_region_spec&nbsp;with&nbsp;"<span class="inlinecode"><span class="id" title="var">H</span></span>");&nbsp;eauto.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iDestruct&nbsp;"H"&nbsp;as&nbsp;(w&nbsp;Hws)&nbsp;"(?&amp;Hl&amp;?&amp;Hφ&?)". iExists _. iFrame. *)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iSplitR.&nbsp;iPureIntro.&nbsp;by&nbsp;rewrite&nbsp;{1}Hws&nbsp;//.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;{1}Hws.&nbsp;iDestruct&nbsp;(big_sepL_app&nbsp;with&nbsp;"Hl")&nbsp;as&nbsp;"<span class="inlinecode">?</span> <span class="inlinecode">?</span>".&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cbn.&nbsp;iFrame.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Qed.&nbsp;*)</span><br/>
-
-<br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Notation&nbsp;"<span class="inlinecode">[</span> <span class="inlinecode"><span class="id" title="var">b</span></span> <span class="inlinecode">,</span> <span class="inlinecode"><span class="id" title="var">e</span></span> <span class="inlinecode">]</span>&nbsp;↣ₐ&nbsp;<span class="inlinecode">[</span> <span class="inlinecode"><span class="id" title="var">ws</span></span> <span class="inlinecode">]</span>"&nbsp;:=&nbsp;(region_mapsto_spec&nbsp;b&nbsp;e&nbsp;ws)&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(at&nbsp;level&nbsp;50,&nbsp;format&nbsp;"<span class="inlinecode">[</span> <span class="inlinecode"><span class="id" title="var">b</span></span> <span class="inlinecode">,</span> <span class="inlinecode"><span class="id" title="var">e</span></span> <span class="inlinecode">]</span>&nbsp;↣ₐ&nbsp;<span class="inlinecode">[</span> <span class="inlinecode"><span class="id" title="var">ws</span></span> <span class="inlinecode">]</span>")&nbsp;:&nbsp;bi_scope.&nbsp;*)</span><br/>
-
-<br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Lemma&nbsp;region_mapsto_cons_spec&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(b&nbsp;b'&nbsp;e&nbsp;:&nbsp;Addr)&nbsp;(w&nbsp;:&nbsp;Word)&nbsp;(ws&nbsp;:&nbsp;list&nbsp;Word)&nbsp;:&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;(b&nbsp;+&nbsp;1)a&nbsp;→&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;<span class="inlinecode">[<span class="id" title="var">b</span>,</span> <span class="inlinecode"><span class="id" title="var">e</span>]</span>&nbsp;↣ₐ&nbsp;<span class="inlinecode">[</span> <span class="inlinecode"><span class="id" title="var">w</span></span> <span class="inlinecode">::</span> <span class="inlinecode"><span class="id" title="var">ws</span></span> <span class="inlinecode">]</span>&nbsp;⊣⊢&nbsp;b&nbsp;↣ₐ&nbsp;w&nbsp;∗&nbsp;<span class="inlinecode">[<span class="id" title="var">b'</span>,</span> <span class="inlinecode"><span class="id" title="var">e</span>]</span>&nbsp;↣ₐ&nbsp;<span class="inlinecode">[</span> <span class="inlinecode"><span class="id" title="var">ws</span></span> <span class="inlinecode">]</span>.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Proof.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;intros&nbsp;Hb'&nbsp;Hb'e.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;rewrite&nbsp;/region_mapsto_spec.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;rewrite&nbsp;(finz_seq_between_decomposition&nbsp;b&nbsp;b&nbsp;e).&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;2:&nbsp;revert&nbsp;Hb'&nbsp;Hb'e;&nbsp;clear;&nbsp;intros;&nbsp;split;&nbsp;solve_addr.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;rewrite&nbsp;finz_seq_between_empty&nbsp;/=.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;2:&nbsp;clear;&nbsp;solve_addr.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;rewrite&nbsp;(_:&nbsp;(b&nbsp;^+&nbsp;1)&nbsp;=&nbsp;b')*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;2:&nbsp;revert&nbsp;Hb'&nbsp;Hb'e;&nbsp;clear;&nbsp;intros;&nbsp;solve_addr.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;eauto.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Qed.&nbsp;*)</span><br/>
-
-<br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Lemma&nbsp;region_mapsto_single_spec&nbsp;b&nbsp;e&nbsp;l:&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;(b+1)*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;<span class="inlinecode">[<span class="id" title="var">b</span>,<span class="id" title="var">e</span>]</span>&nbsp;↣ₐ&nbsp;<span class="inlinecode">[<span class="id" title="var">l</span>]</span>&nbsp;-∗&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;∃&nbsp;v,&nbsp;b&nbsp;↣ₐ&nbsp;v&nbsp;∗&nbsp;⌜l&nbsp;=&nbsp;<span class="inlinecode"><span class="id" title="var">v</span></span>⌝.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Proof.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;iIntros&nbsp;(Hbe)&nbsp;"H".&nbsp;rewrite&nbsp;/region_mapsto_spec&nbsp;finz_seq_between_singleton&nbsp;//.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;iDestruct&nbsp;(big_sepL2_length&nbsp;with&nbsp;"H")&nbsp;as&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;cbn&nbsp;in&nbsp;Hlen.&nbsp;destruct&nbsp;l&nbsp;as&nbsp;<span class="inlinecode">|<span class="id" title="var">x</span></span> <span class="inlinecode"><span class="id" title="var">l'</span></span>;&nbsp;<span class="inlinecode"><span class="id" title="tactic">by</span></span> <span class="inlinecode"><span class="id" title="tactic">inversion</span></span> <span class="inlinecode"><span class="id" title="var">Hlen</span>|</span>.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;destruct&nbsp;l';&nbsp;<span class="inlinecode">|</span> <span class="inlinecode"><span class="id" title="tactic">by</span></span> <span class="inlinecode"><span class="id" title="tactic">inversion</span></span> <span class="inlinecode"><span class="id" title="var">Hlen</span></span>.&nbsp;iExists&nbsp;x.&nbsp;cbn.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;iDestruct&nbsp;"H"&nbsp;as&nbsp;"(H&nbsp;&amp;&nbsp;_)".&nbsp;eauto.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Qed.&nbsp;*)</span><br/>
-
-<br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Lemma&nbsp;region_mapsto_split_spec&nbsp;&nbsp;(b&nbsp;e&nbsp;a&nbsp;:&nbsp;Addr)&nbsp;(w1&nbsp;w2&nbsp;:&nbsp;list&nbsp;Word)&nbsp;:&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;(b&nbsp;≤&nbsp;a&nbsp;≤&nbsp;e)*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;(length&nbsp;w1)&nbsp;=&nbsp;(finz.dist&nbsp;b&nbsp;a)&nbsp;→&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;(<span class="inlinecode">[<span class="id" title="var">b</span>,<span class="id" title="var">e</span>]</span>↣ₐ<span class="inlinecode">[<span class="id" title="var">w1</span></span> <span class="inlinecode">++</span> <span class="inlinecode"><span class="id" title="var">w2</span>]</span>&nbsp;⊣⊢&nbsp;<span class="inlinecode">[<span class="id" title="var">b</span>,<span class="id" title="var">a</span>]</span>↣ₐ<span class="inlinecode">[<span class="id" title="var">w1</span>]</span>&nbsp;∗&nbsp;<span class="inlinecode">[<span class="id" title="var">a</span>,<span class="id" title="var">e</span>]</span>↣ₐ<span class="inlinecode">[<span class="id" title="var">w2</span>]</span>)*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;Proof&nbsp;with&nbsp;try&nbsp;(rewrite&nbsp;/finz.dist;&nbsp;solve_addr).&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;intros&nbsp;<span class="inlinecode"><span class="id" title="var">Hba</span></span> <span class="inlinecode"><span class="id" title="var">Hae</span></span>&nbsp;Hsize.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;iSplit.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;iIntros&nbsp;"Hbe".&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;/region_mapsto_spec&nbsp;/finz.seq_between.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;(finz_seq_decomposition&nbsp;_&nbsp;_&nbsp;(finz.dist&nbsp;b&nbsp;a))...&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iDestruct&nbsp;(big_sepL2_app'&nbsp;with&nbsp;"Hbe")&nbsp;as&nbsp;"<span class="inlinecode"><span class="id" title="var">Hba</span></span> <span class="inlinecode"><span class="id" title="var">Ha'b</span></span>".&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;by&nbsp;rewrite&nbsp;finz_seq_length.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;iFrame.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;(_:&nbsp;(b&nbsp;^+&nbsp;finz.dist&nbsp;b&nbsp;a)*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;(_:&nbsp;finz.dist&nbsp;a&nbsp;e&nbsp;=&nbsp;finz.dist&nbsp;b&nbsp;e&nbsp;-&nbsp;finz.dist&nbsp;b&nbsp;a)...&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">(*&nbsp;todo:&nbsp;turn&nbsp;these&nbsp;two&nbsp;into&nbsp;lemmas&nbsp;*)</span>&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;iIntros&nbsp;"<span class="inlinecode"><span class="id" title="var">Hba</span></span> <span class="inlinecode"><span class="id" title="var">Hae</span></span>".&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;/region_mapsto_spec&nbsp;/finz.seq_between.&nbsp;<span class="comment">(*&nbsp;todo:&nbsp;use&nbsp;a&nbsp;proper&nbsp;region&nbsp;splitting&nbsp;lemma&nbsp;*)</span>&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;(finz_seq_decomposition&nbsp;(finz.dist&nbsp;b&nbsp;e)&nbsp;_&nbsp;(finz.dist&nbsp;b&nbsp;a))...&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iApply&nbsp;(big_sepL2_app&nbsp;with&nbsp;"Hba&nbsp;<span class="inlinecode"><span class="id" title="var">Hae</span></span>");&nbsp;cbn.&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;(_:&nbsp;(b&nbsp;^+&nbsp;finz.dist&nbsp;b&nbsp;a)*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;(_:&nbsp;finz.dist&nbsp;b&nbsp;e&nbsp;-&nbsp;finz.dist&nbsp;b&nbsp;a&nbsp;=&nbsp;finz.dist&nbsp;a&nbsp;e)...&nbsp;*)</span><br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;&nbsp;Qed.&nbsp;*)</span><br/>
 
 <br/>
 &nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a id="NoDup_logical_region" class="idref" href="#NoDup_logical_region"><span class="id" title="lemma">NoDup_logical_region</span></a> (<a id="b:119" class="idref" href="#b:119"><span class="id" title="binder">b</span></a> <a id="e:120" class="idref" href="#e:120"><span class="id" title="binder">e</span></a> : <a class="idref" href="cap_machine.opsem.addr_reg.html#Addr"><span class="id" title="abbreviation">Addr</span></a>) (<a id="v:121" class="idref" href="#v:121"><span class="id" title="binder">v</span></a> : <a class="idref" href="cap_machine.program_logic.logical_mapsto.html#Version"><span class="id" title="definition">Version</span></a>) :<br/>
@@ -418,8 +281,6 @@
 <span class="id" title="keyword">End</span> <a class="idref" href="cap_machine.proofmode.region.html#region"><span class="id" title="section">region</span></a>.<br/>
 
 <br/>
-<span class="comment">(*&nbsp;TODO&nbsp;included&nbsp;and&nbsp;in_range&nbsp;might&nbsp;need&nbsp;to&nbsp;be&nbsp;defined<br/>
-&nbsp;&nbsp;&nbsp;in&nbsp;terms&nbsp;of&nbsp;logical&nbsp;addresses&nbsp;instead&nbsp;?&nbsp;*)</span><br/>
 <span class="id" title="keyword">Global Notation</span> <a id="f2f1b40d58c0ebe29dba15a5a2d82bb3" class="idref" href="#f2f1b40d58c0ebe29dba15a5a2d82bb3"><span class="id" title="notation">&quot;</span></a>[[ b , e ]] ↦ₐ{ v } [[ ws ]]" := (<a class="idref" href="cap_machine.proofmode.region.html#region_mapsto"><span class="id" title="definition">region_mapsto</span></a> <span class="id" title="var">b</span> <span class="id" title="var">e</span> <span class="id" title="var">v</span> <span class="id" title="var">ws</span>)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 50, <span class="id" title="var">format</span> "[[ b , e ]] ↦ₐ{ v } [[ ws ]]") : <span class="id" title="var">bi_scope</span>.<br/>
 
@@ -430,10 +291,6 @@
 <br/>
 <span class="id" title="keyword">Global Notation</span> <a id="b3c1cb6038aea3772362339b74d19ea1" class="idref" href="#b3c1cb6038aea3772362339b74d19ea1"><span class="id" title="notation">&quot;</span></a>a ∈ₐ [[ b , e ]]" := (<a class="idref" href="cap_machine.proofmode.region.html#in_range"><span class="id" title="definition">in_range</span></a> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">e</span>)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 50, <span class="id" title="var">format</span> "a ∈ₐ [[ b , e ]]") : <span class="id" title="var">bi_scope</span>.<br/>
-
-<br/>
-<span class="comment">(*&nbsp;Global&nbsp;Notation&nbsp;"<span class="inlinecode">[</span> <span class="inlinecode"><span class="id" title="var">b</span></span> <span class="inlinecode">,</span> <span class="inlinecode"><span class="id" title="var">e</span></span> <span class="inlinecode">]</span>&nbsp;↣ₐ&nbsp;<span class="inlinecode">[</span> <span class="inlinecode"><span class="id" title="var">ws</span></span> <span class="inlinecode">]</span>"&nbsp;:=&nbsp;(region_mapsto_spec&nbsp;b&nbsp;e&nbsp;ws)&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(at&nbsp;level&nbsp;50,&nbsp;format&nbsp;"<span class="inlinecode">[</span> <span class="inlinecode"><span class="id" title="var">b</span></span> <span class="inlinecode">,</span> <span class="inlinecode"><span class="id" title="var">e</span></span> <span class="inlinecode">]</span>&nbsp;↣ₐ&nbsp;<span class="inlinecode">[</span> <span class="inlinecode"><span class="id" title="var">ws</span></span> <span class="inlinecode">]</span>")&nbsp;:&nbsp;bi_scope.&nbsp;*)</span><br/>
 
 <br/>
 <span class="id" title="keyword">Section</span> <a id="codefrag" class="idref" href="#codefrag"><span class="id" title="section">codefrag</span></a>.<br/>

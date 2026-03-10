@@ -34,16 +34,12 @@
 <span class="id" title="keyword">From</span> <span class="id" title="var">iris.program_logic</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">adequacy</span>.<br/>
 <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Logic.Eqdep_dec.html#"><span class="id" title="library">Eqdep_dec</span></a>.<br/>
 <span class="id" title="keyword">From</span> <span class="id" title="var">cap_machine</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="cap_machine.utils.stdpp_extra.html#"><span class="id" title="library">stdpp_extra</span></a> <a class="idref" href="cap_machine.utils.iris_extra.html#"><span class="id" title="library">iris_extra</span></a> <a class="idref" href="cap_machine.opsem.cap_lang.html#"><span class="id" title="library">cap_lang</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="cap_machine.proofmode.region.html#"><span class="id" title="library">region</span></a> <a class="idref" href="cap_machine.program_logic.rules_base.html#"><span class="id" title="library">rules_base</span></a> <a class="idref" href="cap_machine.program_logic.rules.html#"><span class="id" title="library">rules</span></a> <span class="comment">(*&nbsp;rules_binary&nbsp;rules_binary_base&nbsp;*)</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="cap_machine.proofmode.region.html#"><span class="id" title="library">region</span></a> <a class="idref" href="cap_machine.program_logic.rules_base.html#"><span class="id" title="library">rules_base</span></a> <a class="idref" href="cap_machine.program_logic.rules.html#"><span class="id" title="library">rules</span></a>.<br/>
 <span class="id" title="keyword">From</span> <span class="id" title="var">cap_machine.proofmode</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="cap_machine.proofmode.disjoint_regions_tactics.html#"><span class="id" title="library">disjoint_regions_tactics</span></a>.<br/>
 
 <br/>
 <span class="id" title="keyword">Definition</span> <a id="mkregion" class="idref" href="#mkregion"><span class="id" title="definition">mkregion</span></a> (<a id="r_start:1" class="idref" href="#r_start:1"><span class="id" title="binder">r_start</span></a> <a id="r_end:2" class="idref" href="#r_end:2"><span class="id" title="binder">r_end</span></a>: <a class="idref" href="cap_machine.opsem.addr_reg.html#Addr"><span class="id" title="abbreviation">Addr</span></a>) (<a id="contents:3" class="idref" href="#contents:3"><span class="id" title="binder">contents</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="cap_machine.opsem.machine_base.html#Word"><span class="id" title="inductive">Word</span></a>): <span class="id" title="record">gmap</span> <a class="idref" href="cap_machine.opsem.addr_reg.html#Addr"><span class="id" title="abbreviation">Addr</span></a> <a class="idref" href="cap_machine.opsem.machine_base.html#Word"><span class="id" title="inductive">Word</span></a> :=<br/>
 &nbsp;&nbsp;<span class="id" title="definition">list_to_map</span> (<span class="id" title="abbreviation">zip</span> (<a class="idref" href="machine_utils.finz_interval.html#finz.seq_between"><span class="id" title="definition">finz.seq_between</span></a> <a class="idref" href="cap_machine.proofmode.mkregion_helpers.html#r_start:1"><span class="id" title="variable">r_start</span></a> <a class="idref" href="cap_machine.proofmode.mkregion_helpers.html#r_end:2"><span class="id" title="variable">r_end</span></a>) <a class="idref" href="cap_machine.proofmode.mkregion_helpers.html#contents:3"><span class="id" title="variable">contents</span></a>).<br/>
-
-<br/>
-<span class="comment">(*&nbsp;Definition&nbsp;mbkregion&nbsp;(r_start&nbsp;r_end:&nbsp;Addr)&nbsp;(contents:&nbsp;list&nbsp;Word)&nbsp;(contents_spec:&nbsp;list&nbsp;Word):&nbsp;gmap&nbsp;Addr&nbsp;(Word&nbsp;*&nbsp;Word)&nbsp;:=&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;list_to_map&nbsp;(zip&nbsp;(finz.seq_between&nbsp;r_start&nbsp;r_end)&nbsp;(zip&nbsp;contents&nbsp;contents_spec)).&nbsp;*)</span><br/>
 
 <br/>
 <span class="id" title="keyword">Lemma</span> <a id="zip_seq_between_lookup" class="idref" href="#zip_seq_between_lookup"><span class="id" title="lemma">zip_seq_between_lookup</span></a> {<a id="A:4" class="idref" href="#A:4"><span class="id" title="binder">A</span></a>} (<a id="b:5" class="idref" href="#b:5"><span class="id" title="binder">b</span></a> <a id="e:6" class="idref" href="#e:6"><span class="id" title="binder">e</span></a> <a id="a:7" class="idref" href="#a:7"><span class="id" title="binder">a</span></a> : <a class="idref" href="cap_machine.opsem.addr_reg.html#Addr"><span class="id" title="abbreviation">Addr</span></a>) (<a id="l:8" class="idref" href="#l:8"><span class="id" title="binder">l</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="cap_machine.proofmode.mkregion_helpers.html#A:4"><span class="id" title="variable">A</span></a>) <a id="x:9" class="idref" href="#x:9"><span class="id" title="binder">x</span></a> :<br/>
@@ -209,77 +205,6 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="cap_machine.program_logic.logical_mapsto.html#word_to_lword_get_word_int"><span class="id" title="axiom">word_to_lword_get_word_int</span></a> //.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">iFrame</span>. <span class="id" title="var">iApply</span> <span class="id" title="notation">(</span><span class="id" title="var">IHl</span> <span class="id" title="notation">with</span> "H"<span class="id" title="notation">)</span>; <span class="id" title="tactic">auto</span>. <span class="id" title="var">solve_addr</span>. }<br/>
 <span class="id" title="var">Unshelve</span>. <span class="id" title="var">Fail</span> <span class="id" title="tactic">idtac</span>. <span class="id" title="var">Admitted</span>.<br/>
-
-<br/>
-<span class="comment">(*&nbsp;TODO&nbsp;fix&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;Lemma&nbsp;mkregion_sepM_to_sepL2&nbsp;`{Σ:&nbsp;gFunctors}&nbsp;(a&nbsp;e:&nbsp;Addr)&nbsp;(l&nbsp;:&nbsp;list&nbsp;Word)&nbsp;(φ:&nbsp;Addr&nbsp;→&nbsp;Word&nbsp;→&nbsp;iProp&nbsp;Σ)&nbsp;(v&nbsp;:&nbsp;Version)&nbsp;:&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;(a&nbsp;+&nbsp;length&nbsp;l)*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;⊢&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">map</span></span>&nbsp;k↦v&nbsp;∈&nbsp;mkregion&nbsp;a&nbsp;e&nbsp;l,&nbsp;φ&nbsp;k&nbsp;v)&nbsp;-∗&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">list</span></span>&nbsp;k;v&nbsp;∈&nbsp;(finz.seq_between&nbsp;a&nbsp;e);&nbsp;l,&nbsp;φ&nbsp;k&nbsp;v).&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;Proof.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;rewrite&nbsp;/mkregion.&nbsp;revert&nbsp;a&nbsp;e.&nbsp;induction&nbsp;l&nbsp;as&nbsp;<span class="inlinecode">|</span> <span class="inlinecode"><span class="id" title="var">x</span></span> <span class="inlinecode"><span class="id" title="var">l</span></span>.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;{&nbsp;cbn.&nbsp;intros.&nbsp;rewrite&nbsp;zip_with_nil_r&nbsp;/=.&nbsp;assert&nbsp;(a&nbsp;=&nbsp;e)&nbsp;as&nbsp;-&gt;&nbsp;by&nbsp;solve_addr.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;/finz.seq_between&nbsp;finz_dist_0.&nbsp;2:&nbsp;solve_addr.&nbsp;cbn.&nbsp;eauto.&nbsp;}&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;{&nbsp;cbn.&nbsp;intros&nbsp;a&nbsp;e&nbsp;Hlen.&nbsp;rewrite&nbsp;finz_seq_between_cons.&nbsp;2:&nbsp;solve_addr.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cbn.&nbsp;iIntros&nbsp;"H".&nbsp;iDestruct&nbsp;(big_sepM_insert&nbsp;with&nbsp;"H")&nbsp;as&nbsp;"<span class="inlinecode">?</span> <span class="inlinecode"><span class="id" title="var">H</span></span>".&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;rewrite&nbsp;-not_elem_of_list_to_map&nbsp;/=.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;intros&nbsp;<span class="inlinecode"></span> <span class="inlinecode">[?</span> <span class="inlinecode">?]</span> <span class="inlinecode">[-&gt;</span> <span class="inlinecode">[?</span> <span class="inlinecode">?]%<span class="id" title="var">elem_of_zip_l</span>%<span class="id" title="var">elem_of_finz_seq_between</span>]</span> <span class="inlinecode"></span>*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;solve_addr.&nbsp;}&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iFrame.&nbsp;iApply&nbsp;(IHl&nbsp;with&nbsp;"H").&nbsp;solve_addr.&nbsp;}&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;Qed.&nbsp;*)</span><br/>
-
-<br/>
-<span class="comment">(*&nbsp;Lemma&nbsp;mkregion_prepare&nbsp;`{ceriseG&nbsp;Σ}&nbsp;(a&nbsp;e:&nbsp;Addr)&nbsp;(l&nbsp;:&nbsp;list&nbsp;Word)&nbsp;(v&nbsp;:&nbsp;Version)&nbsp;:&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;(a&nbsp;+&nbsp;length&nbsp;l)*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;⊢&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">map</span></span>&nbsp;k↦v&nbsp;∈&nbsp;mkregion&nbsp;a&nbsp;e&nbsp;l,&nbsp;k&nbsp;↦ₐ&nbsp;v)&nbsp;==∗&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">list</span></span>&nbsp;k;v&nbsp;∈&nbsp;(finz.seq_between&nbsp;a&nbsp;e);&nbsp;l,&nbsp;k&nbsp;↦ₐ&nbsp;v).&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;Proof.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;iIntros&nbsp;(?)&nbsp;"H".&nbsp;iDestruct&nbsp;(mkregion_sepM_to_sepL2&nbsp;with&nbsp;"H")&nbsp;as&nbsp;"H";&nbsp;auto.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;Qed.&nbsp;*)</span><br/>
-
-<br/>
-<span class="comment">(*&nbsp;NOTE&nbsp;binary&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;Lemma&nbsp;mkregion_sepM_to_sepL2_zip&nbsp;`{Σ:&nbsp;gFunctors}&nbsp;(a&nbsp;e:&nbsp;Addr)&nbsp;l&nbsp;l'&nbsp;(φ&nbsp;φ':&nbsp;Addr&nbsp;→&nbsp;Word&nbsp;→&nbsp;iProp&nbsp;Σ)&nbsp;:&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;(a&nbsp;+&nbsp;length&nbsp;l)*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;(a&nbsp;+&nbsp;length&nbsp;l')*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">map</span></span>&nbsp;k↦v&nbsp;∈&nbsp;mkregion&nbsp;a&nbsp;e&nbsp;l,&nbsp;φ&nbsp;k&nbsp;v)&nbsp;-∗&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">map</span></span>&nbsp;k↦v&nbsp;∈&nbsp;mkregion&nbsp;a&nbsp;e&nbsp;l',&nbsp;φ'&nbsp;k&nbsp;v)&nbsp;-∗&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">map</span></span>&nbsp;k↦v&nbsp;∈&nbsp;mbkregion&nbsp;a&nbsp;e&nbsp;l&nbsp;l',&nbsp;φ&nbsp;k&nbsp;v.1&nbsp;∗&nbsp;φ'&nbsp;k&nbsp;v.2).&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;Proof.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;rewrite&nbsp;/mkregion.&nbsp;revert&nbsp;a&nbsp;e&nbsp;l'.&nbsp;induction&nbsp;l&nbsp;as&nbsp;<span class="inlinecode">|</span> <span class="inlinecode"><span class="id" title="var">x</span></span> <span class="inlinecode"><span class="id" title="var">l</span></span>.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;{&nbsp;cbn.&nbsp;intros.&nbsp;rewrite&nbsp;zip_with_nil_r&nbsp;/=.&nbsp;assert&nbsp;(a&nbsp;=&nbsp;e)&nbsp;as&nbsp;-&gt;&nbsp;by&nbsp;solve_addr.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;/finz.seq_between&nbsp;/finz.dist&nbsp;/=.&nbsp;assert&nbsp;((Z.to_nat&nbsp;(e&nbsp;-&nbsp;e))&nbsp;=&nbsp;0)&nbsp;as&nbsp;-&gt;.&nbsp;lia.&nbsp;simpl.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;/mbkregion.&nbsp;rewrite&nbsp;finz_seq_between_empty;<span class="inlinecode">|<span class="id" title="var">solve_addr</span></span>.&nbsp;eauto.&nbsp;}&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;{&nbsp;cbn.&nbsp;intros&nbsp;a&nbsp;e&nbsp;l'&nbsp;Hlen&nbsp;Hlen'.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert&nbsp;(length&nbsp;l'&nbsp;=&nbsp;S&nbsp;(length&nbsp;l))&nbsp;as&nbsp;Hleneq.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;solve_addr.&nbsp;}&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destruct&nbsp;l';<span class="inlinecode"><span class="id" title="tactic">inversion</span></span> <span class="inlinecode"><span class="id" title="var">Hleneq</span>|</span>.&nbsp;simpl&nbsp;in&nbsp;*.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;finz_seq_between_cons.&nbsp;2:&nbsp;solve_addr.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;/mbkregion&nbsp;/=.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cbn.&nbsp;iIntros&nbsp;"H&nbsp;H'".&nbsp;iDestruct&nbsp;(big_sepM_insert&nbsp;with&nbsp;"H")&nbsp;as&nbsp;"<span class="inlinecode">?</span> <span class="inlinecode"><span class="id" title="var">H</span></span>".&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;rewrite&nbsp;-not_elem_of_list_to_map&nbsp;/=.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;intros&nbsp;<span class="inlinecode"></span> <span class="inlinecode">[?</span> <span class="inlinecode">?]</span> <span class="inlinecode">[-&gt;</span> <span class="inlinecode">[?</span> <span class="inlinecode">?]%<span class="id" title="var">elem_of_zip_l</span>%<span class="id" title="var">elem_of_finz_seq_between</span>]</span> <span class="inlinecode"></span>*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;solve_addr.&nbsp;}&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iDestruct&nbsp;(big_sepM_insert&nbsp;with&nbsp;"H'")&nbsp;as&nbsp;"<span class="inlinecode">?</span> <span class="inlinecode"><span class="id" title="var">H'</span></span>".&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;rewrite&nbsp;-not_elem_of_list_to_map&nbsp;/=.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;intros&nbsp;<span class="inlinecode"></span> <span class="inlinecode">[?</span> <span class="inlinecode">?]</span> <span class="inlinecode">[-&gt;</span> <span class="inlinecode">[?</span> <span class="inlinecode">?]%<span class="id" title="var">elem_of_zip_l</span>%<span class="id" title="var">elem_of_finz_seq_between</span>]</span> <span class="inlinecode"></span>*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;solve_addr.&nbsp;}&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rewrite&nbsp;(finz_seq_between_cons&nbsp;a).&nbsp;2:&nbsp;solve_addr.&nbsp;simpl.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iApply&nbsp;big_sepM_insert.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;rewrite&nbsp;-not_elem_of_list_to_map&nbsp;/=.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;intros&nbsp;<span class="inlinecode"></span> <span class="inlinecode">[?</span> <span class="inlinecode">?]</span> <span class="inlinecode">[-&gt;</span> <span class="inlinecode">[?</span> <span class="inlinecode">?]%<span class="id" title="var">elem_of_zip_l</span>%<span class="id" title="var">elem_of_finz_seq_between</span>]</span> <span class="inlinecode"></span>*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;solve_addr.&nbsp;}&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iFrame.&nbsp;iApply&nbsp;(IHl&nbsp;with&nbsp;"H&nbsp;H'").&nbsp;solve_addr.&nbsp;solve_addr.&nbsp;}&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;Qed.&nbsp;*)</span><br/>
-
-<br/>
-<span class="comment">(*&nbsp;Lemma&nbsp;mbkregion_prepare&nbsp;`{memG&nbsp;Σ,&nbsp;cfgSG&nbsp;Σ}&nbsp;(a&nbsp;e&nbsp;:&nbsp;Addr)&nbsp;l&nbsp;l'&nbsp;:&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;(a&nbsp;+&nbsp;length&nbsp;l)*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;(a&nbsp;+&nbsp;length&nbsp;l')*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">map</span></span>&nbsp;k↦v&nbsp;∈&nbsp;mkregion&nbsp;a&nbsp;e&nbsp;l,&nbsp;k&nbsp;↦ₐ&nbsp;v)&nbsp;-∗&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">map</span></span>&nbsp;k↦v&nbsp;∈&nbsp;mkregion&nbsp;a&nbsp;e&nbsp;l',&nbsp;k&nbsp;↣ₐ&nbsp;v)&nbsp;==∗&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;(<span class="inlinecode">∗</span> <span class="inlinecode"><span class="id" title="var">map</span></span>&nbsp;k↦v&nbsp;∈&nbsp;mbkregion&nbsp;a&nbsp;e&nbsp;l&nbsp;l',&nbsp;k&nbsp;↦ₐ&nbsp;v.1&nbsp;∗&nbsp;k&nbsp;↣ₐ&nbsp;v.2).&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;Proof.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;&nbsp;&nbsp;iIntros&nbsp;(?&nbsp;?)&nbsp;"H&nbsp;H'".&nbsp;iDestruct&nbsp;(mkregion_sepM_to_sepL2_zip&nbsp;with&nbsp;"H&nbsp;H'")&nbsp;as&nbsp;"H";&nbsp;auto.&nbsp;*)</span><br/>
-<span class="comment">(*&nbsp;Qed.&nbsp;*)</span><br/>
 </div>
 </div>
 <div id="footer">

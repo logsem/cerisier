@@ -44,10 +44,10 @@
 &nbsp;&nbsp;&nbsp;<span class="inlinecode"><span class="id" title="var">solve_pure</span></span>&nbsp;already&nbsp;handles):<br/>
 <br/>
 &nbsp;&nbsp;&nbsp;-&nbsp;ExecPCPerm<br/>
-&nbsp;&nbsp;&nbsp;-&nbsp;PermFlows,&nbsp;PermFlowsTo&nbsp;&nbsp;(TODO:&nbsp;extend)<br/>
+&nbsp;&nbsp;&nbsp;-&nbsp;PermFlows,&nbsp;PermFlowsTo<br/>
 &nbsp;&nbsp;&nbsp;-&nbsp;decodeInstrW&nbsp;w&nbsp;=&nbsp;?<br/>
-&nbsp;&nbsp;&nbsp;-&nbsp;readAllowed&nbsp;p&nbsp;(TODO:&nbsp;extend)<br/>
-&nbsp;&nbsp;&nbsp;-&nbsp;writeAllowed&nbsp;p&nbsp;(TODO:&nbsp;extend)<br/>
+&nbsp;&nbsp;&nbsp;-&nbsp;readAllowed&nbsp;p<br/>
+&nbsp;&nbsp;&nbsp;-&nbsp;writeAllowed&nbsp;p<br/>
 &nbsp;&nbsp;&nbsp;-&nbsp;withinBounds&nbsp;(p,&nbsp;b,&nbsp;e,&nbsp;a)&nbsp;=&nbsp;true<br/>
 &nbsp;&nbsp;&nbsp;-&nbsp;is_Get<br/>
 &nbsp;&nbsp;&nbsp;-&nbsp;is_AddSubLt<br/>
@@ -119,8 +119,6 @@
 #[<span class="id" title="var">export</span>] <span class="id" title="keyword">Hint</span> <span class="id" title="keyword">Resolve</span> <span class="id" title="var">ExecPCPerm_RWX</span> : <span class="id" title="var">solve_pure</span>.<br/>
 #[<span class="id" title="var">export</span>] <span class="id" title="keyword">Hint</span> <span class="id" title="keyword">Resolve</span> <span class="id" title="var">ExecPCPerm_not_E</span> : <span class="id" title="var">solve_pure</span>.<br/>
 #[<span class="id" title="var">export</span>] <span class="id" title="keyword">Hint</span> <span class="id" title="keyword">Resolve</span> <span class="id" title="var">ExecPCPerm_flows_to</span> : <span class="id" title="var">solve_pure</span>.<br/>
-<span class="comment">(*&nbsp;TODO:&nbsp;add&nbsp;a&nbsp;test&nbsp;checking&nbsp;the&nbsp;use&nbsp;of&nbsp;ExecPCPerm_flows_to&nbsp;(if&nbsp;it&nbsp;is&nbsp;still<br/>
-&nbsp;&nbsp;&nbsp;needed)&nbsp;*)</span><br/>
 #[<span class="id" title="var">export</span>] <span class="id" title="keyword">Hint</span> <span class="id" title="keyword">Resolve</span> <span class="id" title="var">ExecPCPerm_readAllowed</span> : <span class="id" title="var">solve_pure</span>.<br/>
 <span class="comment">(*&nbsp;Will&nbsp;only&nbsp;work&nbsp;if&nbsp;arguments&nbsp;are&nbsp;concrete&nbsp;terms&nbsp;*)</span><br/>
 #[<span class="id" title="var">export</span>] <span class="id" title="keyword">Hint</span> <span class="id" title="keyword">Extern</span> 1 (<a class="idref" href="cap_machine.opsem.machine_base.html#readAllowed"><span class="id" title="definition">readAllowed</span></a> <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a>) =&gt; <span class="id" title="tactic">reflexivity</span> : <span class="id" title="var">solve_pure</span>.<br/>
