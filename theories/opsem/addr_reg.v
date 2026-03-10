@@ -64,7 +64,6 @@ Proof.
 Defined.
 
 (* Instances for [zify]: make [lia] work on registers *)
-(* TODO: separate the proof parts into lemmas *)
 
 Definition Z_of_regname (r: RegName): Z.
   destruct r. exact 0.

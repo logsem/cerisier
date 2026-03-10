@@ -82,10 +82,6 @@ Section cap_lang_rules.
   (* Essentially it gives us a partial view on the enclave table, since we now know that at a particular index, at some point, there was an enclave with a particular identity. *)
   (* In a later step of the verification, an invariant will allow us to trade this resource for the specific predicate that always holds for results signed by enclaves with that hash... *)
   (* This enables "learning" some information about the signed, yet unknown result: we will be able to establish that at least the above predicate will hold for it... *)
-  (* NOTE @June what if we already have the resource `enclave_cur(tidx, I)` ? *)
-  (* @Denis: that is the case when an enclave initializes and immediately attests itself. *)
-  (* Then we need a separate rule, because the rule below is not general enough to derive the former *)
-  (* For the time being, this rule is at least enough to prove the FTLR. *)
   Lemma wp_estoreid E pc_p pc_b pc_e pc_a pc_v lw rd rs lregs :
     decodeInstrWL lw = EStoreId rd rs →
     isCorrectLPC (LCap pc_p pc_b pc_e pc_a pc_v) →
@@ -94,14 +90,12 @@ Section cap_lang_rules.
 
     {{{ (▷ [∗ map] k↦y ∈ lregs, k ↦ᵣ y) ∗
         (pc_a, pc_v) ↦ₐ lw
-        (* (if with_ec then EC⤇ ecn else True) *) (* Domi says: ownership of the EC resource is unrelated to EStoreId *)
     }}}
       Instr Executable @ E
     {{{ lregs' tidx I retv, RET retv;
         ⌜ EStoreId_spec lregs lregs' rs rd tidx I retv⌝ ∗
         ([∗ map] k↦y ∈ lregs', k ↦ᵣ y) ∗
         (pc_a, pc_v) ↦ₐ lw ∗
-        (* (if with_ec then EC⤇ ecn else True) ∗ *)
         (⌜(retv = NextIV)⌝ -∗ (enclave_all tidx I)) (*!*)}}}.
   Proof.
     iIntros (Hinstr Hvpc Dregs HPC φ) "(>Hrmap & Hpca) Hφ".
@@ -227,14 +221,6 @@ Section cap_lang_rules.
     easy.
 
     Unshelve.
-    (* @Denis says: TODO...
-       We have shelved goals which arise from failure cases where the postcondition Hφ (which quantifies over
-       a TIndex and an EIdentity) was applied, without a witness for either the table index or the identity
-       (e.g. there was no valid table index).
-       I am simply picking an arbitrary value in these cases, but this feels unsatisfactory.
-       I think the right solution moves the existentially quantified tidx and I in the postcondition of the WP
-       into the right places, and removes the tidx and I parameters of the spec, instead requiring them only
-       for the relevant constructors. TBD... *)
     all: constructor 1.
 
   Qed.
@@ -308,7 +294,7 @@ Section cap_lang_rules.
     Qed.
 
 
-  (* TODO unless we can find a way to derive `0 <= tidx < ecn` another way, keep it here *)
+  (* FIXME unless we can find a way to derive `0 <= tidx < ecn` another way, keep it here *)
   Lemma wp_estoreid_with_ec E pc_p pc_b pc_e pc_a pc_v lw rd rs ecn lregs :
     decodeInstrWL lw = EStoreId rd rs →
     isCorrectLPC (LCap pc_p pc_b pc_e pc_a pc_v) →

@@ -558,7 +558,6 @@ Proof.
     ; [eassumption|iFrame].
 Qed.
 
-(* TODO is there a way to make it even more general ? *)
 Definition equiv_zip_fnt
   {PROP : bi} {A B C : Type}
   (ϕ : nat -> (A * B * C) -> PROP )

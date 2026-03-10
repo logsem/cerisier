@@ -102,7 +102,7 @@ Ltac dispatch_instr_rule instr cont :=
   | Subseg PC (inl _) (inr _) => cont (@wp_subseg_success_pc_l)
   | Subseg PC (inr _) (inl _) => cont (@wp_subseg_success_pc_r)
   | Subseg PC (inl _) (inl _) => cont (@wp_subseg_success_pc_lr)
-  | Subseg _ (inr ?r) (inr ?r) => (cont (@wp_subseg_success_same) || cont (@wp_subseg_success_same_sr)) (* TODO: improve using register values? *)
+  | Subseg _ (inr ?r) (inr ?r) => (cont (@wp_subseg_success_same) || cont (@wp_subseg_success_same_sr))
   | Subseg _ (inr _) (inr _) => (cont (@wp_subseg_success) || cont (@wp_subseg_success_sr))
   | Subseg _ (inl _) (inr _) => (cont (@wp_subseg_success_l) || cont (@wp_subseg_success_l_sr))
   | Subseg _ (inr _) (inl _) => (cont (@wp_subseg_success_r) || cont (@wp_subseg_success_r_sr))
@@ -130,7 +130,5 @@ Ltac dispatch_instr_rule instr cont :=
   (* Halt *)
   | Halt => cont (@wp_halt)
   (* not found *)
-  (* TODO @Denis EInit, EDeInit, EStoreId *)
-  (* TODO @June IsUnique *)
   | _ => fail "No suitable rule found for instruction" instr
   end.

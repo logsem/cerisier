@@ -12,10 +12,10 @@ Ltac solve_pure_addr := solve_pure_finz.
    [solve_pure] already handles):
 
    - ExecPCPerm
-   - PermFlows, PermFlowsTo  (TODO: extend)
+   - PermFlows, PermFlowsTo
    - decodeInstrW w = ?
-   - readAllowed p (TODO: extend)
-   - writeAllowed p (TODO: extend)
+   - readAllowed p
+   - writeAllowed p
    - withinBounds (p, b, e, a) = true
    - is_Get
    - is_AddSubLt
@@ -75,8 +75,6 @@ Proof. auto. Qed.
 #[export] Hint Resolve ExecPCPerm_RWX : solve_pure.
 #[export] Hint Resolve ExecPCPerm_not_E : solve_pure.
 #[export] Hint Resolve ExecPCPerm_flows_to : solve_pure.
-(* TODO: add a test checking the use of ExecPCPerm_flows_to (if it is still
-   needed) *)
 #[export] Hint Resolve ExecPCPerm_readAllowed : solve_pure.
 (* Will only work if arguments are concrete terms *)
 #[export] Hint Extern 1 (readAllowed _ = true) => reflexivity : solve_pure.

@@ -266,8 +266,6 @@ Section cap_lang_rules.
 
     iApply wp2_word_get_cap; iSplit; iIntros.
 
-    (* why can't I use multi-goal selectors with curly braces? *)
-    (* domi: I think that might be an Ltac2 feature...*)
     1: {
       iDestruct (transiently_abort with "Hσ") as "(Hσr & Hσm & Hregs & Hmem & Hcur_tb & Hall_tb & Hecauth & HECv)".
       iSplitR "Hφ Hregs Hmem HECv".
@@ -548,7 +546,7 @@ Section cap_lang_rules.
         rewrite map_full_own.
         eapply (state_phys_log_corresponds_update_mem (la := (b0, v0+1))
           (lw := LSealRange (true, true) s_b s_e s_b)) in Hcorr'; cycle 1.
-        { (* TODO turn into lemma *)
+        {
           rewrite finz_seq_between_cons ; eauto.
           cbn.
           rewrite /is_cur_addr; cbn.
@@ -560,7 +558,7 @@ Section cap_lang_rules.
         set (mem' := (<[b0:=WSealRange (true, true) s_b s_e s_b]> (mem σ))).
         iMod (update_state_interp_next_version (src := r_code) (σm := mem') with "[$Hσr $Hσm $Hregs $Hmem]") as
           "(%Hvm' & Hσr & Hσm & %Hcorr'' & Hregs & Hmem)"; eauto.
-        { (* TODO turn into lemma *)
+        {
           subst mem'.
           rewrite /sweep_reg in Hcode_sweep |- *.
           apply andb_true_intro.
@@ -586,7 +584,7 @@ Section cap_lang_rules.
         }
         eapply (state_phys_log_corresponds_update_mem (la := (b, v+1))
           (lw := LCap RW b0 e0 a0 (v0 + 1))) in Hcorr''; cycle 1.
-        { (* TODO turn into lemma *)
+        {
           rewrite finz_seq_between_cons ; eauto.
           cbn.
           rewrite /is_cur_addr; cbn.

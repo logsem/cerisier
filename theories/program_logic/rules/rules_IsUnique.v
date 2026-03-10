@@ -420,7 +420,7 @@ Section cap_lang_rules.
 
     decodeInstrWL lw = IsUnique dst src →
     isCorrectLPC (LCap pc_p pc_b pc_e pc_a pc_v) →
-    pc_a ∉ finz.seq_between b e -> (* TODO is that necessary ? Or can I derive it ? *)
+    pc_a ∉ finz.seq_between b e ->
     (pc_a + 1)%a = Some pc_a' →
     length lws = length (finz.seq_between b e) ->
     readAllowed p = true ->
@@ -521,7 +521,6 @@ Section cap_lang_rules.
         (logical_range_map b0 e0 lws (v0 + 1) ⊆ mem')
         as Hmem'_be_next.
       { clear -Hvalid Hpca_notin Hlen_lws reservedaddresses.
-        (* TODO extract as a lemma *)
         eapply map_subseteq_spec; intros [a' v'] lw' Hlw'.
         assert (v' = v0+1 /\ (a' ∈ (finz.seq_between b0 e0))) as [? Ha'_in_be]
             by (eapply logical_range_map_some_inv; eauto) ; simplify_eq.
@@ -640,14 +639,12 @@ Section cap_lang_rules.
       iExtractList "Hrmap" [PC; dst; src] as ["HPC"; "Hdst"; "Hsrc"].
       iClear "Hrmap".
       iFrame.
-      (* destruct Hupd as ( lm & Hlm_incl & Hvalid ). *)
 
       assert ( Hpc_a : pc_a ∉ finz.seq_between b0 e0)
                by (eapply unique_in_registersL_pc_no_overlap; eauto; by simplify_map_eq).
       assert ( mem' !! (pc_a, pc_v) = Some lw ) as Hmem'_pca.
       { eapply is_valid_updated_lmemory_notin_preserves_lmem; eauto ; last by simplify_map_eq. }
 
-      (* destruct Hvalid as (Hupd&_&?). *)
       assert (
           exists lws,
             length lws = length (finz.seq_between b0 e0) /\
@@ -670,8 +667,5 @@ Section cap_lang_rules.
       iApply big_sepM_to_big_sepL2; last iFrame; eauto.
       by rewrite map_length.
   Qed.
-
-  (* TODO extend proofmode, which means cases such as:
-     dst = PC, src = PC, dst = stc *)
 
 End cap_lang_rules.

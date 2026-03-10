@@ -287,7 +287,6 @@ Tactic Notation "unfocus_block" constr(hi) constr(hcont) "as" constr(h) :=
 
 (* "iApply with on-demand framing" *)
 
-(* TODO: These proofs should probably not use the proof mode tactics *)
 Lemma envs_clear_spatial_sound_rev {PROP: bi} (Δ: envs PROP) :
   envs_wf Δ →
   of_envs (envs_clear_spatial Δ) ∗ [∗] env_spatial Δ ⊢ of_envs Δ.
@@ -383,7 +382,6 @@ Ltac2 record_framed
     lazy_match! hh with
     | (?r ↦ᵣ _)%I => (r, r, LReg)
     | ((?a, ?v) ↦ₐ{_} _)%I => (a, v, LMem)
-    (* TODO | (?la ↦ₐ{_} _)%I => (la, la, LMem2) ? *)
     | (codefrag ?a ?v _) => (a, v, Codefrag)
     end in
   table.(contents) := (hname, lhs, lhsv, kind) :: table.(contents).
@@ -514,7 +512,6 @@ Ltac2 reintro_cap_resources tbl :=
   iNamedIntro ().
 
 (* cleanup *)
-(* TODO: make this extensible. Remove updatePcPerm? unfolding sometimes causes issues. *)
 Ltac2 iApplyCapAuto_cleanup () :=
   cbn [rules_Get.denote rules_AddSubLt.denote updatePcPerm updatePcPermL].
 

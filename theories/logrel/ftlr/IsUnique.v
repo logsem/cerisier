@@ -467,8 +467,6 @@ Section fundamental.
       rewrite -(insert_id lmem' (a_pc,v_pc) lw_pc);auto.
       by iDestruct (big_sepM_insert_delete with "Hmem") as "[Hmem _]"; iFrame.
     - destruct Hdecide as [ [Hsrc_lregs Hread_src] Hvalid_sweep].
-      (* TODO @June: is there any part of the proof that is common
-         and could be refactored beforehand ? *)
       destruct (decide (src = PC)) as [->|Hsrc_ne_pc]
       ; [clear Hvalid_sweep |]
       ; simplify_map_eq.

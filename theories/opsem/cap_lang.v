@@ -1024,7 +1024,6 @@ Section opsem.
 Global Instance instr_eq_val : EqDecision val.
 Proof. solve_decision. Defined.
 
-  (* TODO: change to co-inductive list in the Seq case *)
   Inductive expr: Type :=
   | Instr (c : ConfFlag)
   | Seq (e : expr).

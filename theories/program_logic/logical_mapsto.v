@@ -1620,7 +1620,6 @@ Proof.
   by apply update_version_region_vmap_notin_preserves_cur.
 Qed.
 
-(* TODO generalize to update with glm instead of lm *)
 Lemma update_version_region_preserves_mem_corresponds
   (phm : Mem) (lm lm': LMem) (vmap vmap' : VMap) (la : list Addr) v:
   vmap' = update_version_region_vmap la v vmap ->
@@ -1675,7 +1674,6 @@ Definition is_valid_updated_lmemory
   (glmem llmem : LMem) (la : list Addr) (v : Version) (llmem' : LMem) : Prop :=
   (update_version_region glmem la v llmem) ⊆ llmem' /\
   llmem ⊆ glmem ∧
-    (* TODO unclear whether this is useful in the def *)
     (Forall (fun a => llmem !! (a, v+1) = None) la) /\
     (Forall (fun a => is_Some (llmem' !! (a, v+1))) la).
 
@@ -2374,7 +2372,6 @@ Qed.
 
 
 (** Miscellaneous about logical regions *)
-(* TODO move definition to regions.v ? *)
 Lemma elem_of_logical_region (a : Addr) (la : list Addr) (v : Version) :
   a ∈ la <-> (a, v) ∈ logical_region la v.
 Proof.
@@ -2947,7 +2944,6 @@ Proof.
   apply (map_Forall_lookup_1 _ _ _ _ Hcurregs Hreg).
 Qed.
 
-(* TODO generalise *)
 Lemma map_Forall_all_P (w : LWord) (la : list Addr) (lws : list LWord) (v : Version)
   (P : LWord -> Prop) :
   NoDup la ->

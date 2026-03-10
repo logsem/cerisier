@@ -169,7 +169,6 @@ Section logrel.
        inv (attestN .@ tidx) ((∃ I, enclave_cur tidx I) ∨ enclave_prev tidx)
     )%I.
 
-  (* TODO: @Denis include the condition for edeinit found on p24 of the TR (Apx E.2) *)
   Program Definition interp_sr (interp : D) : D :=
     λne lw, (match lw with
     | LSealRange p b e a =>
@@ -893,7 +892,6 @@ Section logrel.
   Definition compute_mask_range (E : coPset) (b e : Addr) (v : Version) : coPset :=
     (compute_mask E (logical_range_set b e v)).
 
-  (* TODO @June is there a way to generalize the opening of the list of invariant ? *)
   (* Lemma for opening invariants of a region *)
   Lemma open_region_inv
     (E : coPset)
@@ -1274,7 +1272,6 @@ Section custom_enclaves.
     ∗ enclave_cur tidx I
     ={Ep}=∗ interp (LCap E b e (b^+1)%a v).
 
-  (* TODO @June explanation of the contract *)
   Definition custom_enclave_contract
     {enclaves_map : CustomEnclavesMap} : iProp Σ :=
     ∀
@@ -1286,7 +1283,7 @@ Section custom_enclaves.
     (ce : CustomEnclave),
 
     ⌜ custom_enclaves !! I = Some ce⌝ →
-    ⌜ (ot + 2)%ot = Some (ot ^+ 2)%ot⌝ →(* Well-formness: otype does not overflow *)
+    ⌜ (ot + 2)%ot = Some (ot ^+ 2)%ot⌝ → (* Well-formness: otype does not overflow *)
 
     ⌜ I = hash_concat (hash b) (hash (code ce))⌝ →
     ⌜ b = (code_region ce)⌝ →

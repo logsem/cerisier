@@ -131,7 +131,6 @@ Section cap_lang_rules.
     iMod ("H" $! {| reg := reg; mem := mem; etable := etable; enumcur := enumcur |} with
            "[Hr Hm Htbl_cur Htbl_prev Htbl_all $HEC $Hregs $Hcode]") as "H".
     { iExists _, _, _,_,_,_. now iFrame.
-      (* TODO: allow changing cur_map? *)
     }
 
     eapply step_exec_inv in Hstep; eauto; cbn.
@@ -195,7 +194,6 @@ Section cap_lang_rules.
                 ⊢ state_interp_transient φ φ lr lr lm lm.
   Proof. iIntros. now iApply transiently_intro. Qed.
 
-  (* TODO: split off lemma about big_sepM_fmap?  *)
   Lemma state_interp_transient_intro_nodfracs {φ : ExecConf} {lr : LReg} {lm : LMem} :
     state_interp_logical φ ∗ ([∗ map] k↦y ∈ lr, k ↦ᵣ y) ∗ ([∗ map] k↦y ∈ lm, k ↦ₐ y)
       ⊢ state_interp_transient φ φ lr lr ((fun y => (DfracOwn 1 , y)) <$> lm) ((fun y => (DfracOwn 1 , y)) <$> lm).
@@ -704,91 +702,8 @@ Qed.
     eapply state_corresponds_reg_get_word; eauto.
   Qed.
 
-  (* Lemma state_interp_derive (E : coPset) (s : stuckness) (R P : iProp Σ) (HPers : Persistent P) Φ e : *)
-  (*   to_val e = None -> *)
-  (*   (∀ σ, R ∗ state_interp_logical σ -∗ P) -∗ *)
-  (*   (R ∗ P -∗ (wp s E e Φ)) -∗ *)
-  (*   (R -∗ (wp s E e Φ)). *)
-  (* Proof. *)
-  (*   iIntros (He) "HRP Hwp HR". *)
-  (*   rewrite !wp_unfold /wp_pre /=. *)
-  (*   rewrite He. *)
-  (*   iIntros (σ ns κ κs nt) "Hσ /=". *)
-  (*   iDestruct ("HRP" with "[$HR $Hσ]") as "#HP". *)
-  (*   iDestruct ("Hwp" with "[$HR $HP]") as "Hwp". *)
-  (*   iSpecialize ("Hwp" $! σ ns κ κs nt with "Hσ"). *)
-  (*   iMod ("Hwp") as "[%Hred H]". *)
-  (*   iModIntro. iSplitR; first by iPureIntro. *)
-  (*   iIntros (? ? ?) "%Hstep Hcred". *)
-  (*   iMod ("H" $! e2 σ2 efs Hstep with "Hcred") as "H". *)
-  (*   done. *)
-  (* Qed. *)
-
-  (* Lemma ec_bounds_etable σ `{ReservedAddresses} `{!ceriseG Σ} : *)
-  (*   state_interp_logical σ -∗ *)
-  (*   ⌜forall i, i ∈ dom σ.(etable) → i < σ.(enumcur)⌝. *)
-  (* Proof. *)
-  (*   iIntros "σ". *)
-  (*   iDestruct "σ" as (lr lm vm cur_tb prev_tb all_tb) *)
-  (*                      "(Hlr & Hlm & %Hetable & Hcur_tb & Hprev_tb & Hall_tb & Hecauth & %Hdomcurtb & %Hdomtbcompl & %Htbdisj & %Htbcompl & %Hcorr0)". *)
-  (*   iPureIntro. *)
-  (*   intros i Hdom. *)
-  (*   rewrite -Hetable in Hdom. *)
-  (*   apply (elem_of_weaken i (dom cur_tb) (dom (cur_tb ∪ prev_tb))) in Hdom. *)
-  (*   rewrite list_to_set_seq in Hdomtbcompl. *)
-  (*   set_solver. *)
-  (*   set_solver. *)
-  (* Qed. *)
-
-  (* Lemma state_interp_derive_instr_exec (E : coPset) (s : stuckness) (R P : iProp Σ) (HPers : Persistent P) Φ : *)
-  (*   (∀ σ, R ∗ state_interp_logical σ -∗ P) -∗ *)
-  (*   (R ∗ P -∗ (wp s E (Instr Executable) Φ)) -∗ *)
-  (*   (R -∗ wp s E (Instr Executable) Φ). *)
-  (* Proof. *)
-  (*   iIntros "HRP Hwp HR". *)
-  (*   by iApply (state_interp_derive with "[$HRP] [$Hwp] [$HR]"). *)
-  (* Qed. *)
-
-  (* Lemma state_interp_max_tidx σ ecn tidx I : *)
-  (*   state_interp_logical σ -∗ *)
-  (*   EC⤇ ecn -∗ *)
-  (*   enclave_all tidx I -∗ *)
-  (*   ⌜ tidx < ecn ⌝. *)
-  (* Proof. *)
-  (*   iIntros "Hinterp HEC Henclave". *)
-  (*   iDestruct (ec_bounds_etable with "Hinterp") as "%Hbound". *)
-  (*   iDestruct "Hinterp" as (lr lm vm cur_tb prev_tb all_tb) *)
-  (*                            "(Hlr & Hlm & %Hetable & Hcur_tb & Hprev_tb & Hall_tb & Hecauth & %Hdomcurtb & %Hdomtbcompl & %Htbdisj & %Htbcompl & %Hcorr0)". *)
-  (*   iCombine "Hecauth HEC" as "Henumcur". *)
-  (*   iDestruct (own_valid with "Henumcur") as "%Hvalid_ec". *)
-  (*   apply excl_auth_agree_L in Hvalid_ec. *)
-  (*   rewrite -Hvalid_ec. *)
-  (*   iAssert (⌜tidx ∈ dom all_tb⌝%I) as "%Hin". *)
-  (*   iCombine "Hall_tb" "Henclave" as "Hall". *)
-  (*   iDestruct (own_valid with "Hall") as "%Hvalid_all". *)
-  (*   apply auth_both_valid_discrete in Hvalid_all as [Hlt_all Hvalid_all]. *)
-  (*   apply gmap.dom_included in Hlt_all. *)
-  (*   by rewrite dom_singleton dom_fmap singleton_subseteq_l in Hlt_all. *)
-  (*   rewrite -Htbcompl in Hin. *)
-  (*   iPureIntro. *)
-  (*   rewrite Hdomtbcompl in Hin. *)
-  (*   rewrite list_to_set_seq in Hin. *)
-  (*   set_solver +Hin. *)
-  (* Qed. *)
-
-  (* Lemma valid_enclave_ec ecn tidx I s E Φ : *)
-  (*   ( ( EC⤇ ecn ∗ enclave_all tidx I) ∗ ⌜ tidx < ecn ⌝ -∗ (wp s E (Instr Executable) Φ)) ⊢ *)
-  (*   ( ( EC⤇ ecn ∗ enclave_all tidx I) -∗ wp s E (Instr Executable) Φ). *)
-  (* Proof. *)
-  (*   iIntros "Hwp HR". *)
-  (*   iApply (state_interp_derive_instr_exec with "[] [$Hwp] [$HR]"). *)
-  (*   iIntros (σ) "( (HEC & Henclave) & Hσ)". *)
-  (*   iApply (state_interp_max_tidx with "[$] [$] [$]"). *)
-  (* Qed. *)
-
   Definition full_own_mem (lmem : LMem) : LMemF := (λ y : LWord, (DfracOwn 1, y)) <$> lmem.
 
-  (* TODO generalise and move *)
   Lemma fmap_forall_inv (lmt : LMemF) :
     map_Forall (λ (_ : LAddr) (a : dfrac * LWord), a.1 = DfracOwn 1) lmt ->
     exists lm, lmt = (full_own_mem lm).
@@ -805,7 +720,6 @@ Qed.
   Qed.
 
 
-  (* TODO generalise to not just LMem + find better name + move iris_extra *)
   Lemma map_full_own (lm : LMem) :
     ([∗ map] k↦y ∈ lm, k ↦ₐ y)%I
     ⊣⊢ ([∗ map] la↦dw ∈ (full_own_mem lm), la ↦ₐ{dw.1} dw.2).

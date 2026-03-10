@@ -474,7 +474,6 @@ Proof.
   rewrite /isWithin. solve_addr.
 Qed.
 
-(* TODO move in finz *)
 Lemma finz_incr_minus_id
   {finz_bound : Z}
   (f : finz finz_bound) (z : Z)
