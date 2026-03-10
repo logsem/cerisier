@@ -7,7 +7,7 @@ From cap_machine Require
 
 Goal True. idtac "
 Assumptions of fundamental theorem:". Abort.
-Print Assumptions fundamental.fundamental'.
+Print Assumptions fundamental.cerisier_universal_contract.
 
 Goal True. idtac "
 Assumptions of SOC end-to-end theorem:". Abort.
