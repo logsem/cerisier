@@ -232,9 +232,9 @@ In the program logic:
 
 In the logical relation:
 
-| *name in paper*              | *name in mechanization* |
-|------------------------------|-------------------------|
-| \mathcal{V}                  | interp                  |
-| \mathcal{E}                  | interp_expression       |
-| safe_to_deinit               | safe_to_attest          |
-| Global Invariant \mathcal{I} | system_inv              |
+| *name in paper*                  | *name in mechanization* |
+|----------------------------------|-------------------------|
+| $$\mathcal{V}$$                  | interp                  |
+| $$\mathcal{E}$$                  | interp_expression       |
+| safe_to_deinit                   | safe_to_attest          |
+| Global Invariant $$\mathcal{I}$$ | system_inv              |
