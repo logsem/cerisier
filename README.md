@@ -175,8 +175,11 @@ For each case study:
 - `*_adequacy.v`: Contains the end-to-end specification of the case study, phrased in terms of the
   operational semantics.
 
-## Link and difference with the paper
+## Link and differences between the paper and the mechanization
 
+In this section, we explain how to compare the paper with our mechanization.
+
+We provide a table that link the different sections of the paper with the related Rocq files:
 | *technical section*                | *Rocq files*                                   |
 |------------------------------------|------------------------------------------------|
 | Operational semantics              | `opsem/*`                                      |
@@ -188,6 +191,7 @@ For each case study:
 | Case Study - Mutual Attest (§5.2)  | `case_studies/mutual_attestation/*.v`          |
 | Case Study - Sensor Readout (§5.3) | `case_studies/memory_readout/*.v`              |
 
+We also provide a table that link the different figures and theorems of the paper with the related Rocq files:
 | *figure*                       | *Rocq definition/theorem*                                | remark                                                                               |
 |--------------------------------|----------------------------------------------------------|--------------------------------------------------------------------------------------|
 | Figures 2 and 15               | `case_studies/soc/soc_code.v`                            |                                                                                      |
@@ -202,9 +206,7 @@ For each case study:
 | Theorem 4.1                    | `logrel/fundamental:cerisier_universal_contract`         |                                                                                      |
 
 
-Some definitions have different names from the paper.
-
-*name in paper => name in mechanization*
+Finally, some definitions have different names from the paper.
 
 In the operational semantics:
 
@@ -227,4 +229,12 @@ In the program logic:
 | tidx $\mapsto_{E}^{\square}$ I | enclave_all tidx I      |
 | tidx $\mapsto_{E}$ I           | enclave_cur tidx I      |
 | DeInitialized(tidx)            | enclave_prev tidx       |
-| I(M)                           | system_inv              |
+
+In the logical relation:
+
+| *name in paper*              | *name in mechanization* |
+|------------------------------|-------------------------|
+| \mathcal{V}                  | interp                  |
+| \mathcal{E}                  | interp_expression       |
+| safe_to_deinit               | safe_to_attest          |
+| Global Invariant \mathcal{I} | system_inv              |
