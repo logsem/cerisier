@@ -58,6 +58,7 @@ env)` and then `opam install -y .` (this will continue from where it failed).
 ```
 make -jN  # replace N with the number of CPU cores of your machine
 ```
+We recommend to use `-j1` if you have less then 16Gb of RAM.
 
 We recommend that you have at least **8Gb of RAM+swap**.
 Please be aware that the development takes around an hour to compile with `-j1`.
