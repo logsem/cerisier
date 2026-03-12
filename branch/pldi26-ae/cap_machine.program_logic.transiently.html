@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<link href="coqdocjs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="config.js"></script>
+<script type="text/javascript" src="coqdocjs.js"></script>
+</head>
+
+<body onload="document.getElementById('content').focus()">
+  <div id="header">
+    <span class="left">
+      <span class="modulename"> <script> document.write(document.title) </script> </span>
+    </span>
+
+    <span class="button" id="toggle-proofs"></span>
+
+    <span class="right">
+      <a href="./">Project Page</a>
+      <a href="./indexpage.html"> Index </a>
+      <a href="./toc.html"> Table of Contents </a>
+    </span>
+</div>
+    <div id="content" tabindex="-1" onblur="document.getElementById('content').focus()">
+    <div id="main">
+<h1 class="libtitle">cap_machine.program_logic.transiently</h1>
+
+<div class="code">
+<span class="id" title="keyword">From</span> <span class="id" title="var">iris.proofmode</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">proofmode</span> <span class="id" title="library">classes</span>.<br/>
+<span class="id" title="keyword">From</span> <span class="id" title="var">iris.program_logic</span> <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="library">weakestpre</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a id="transiently_modality" class="idref" href="#transiently_modality"><span class="id" title="section">transiently_modality</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<a id="irisg:4" class="idref" href="#irisg:4"><span class="id" title="binder">irisg</span></a>: <span class="id" title="class">irisGS_gen</span> <a id="hlc:1" class="idref" href="#hlc:1"><span class="id" title="binder">hlc</span></a> <a id="58e674108a556f77ea3c5ef959e658b0" class="idref" href="#58e674108a556f77ea3c5ef959e658b0"><span class="id" title="binder">Λ</span></a> <a id="eb9571817dd417966f307c3a9de8fe7f" class="idref" href="#eb9571817dd417966f307c3a9de8fe7f"><span class="id" title="binder">Σ</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a id="transiently" class="idref" href="#transiently"><span class="id" title="definition">transiently</span></a> (<a id="Pcommitted:5" class="idref" href="#Pcommitted:5"><span class="id" title="binder">Pcommitted</span></a> : <span class="id" title="abbreviation">iProp</span> <a class="idref" href="cap_machine.program_logic.transiently.html#a55722c867091ffb6a36b495fb90e69f"><span class="id" title="variable">Σ</span></a>) (<a id="Ptransient:6" class="idref" href="#Ptransient:6"><span class="id" title="binder">Ptransient</span></a> : <span class="id" title="abbreviation">iProp</span> <a class="idref" href="cap_machine.program_logic.transiently.html#a55722c867091ffb6a36b495fb90e69f"><span class="id" title="variable">Σ</span></a>) : <span class="id" title="abbreviation">iProp</span> <a class="idref" href="cap_machine.program_logic.transiently.html#a55722c867091ffb6a36b495fb90e69f"><span class="id" title="variable">Σ</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="cap_machine.program_logic.transiently.html#Pcommitted:5"><span class="id" title="variable">Pcommitted</span></a> <span class="id" title="notation">∧</span> <span class="id" title="notation">|==&gt;</span> <a class="idref" href="cap_machine.program_logic.transiently.html#Ptransient:6"><span class="id" title="variable">Ptransient</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a id="transiently_intro" class="idref" href="#transiently_intro"><span class="id" title="lemma">transiently_intro</span></a> <a id="P:7" class="idref" href="#P:7"><span class="id" title="binder">P</span></a> : <a class="idref" href="cap_machine.program_logic.transiently.html#P:7"><span class="id" title="variable">P</span></a> <span class="id" title="notation">⊢</span> <a class="idref" href="cap_machine.program_logic.transiently.html#transiently"><span class="id" title="definition">transiently</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#P:7"><span class="id" title="variable">P</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#P:7"><span class="id" title="variable">P</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="var">now</span> <span class="id" title="var">iIntros</span> "$". <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a id="transiently_abort" class="idref" href="#transiently_abort"><span class="id" title="lemma">transiently_abort</span></a> <a id="Pcommitted:8" class="idref" href="#Pcommitted:8"><span class="id" title="binder">Pcommitted</span></a> <a id="Ptransient:9" class="idref" href="#Ptransient:9"><span class="id" title="binder">Ptransient</span></a> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="cap_machine.program_logic.transiently.html#transiently"><span class="id" title="definition">transiently</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#Pcommitted:8"><span class="id" title="variable">Pcommitted</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#Ptransient:9"><span class="id" title="variable">Ptransient</span></a> <span class="id" title="notation">⊢</span> <a class="idref" href="cap_machine.program_logic.transiently.html#Pcommitted:8"><span class="id" title="variable">Pcommitted</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="var">now</span> <span class="id" title="var">iIntros</span> "[P _]". <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a id="transiently_commit" class="idref" href="#transiently_commit"><span class="id" title="lemma">transiently_commit</span></a> <a id="Pcommitted:10" class="idref" href="#Pcommitted:10"><span class="id" title="binder">Pcommitted</span></a> <a id="Ptransient:11" class="idref" href="#Ptransient:11"><span class="id" title="binder">Ptransient</span></a> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="cap_machine.program_logic.transiently.html#transiently"><span class="id" title="definition">transiently</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#Pcommitted:10"><span class="id" title="variable">Pcommitted</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#Ptransient:11"><span class="id" title="variable">Ptransient</span></a> <span class="id" title="notation">⊢</span> <span class="id" title="notation">|==&gt;</span> <a class="idref" href="cap_machine.program_logic.transiently.html#Ptransient:11"><span class="id" title="variable">Ptransient</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="var">now</span> <span class="id" title="var">iIntros</span> "[_ Ht]". <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a id="transiently_mono_2" class="idref" href="#transiently_mono_2"><span class="id" title="lemma">transiently_mono_2</span></a> <a id="Pcommitted:12" class="idref" href="#Pcommitted:12"><span class="id" title="binder">Pcommitted</span></a> <a id="Ptransient1:13" class="idref" href="#Ptransient1:13"><span class="id" title="binder">Ptransient1</span></a> (<a id="Ptransient2:14" class="idref" href="#Ptransient2:14"><span class="id" title="binder">Ptransient2</span></a> : <span class="id" title="abbreviation">iProp</span> <a class="idref" href="cap_machine.program_logic.transiently.html#a55722c867091ffb6a36b495fb90e69f"><span class="id" title="variable">Σ</span></a>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">(</span><a class="idref" href="cap_machine.program_logic.transiently.html#Ptransient1:13"><span class="id" title="variable">Ptransient1</span></a> <span class="id" title="notation">==∗</span> <a class="idref" href="cap_machine.program_logic.transiently.html#Ptransient2:14"><span class="id" title="variable">Ptransient2</span></a><span class="id" title="notation">)</span> <span class="id" title="notation">∗</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="cap_machine.program_logic.transiently.html#transiently"><span class="id" title="definition">transiently</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#Pcommitted:12"><span class="id" title="variable">Pcommitted</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#Ptransient1:13"><span class="id" title="variable">Ptransient1</span></a> <span class="id" title="notation">⊢</span> <a class="idref" href="cap_machine.program_logic.transiently.html#transiently"><span class="id" title="definition">transiently</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#Pcommitted:12"><span class="id" title="variable">Pcommitted</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#Ptransient2:14"><span class="id" title="variable">Ptransient2</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="var">iIntros</span> "(HPt &amp; Hcomtrans1)". <span class="id" title="var">iSplit</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">now</span> <span class="id" title="var">iDestruct</span> "Hcomtrans1" <span class="id" title="keyword">as</span> "($ &amp; _)".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">iDestruct</span> "Hcomtrans1" <span class="id" title="keyword">as</span> "(_ &amp; Htrans1)".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">iMod</span> "Htrans1" <span class="id" title="keyword">as</span> "Htrans1".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="var">iMod</span> <span class="id" title="notation">(</span>"HPt" <span class="id" title="notation">with</span> "Htrans1"<span class="id" title="notation">)</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">Unshelve</span>. <span class="id" title="var">Fail</span> <span class="id" title="tactic">idtac</span>. <span class="id" title="var">Admitted</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a id="transiently_proper_strong" class="idref" href="#transiently_proper_strong"><span class="id" title="lemma">transiently_proper_strong</span></a> {<a id="P:15" class="idref" href="#P:15"><span class="id" title="binder">P</span></a> <a id="Q:16" class="idref" href="#Q:16"><span class="id" title="binder">Q</span></a> <a id="R:17" class="idref" href="#R:17"><span class="id" title="binder">R</span></a> : <span class="id" title="abbreviation">iProp</span> <a class="idref" href="cap_machine.program_logic.transiently.html#a55722c867091ffb6a36b495fb90e69f"><span class="id" title="variable">Σ</span></a>} :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">(</span><a class="idref" href="cap_machine.program_logic.transiently.html#Q:16"><span class="id" title="variable">Q</span></a> <span class="id" title="notation">-∗</span> <a class="idref" href="cap_machine.program_logic.transiently.html#R:17"><span class="id" title="variable">R</span></a><span class="id" title="notation">)</span> <span class="id" title="notation">∗</span> <a class="idref" href="cap_machine.program_logic.transiently.html#transiently"><span class="id" title="definition">transiently</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#P:15"><span class="id" title="variable">P</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#Q:16"><span class="id" title="variable">Q</span></a> <span class="id" title="notation">⊢</span> <a class="idref" href="cap_machine.program_logic.transiently.html#transiently"><span class="id" title="definition">transiently</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#P:15"><span class="id" title="variable">P</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#R:17"><span class="id" title="variable">R</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">iIntros</span> "(HQR &amp; HPQ)".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">iSplit</span>; <span class="id" title="tactic">first</span> <span class="id" title="tactic">by</span> <span class="id" title="var">iDestruct</span> "HPQ" <span class="id" title="keyword">as</span> "(HP &amp; _)".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">iDestruct</span> "HPQ" <span class="id" title="keyword">as</span> "(_ &amp; HQ)".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">iMod</span> "HQ" <span class="id" title="keyword">as</span> "HQ".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="var">iApply</span> "HQR".<br/>
+&nbsp;&nbsp;<span class="id" title="var">Unshelve</span>. <span class="id" title="var">Fail</span> <span class="id" title="tactic">idtac</span>. <span class="id" title="var">Admitted</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;#[<span class="id" title="var">export</span>] <span class="id" title="keyword">Instance</span> <a id="elimModal_transiently" class="idref" href="#elimModal_transiently"><span class="id" title="instance">elimModal_transiently</span></a> {<a id="P:18" class="idref" href="#P:18"><span class="id" title="binder">P</span></a> <a id="Q:19" class="idref" href="#Q:19"><span class="id" title="binder">Q</span></a> <a id="R:20" class="idref" href="#R:20"><span class="id" title="binder">R</span></a>} : <span class="id" title="class">ElimModal</span> <span class="id" title="notation">True</span> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.18.0/stdlib//Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a> (<a class="idref" href="cap_machine.program_logic.transiently.html#transiently"><span class="id" title="definition">transiently</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#P:18"><span class="id" title="variable">P</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#Q:19"><span class="id" title="variable">Q</span></a>) <a class="idref" href="cap_machine.program_logic.transiently.html#Q:19"><span class="id" title="variable">Q</span></a> (<a class="idref" href="cap_machine.program_logic.transiently.html#transiently"><span class="id" title="definition">transiently</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#P:18"><span class="id" title="variable">P</span></a> <a class="idref" href="cap_machine.program_logic.transiently.html#R:20"><span class="id" title="variable">R</span></a>) (<span class="id" title="notation">|==&gt;</span> <a class="idref" href="cap_machine.program_logic.transiently.html#R:20"><span class="id" title="variable">R</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">iIntros</span> (<span class="id" title="var">_</span>) "(HPQ &amp; HK)".<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="var">iApply</span> <span class="id" title="notation">(</span><a class="idref" href="cap_machine.program_logic.transiently.html#transiently_mono_2"><span class="id" title="axiom">transiently_mono_2</span></a> <span class="id" title="notation">with</span> "[$HK $HPQ]"<span class="id" title="notation">)</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">Unshelve</span>. <span class="id" title="var">Fail</span> <span class="id" title="tactic">idtac</span>. <span class="id" title="var">Admitted</span>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="cap_machine.program_logic.transiently.html#transiently_modality"><span class="id" title="section">transiently_modality</span></a>.<br/>
+</div>
+</div>
+<div id="footer">
+  Generated by <a href="http://coq.inria.fr/">coqdoc</a> and improved with <a href="https://github.com/tebbi/coqdocjs">CoqdocJS</a>
+</div>
+</div>
+</body>
+
+</html>
