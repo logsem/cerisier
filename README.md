@@ -59,8 +59,13 @@ env)` and then `opam install -y .` (this will continue from where it failed).
 make -jN  # replace N with the number of CPU cores of your machine
 ```
 
-It is possible to run `make fundamental` to only build files up to the
-Fundamental Theorem.
+We recommend that you have at least **8Gb of RAM+swap**.
+Please be aware that the development takes around an hour to compile with `-j1`.
+In particular, the files `theories/case_studies/mutual_attestation/mutual_attestation_A_spec.v`
+and `theories/case_studies/mutual_attestation/mutual_attestation_B_spec.v`
+can each take up to 10 minutes and up to 8Gb of RAM to compile.
+
+It is possible to run `make fundamental` to only build files up to the Fundamental Theorem.
 
 
 # Step by step Instructions
