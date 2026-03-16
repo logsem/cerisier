@@ -1,7 +1,7 @@
 # Cerisier: A Program Logic for Attestation
 This repository contains the Rocq mechanization accompanying the submission 
 "Cerisier: A Program Logic for Attestation".
-It provides a model of a capability machine with feature for local attestation and TEE,
+It provides a model of a capability machine featuring local attestation
 and principles to reason about the interaction of known, unknown, and attested code.
 Cerisier extends the Cerise capability machine. 
 We do not assume prior experience with Cerise.
@@ -56,12 +56,8 @@ make[1]: Leaving directory '/home/rocq/cerisier'
 ```
 
 The output should list all recursive dependencies up to and including `theories/logrel/fundamental.v` being compiled by `COQC`.
-This is sufficient to ensure everything else will also compile successfully.
+This is sufficient for a kick-the-tyres session to ensure everything else will also compile successfully.
 
-Finally, compile the case studies. This can take up to 30 to 45 minutes.
-```sh
-rocq@cerisier:~/cerisier$ make
-```
 
 ## Without Docker
 
@@ -145,9 +141,15 @@ Encoding is injective. Decoding is the inverse of encoding.
 - (New for Cerisier) there exist `hash` and `hash_concat` functions. These are both injective, and several algebraic properties hold for these functions (Paper: lines 519-521).
 These assumptions are part of the `MachineParameters` typeclass in `opsem/machine_parameters.v`.
 
-These can be printed using the Rocq command `Print Assumptions`.
+Axioms can be printed using the Rocq command `Print Assumptions`.
 
-Note that by running `make`, a file `theories/assumptions.v` is automatically type checked and compiled by Rocq that will print any axioms or unproven assumptions in each of the parts of the code. The stdout of `make` should thus resemble:
+We have already prepared a file `theories/assumptions.v` that does exactly that for the entire codebase. It is the final file that gets compiled when running `make`. Try it now (this can take up to 45 minutes):
+
+```sh
+rocq@cerisier:~/cerisier$ make
+```
+
+The output should resemble what's below.
 
 ``` text
 COQC theories/Assumptions.v
