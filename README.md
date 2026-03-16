@@ -3,11 +3,12 @@ This repository contains the Rocq mechanization accompanying the submission
 "Cerisier: A Program Logic for Attestation".
 It provides a model of a capability machine with feature for local attestation and TEE,
 and principles to reason about the interaction of known, unknown, and attested code.
-
+Cerisier extends the Cerise capability machine. 
+We do not assume prior experience with Cerise.
 
 # Getting Started Guide
 
-For ease of setup, we provide a Docker image. We encourage making use of it over manual installation.
+For ease of setup, we provide a Docker image. We encourage making use of it over manual installation since package management can sometimes be tricky.
 
 
 > The Getting Started Guide should contain setup instructions (including, for example, a pointer to the VM player software, its version, passwords if needed, etc.) and basic testing of your artifact that you expect a reviewer to be able to complete in 30 minutes. Reviewers will follow all the steps in the guide during an initial kick-the-tires phase. The Getting Started Guide should be as simple as possible, and yet it should stress the key elements of your artifact. Anyone who has followed the Getting Started Guide should have no technical difficulties with the rest of your artifact.
@@ -28,7 +29,7 @@ $ docker run -it --hostname cerisier --rm cerisier:pldi26
 
 This drops you in a shell at `/home/rocq/cerisier` under the `rocq` user. This directory contains all the artifact's sources, and the container provides all dependencies needed for compiling from these sources.
 
-From this directory, invoke the Makefile with the `fundamental` target to double-check that everything is in working order. This can take up to 10 minutes on some machines.
+From this directory, invoke the Makefile with the `fundamental` target to double-check that everything is in working order. This can take up to 15 minutes on some machines.
 
 ```sh
 rocq@cerisier:~/cerisier$ make fundamental
@@ -125,37 +126,27 @@ In particular, the files `theories/case_studies/mutual_attestation/mutual_attest
 and `theories/case_studies/mutual_attestation/mutual_attestation_B_spec.v`
 can each take up to 10 minutes and up to 8Gb of RAM to compile.
 
-It is possible to run `make fundamental` to only build files up to the Fundamental Theorem.
-
+It is possible to run `make fundamental` to only build files up to the Fundamental Theorem. This should take less than 15 minutes.
 
 # Step by step Instructions
 
-We make 4 claims about our artifact in the paper.
+We make 3 claims about our artifact in the paper.
 
-TODO
-1. the dev 35k locs
-2. no axioms except those discussed
-3. the code is reusable, in particular extensible: directory layout etc
-4. Faithful to the paper.
+1. We do not rely on any axioms, except those discussed in the paper.
+2. The Rocq development compromises around 35k LoC/LoP.
+3. The artifact's definitions and theorems are faithful to the paper.
 
-TODO
-> The Step by Step Instructions explain how to reproduce any experiments or other activities that support the conclusions in your paper. Write this for readers who have a deep interest in your work and are studying it to improve it or compare against it. If your artifact runs for more than a few minutes, point this out and explain how to run it on smaller inputs.
+## 1. No axioms used except those discussed in the paper
 
-Claims:
-- LoC (paper: line 963): `make count-lines`
-- mechanised proofs:  `make`
+In the paper we claim that our Rocq development relies on the following assumptions about the machine:
+- (Inherited from Cerise) there exist `encode` and `decode` functions for instructions and permissions.
+Encoding is injective. Decoding is the inverse of encoding. 
+- (New for Cerisier) there exist `hash` and `hash_concat` functions. These are both injective, and several algebraic properties hold for these functions (Paper: lines 519-521).
+These assumptions are part of the `MachineParameters` typeclass in `opsem/machine_parameters.v`.
 
-# Assumptions
+These can be printed using the Rocq command `Print Assumptions`.
 
-The typeclass `MachineParameters` in `opsem/machine_parameters.v` contains the assumptions
-on the machine, in particular:
-- `encode` and `decode` functions for instructions, permissions and sealing permissions.
-  Encoding is injective. Decoding is the inverse of encoding. (Assumptions from Cerise)
-- `hash` and `hash_concat` functions. They are both injective. (Paper: lines 519-521)
-
-The file `assumption.v` shows which axioms are required for each theorems.
-The mutual attestation requires some additional algebraic assumptions on hash (Paper: lines 883-885)
-Compiling `assumption.v` should output the following:
+Note that by running `make`, a file `theories/assumptions.v` is automatically type checked and compiled by Rocq that will print any axioms or unproven assumptions in each of the parts of the code. The stdout of `make` should thus resemble:
 
 ``` text
 COQC theories/Assumptions.v
@@ -193,8 +184,26 @@ FunctionalExtensionality.functional_extensionality_dep
     (forall x : A, f x = g x) -> f = g
 ```
 
+## 2. Verification effort
+
+In the paper, we claim the verification effort is comprised of roughly 35.000 lines of code (LoC)
+
+To verify this claim, run the `count-lines` make target:
+
+```sh
+rocq@cerisier:~/cerisier$ make count-lines
+```
+
+This invokes `coqwc`, a command line utility that counts specification lines and proof lines.
+A table should be printed to stdout that summarizes the sources per file.
+
+Confirm that the sum of the lines of spec (last row, first column) and the lines of proof (last row, second column) roughly amount to 35.000 lines.
+
 # Organization
-All path below are under the `theories/` repository.
+
+For completeness, we give an overview of the artifact's directory structure below, and couple definitions and theorems back to the paper.
+
+All paths below are under the `theories/` repository.
 
 ## Organization of the repository
 
