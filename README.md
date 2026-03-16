@@ -32,8 +32,6 @@ From this directory, invoke the Makefile with the `fundamental` target to double
 rocq@cerisier:~/cerisier$ make fundamental
 ```
 
-This compiles all Rocq sources up the fundamental theorem; which is sufficient to ensure everything else will also compile successfully.
-
 Ensure the output matches what is below:
 
 ```
@@ -58,6 +56,7 @@ make[1]: Leaving directory '/home/rocq/cerisier'
 ```
 
 The output should list all recursive dependencies up to and including `theories/logrel/fundamental.v` being compiled by `COQC`.
+This is sufficient to ensure everything else will also compile successfully.
 
 Finally, compile the case studies. This can take up to 30 to 45 minutes.
 ```sh
