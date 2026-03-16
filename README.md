@@ -59,6 +59,11 @@ make[1]: Leaving directory '/home/rocq/cerisier'
 
 The output should list all recursive dependencies up to and including `theories/logrel/fundamental.v` being compiled by `COQC`.
 
+Finally, compile the case studies. This can take up to 30 to 45 minutes.
+```sh
+rocq@cerisier:~/cerisier$ make
+```
+
 ## Without Docker
 
 ### Obtaining Cerisier
