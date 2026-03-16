@@ -224,6 +224,10 @@ and moreover, that the `theories/logrel/ftlr/EInit.v`'s proof lines column (seco
 23     1871       84 theories/logrel/ftlr/EInit.v
 ```
 
+## 3. Artifact faithful to the paper
+In the rest of the README, we provide an explanation of the organisation of this artifact,
+and we provide correspondence tables between the Rocq implementation and the paper.
+
 # Organization
 
 For completeness, we give an overview of the artifact's directory structure below, and couple definitions and theorems back to the paper.
