@@ -7,12 +7,69 @@ and principles to reason about the interaction of known, unknown, and attested c
 
 # Getting Started Guide
 
-TODO
+For ease of setup, we provide a Docker image. We encourage making use of it over manual installation.
+
 
 > The Getting Started Guide should contain setup instructions (including, for example, a pointer to the VM player software, its version, passwords if needed, etc.) and basic testing of your artifact that you expect a reviewer to be able to complete in 30 minutes. Reviewers will follow all the steps in the guide during an initial kick-the-tires phase. The Getting Started Guide should be as simple as possible, and yet it should stress the key elements of your artifact. Anyone who has followed the Getting Started Guide should have no technical difficulties with the rest of your artifact.
 
 ## With Docker
+
+Proceed by downloading the tarball of the image `cerisier-pldi26.tar.gz` and loading it in Docker
+
+```sh
+$ docker load < cerisier-pldi26.tar.gz
+```
+
+Next, run the loaded image to spawn a container.
+
+```sh
+$ docker run -it --hostname cerisier --rm cerisier:pldi26
+```
+
+This drops you in a shell at `/home/rocq/cerisier` under the `rocq` user. This directory contains all the artifact's sources, and the container provides all dependencies needed for compiling from these sources.
+
+From this directory, invoke the Makefile with the `fundamental` target to double-check that everything is in working order. This can take up to 10 minutes on some machines.
+
+```sh
+rocq@cerisier:~/cerisier$ make fundamental
+```
+
+This compiles all Rocq sources up the fundamental theorem; which is sufficient to ensure everything else will also compile successfully.
+
+Ensure the output matches what is below:
+
+```
+... [omitted] ...
+COQC theories/proofmode/classes.v
+COQC theories/proofmode/contiguous.v
+COQC theories/proofmode/tactics_helpers.v
+COQC theories/proofmode/proofmode_instr_rules.v
+COQC machine_utils/theories/class_instances.v
+COQC theories/proofmode/class_instances.v
+COQC theories/proofmode/solve_addr_extra.v
+COQC machine_utils/theories/solve_pure.v
+COQC theories/proofmode/solve_pure.v
+COQC theories/utils/NamedProp.v
+COQC machine_utils/theories/tactics.v
+COQC theories/proofmode/proofmode.v
+COQC theories/logrel/ftlr/EInit.v
+COQC theories/logrel/ftlr/EDeInit.v
+COQC theories/logrel/ftlr/EStoreId.v
+COQC theories/logrel/fundamental.v
+make[1]: Leaving directory '/home/rocq/cerisier'
+```
+
+The output should list all recursive dependencies up to and including `theories/logrel/fundamental.v` being compiled by `COQC`.
+
 ## Without Docker
+
+### Obtaining Cerisier
+
+The Cerisier sources can be obtained through GitHub by cloning the git repository:
+
+```
+git clone https://github.com/logsem/cerisier.git --depth=1
+```
 
 ### Building the proofs
 
@@ -21,6 +78,7 @@ After cloning Cerisier, you can load the submodule using
 ```
 git submodule update --init
 ```
+
 #### Installing the dependencies
 
 You need to have [opam](https://opam.ocaml.org/) >= 2.0 installed.
@@ -55,13 +113,14 @@ env)` and then `opam install -y .` (this will continue from where it failed).
 
 #### Building
 
+This artifact requires at least 8 GB of RAM to build successfully, and more will make building faster.
+
 ```
 make -jN  # replace N with the number of CPU cores of your machine
 ```
-We recommend to use `-j1` if you have less then 16Gb of RAM.
-
-We recommend that you have at least **8Gb of RAM+swap**.
+We recommend using `-j1` (the default) if you have less then 16Gb of RAM.
 Please be aware that the development takes around an hour to compile with `-j1`.
+
 In particular, the files `theories/case_studies/mutual_attestation/mutual_attestation_A_spec.v`
 and `theories/case_studies/mutual_attestation/mutual_attestation_B_spec.v`
 can each take up to 10 minutes and up to 8Gb of RAM to compile.
@@ -70,6 +129,14 @@ It is possible to run `make fundamental` to only build files up to the Fundament
 
 
 # Step by step Instructions
+
+We make 4 claims about our artifact in the paper.
+
+TODO
+1. the dev 35k locs
+2. no axioms except those discussed
+3. the code is reusable, in particular extensible: directory layout etc
+4. Faithful to the paper.
 
 TODO
 > The Step by Step Instructions explain how to reproduce any experiments or other activities that support the conclusions in your paper. Write this for readers who have a deep interest in your work and are studying it to improve it or compare against it. If your artifact runs for more than a few minutes, point this out and explain how to run it on smaller inputs.
