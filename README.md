@@ -10,9 +10,6 @@ We do not assume prior experience with Cerise.
 
 For ease of setup, we provide a Docker image. We encourage making use of it over manual installation since package management can sometimes be tricky.
 
-
-> The Getting Started Guide should contain setup instructions (including, for example, a pointer to the VM player software, its version, passwords if needed, etc.) and basic testing of your artifact that you expect a reviewer to be able to complete in 30 minutes. Reviewers will follow all the steps in the guide during an initial kick-the-tires phase. The Getting Started Guide should be as simple as possible, and yet it should stress the key elements of your artifact. Anyone who has followed the Getting Started Guide should have no technical difficulties with the rest of your artifact.
-
 ## With Docker
 
 Proceed by downloading the tarball of the image `cerisier-pldi26.tar.gz` and loading it in Docker
@@ -184,9 +181,11 @@ FunctionalExtensionality.functional_extensionality_dep
     (forall x : A, f x = g x) -> f = g
 ```
 
+Note that we make use of the axiom of extensionality, which is well known to be compatible with Rocq's internal theory.
+
 ## 2. Verification effort
 
-In the paper, we claim the verification effort is comprised of roughly 35.000 lines of code (LoC)
+In the paper, we claim the verification effort is comprised of roughly 35,000 lines of code, and the FTLR case for `EInit` is roughly 2,000 lines of proofs.
 
 To verify this claim, run the `count-lines` make target:
 
@@ -197,7 +196,28 @@ rocq@cerisier:~/cerisier$ make count-lines
 This invokes `coqwc`, a command line utility that counts specification lines and proof lines.
 A table should be printed to stdout that summarizes the sources per file.
 
-Confirm that the sum of the lines of spec (last row, first column) and the lines of proof (last row, second column) roughly amount to 35.000 lines.
+Confirm that the sum of the lines of spec (last row, first column) and the lines of proof (last row, second column) roughly amount to 35,000 lines:
+
+```
+... [omitted] ...
+   59      445       80 theories/case_studies/memory_readout/trusted_memory_readout_client_spec.v
+   64      436       87 theories/case_studies/memory_readout/trusted_memory_readout_sensor_spec.v
+  136      255       49 theories/case_studies/memory_readout/trusted_memory_readout_main_spec.v
+  142      236       30 theories/case_studies/memory_readout/trusted_memory_readout_adequacy.v
+  450       32      228 theories/case_studies/mutual_attestation/mutual_attestation_code.v
+  142     1218      180 theories/case_studies/mutual_attestation/mutual_attestation_A_spec.v
+   54      730      127 theories/case_studies/mutual_attestation/mutual_attestation_B_spec.v
+  263      513       37 theories/case_studies/mutual_attestation/mutual_attestation_spec.v
+  141      200       30 theories/case_studies/mutual_attestation/mutual_attestation_adequacy.v
+   14        8        0 theories/assumptions.v
+15051    21366     2798 total
+```
+
+and moreover, that the `theories/logrel/ftlr/EInit.v`'s proof lines column (second column after spec) is roughly 2,000 lines.
+
+```
+23     1871       84 theories/logrel/ftlr/EInit.v
+```
 
 # Organization
 
