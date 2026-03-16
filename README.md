@@ -127,10 +127,38 @@ It is possible to run `make fundamental` to only build files up to the Fundament
 
 # Step by step Instructions
 
+Our artifact is a mechanization of the definitions, theorems, and proofs discussed in the paper. There, we discuss three case studies. Ensure that these case studies compile successfully by running `make` (this can take up to 45 minutes on some machines):
+
+```sh
+rocq@cerisier:~/cerisier$ make
+```
+
+You can double check to make sure that `theories/case_studies` is in fact listed in stdout. I.e. it contains
+
+```
+COQC theories/case_studies/template_adequacy_attestation.v
+COQC theories/case_studies/soc/soc_code.v
+COQC theories/case_studies/soc/soc_enclave_spec.v
+COQC theories/case_studies/soc/soc_spec.v
+COQC theories/case_studies/soc/soc_adequacy.v
+COQC theories/case_studies/memory_readout/trusted_memory_readout_code.v
+COQC theories/case_studies/memory_readout/trusted_memory_readout_client_spec.v
+COQC theories/case_studies/memory_readout/trusted_memory_readout_sensor_spec.v
+COQC theories/case_studies/memory_readout/trusted_memory_readout_enclaves_spec.v
+COQC theories/case_studies/memory_readout/trusted_memory_readout_main_spec.v
+COQC theories/case_studies/memory_readout/trusted_memory_readout_spec.v
+COQC theories/case_studies/memory_readout/trusted_memory_readout_adequacy.v
+COQC theories/case_studies/mutual_attestation/mutual_attestation_code.v
+COQC theories/case_studies/mutual_attestation/mutual_attestation_A_spec.v
+COQC theories/case_studies/mutual_attestation/mutual_attestation_B_spec.v
+COQC theories/case_studies/mutual_attestation/mutual_attestation_spec.v
+COQC theories/case_studies/mutual_attestation/mutual_attestation_adequacy.v
+```
+
 We make 3 claims about our artifact in the paper.
 
 1. We do not rely on any axioms, except those discussed in the paper.
-2. The Rocq development compromises around 35k LoC/LoP.
+2. The Rocq development comprises around 35k LoC/LoP.
 3. The artifact's definitions and theorems are faithful to the paper.
 
 ## 1. No axioms used except those discussed in the paper
@@ -143,10 +171,10 @@ These assumptions are part of the `MachineParameters` typeclass in `opsem/machin
 
 Axioms can be printed using the Rocq command `Print Assumptions`.
 
-We have already prepared a file `theories/assumptions.v` that does exactly that for the entire codebase. It is the final file that gets compiled when running `make`. Try it now (this can take up to 45 minutes):
+We have already prepared a file `theories/assumptions.v` that does exactly that for the entire codebase. Invoke `make assumptions` from the root directory (this can take up to 45 min if you did not compile the project earlier):
 
 ```sh
-rocq@cerisier:~/cerisier$ make
+rocq@cerisier:~/cerisier$ make assumptions
 ```
 
 The output should resemble what's below.
