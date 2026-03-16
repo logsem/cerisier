@@ -34,4 +34,3 @@ RUN git clone --depth=1 https://github.com/logsem/cerisier.git
 WORKDIR cerisier
 RUN git submodule update --init --recursive
 
-
