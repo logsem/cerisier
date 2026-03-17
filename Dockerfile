@@ -29,8 +29,7 @@ RUN opam install -vyj$(nproc) coq-iris=4.1.0 coq-equations=1.3+8.18 \
 && opam clean -acrs --logs \
 && opam config list && opam list
 
-# Clone artifact repository
-RUN git clone --depth=1 https://github.com/logsem/cerisier.git
+# Copy the artifact
+COPY --chown=rocq:rocq . cerisier
 WORKDIR cerisier
-RUN git submodule update --init --recursive
 

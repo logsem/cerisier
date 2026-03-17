@@ -12,10 +12,11 @@ For ease of setup, we provide a Docker image. We encourage making use of it over
 
 ## With Docker
 
-Proceed by downloading the tarball of the image `cerisier-pldi26.tar.gz` and loading it in Docker
+Proceed by building the Docker image. This step takes approximately 15 minutes to build the Docker
+image, because it installs all the dependencies.
 
 ```sh
-$ docker load < cerisier-pldi26.tar.gz
+$ docker build -t cerisier:pldi26 .
 ```
 
 Next, run the loaded image to spawn a container.
@@ -29,7 +30,7 @@ This drops you in a shell at `/home/rocq/cerisier` under the `rocq` user. This d
 From this directory, invoke the Makefile with the `fundamental` target to double-check that everything is in working order. This can take up to 15 minutes on some machines.
 
 ```sh
-rocq@cerisier:~/cerisier$ make fundamental
+rocq@cerisier:~/cerisier$ make fundamental -j$(nproc)
 ```
 
 Ensure the output matches what is below:
