@@ -97,10 +97,8 @@ eval $(opam env)
 ```
     # Add the coq-released repo (skip if you already have it)
     opam repo add coq-released https://coq.inria.fr/opam/released
-    # Install Coq 8.18.0 (skip if already installed)
     opam update
-    opam install coq.8.18.0
-    opam install coq-iris.4.1.0
+    opam install coq.8.18.0 coq-iris.4.1.0 coq-equations.1.3+8.18
 ```
 
 #### Troubleshooting
