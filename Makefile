@@ -2,7 +2,7 @@ FUNDAMENTAL		:=	 theories/logrel/fundamental.v
 COQMAKEFILE 	?=   Makefile.coq
 COQ_PROJ 		?= _CoqProject
 
-SRCS := $(shell egrep '^.*\.v$$' _CoqProject | grep -v '^#')
+SRCS := $(shell egrep '^.*\.v$$' _CoqProject | grep -v '^\#')
 
 all: $(COQMAKEFILE)
 		+@$(MAKE) -f $^ $@
