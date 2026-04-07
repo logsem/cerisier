@@ -354,6 +354,8 @@ In the operational semantics:
 | Running         | Instr Executable        |
 | Halted          | Instr Halted            |
 | Failed          | Instr Failed            |
+| cseal           | Seal                    |
+| cunseal         | UnSeal                  |
 
 For technical reasons (so that Iris considers a single instruction as an atomic step), 
 the execution mode is interweaved with the "Instr Next" mode, which reduces to a value.
