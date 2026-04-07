@@ -215,6 +215,7 @@ FunctionalExtensionality.functional_extensionality_dep
 ```
 
 Note that we make use of the axiom of extensionality, which is well known to be compatible with Rocq's internal theory.
+The axioms `hash_cap.*` correspond to the algebraic assumptions required for mutual attestation (Paper: line 885).
 
 ## 2. Verification effort
 
