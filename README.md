@@ -332,19 +332,23 @@ We provide a table that link the different sections of the paper with the relate
 | Case Study - Sensor Readout (§5.3) | `case_studies/memory_readout/*.v`              |
 
 We also provide a table that link the different figures and theorems of the paper with the related Rocq files:
-| *figure*                       | *Rocq definition/theorem*                                | remark                                                                               |
-|--------------------------------|----------------------------------------------------------|--------------------------------------------------------------------------------------|
-| Figures 2 and 15               | `case_studies/soc/soc_code.v`                            |                                                                                      |
-| Figures 3, 5, 9, 10, 12, 13,14 | `opsem/*`                                                |                                                                                      |
-| Figure 7                       | `program_logic/rules/rules_Load:wp_load_success`         | The Rocq implementation uses points-to with logical versions, discussed in §3.4.     |
-| Figure 8                       | `logrel/logrel.v:interp`                                 |                                                                                      |
-| Theorem 3.1                    | ---                                                      | Theorem 3.1 comes from Cerise. Our version is Theorem 4.1.                           |
-| Figure 11                      | `program_logic/rules/rules_IsUnique:wp_isunique_success` |                                                                                      |
-| Figure 16                      | `program_logic/rules/rules_EInit`                        | The rules presented in the implementation is more general than the one in the paper. |
-| Figure 17                      | `logrel/logrel.v:system_inv`                             |                                                                                      |
-| Figure 18                      | `logrel/logrel.v:custom_enclave_contract`                |                                                                                      |
-| Theorem 4.1                    | `logrel/fundamental:cerisier_universal_contract`         |                                                                                      |
-
+| *figure*                         | *Rocq definition/theorem*                                        | remark                                                                           |
+|----------------------------------|------------------------------------------------------------------|----------------------------------------------------------------------------------|
+| Figures 2 and 15                 | `case_studies/soc/soc_code.v`                                    |                                                                                  |
+| Figures 3, 9, 13: grammar        | `opsem/machine_base.v`                                           | Figure 9 updates Figure 3, and the Rocq code implements Figure 9 and 13          |
+| Figures 5: ExecSingle            | `opsem/cap_lang.v:step`                                          |                                                                                  |
+| Figures 5: updPC                 | `opsem/machine_base.v:updatePcPerm`                              |                                                                                  |
+| Figures 5: decode                | `opsem/machine_parameters.v:decodeInstr`                         |                                                                                  |
+| Figures 5, 9, 10, 12, 13: tables | `opsem/cap_lang.v:exec_opt`                                      | Operational semantics of the corresponding instructions.                         |
+| Figures 14                       | `opsem/cap_lang.v:exec_opt`                                      | Representation of the case `EInit`.                                              |
+| Figure 7                         | `program_logic/rules/rules_Load:wp_load_success`                 | The Rocq implementation uses points-to with logical versions, discussed in §3.4. |
+| Figure 8                         | `logrel/logrel.v:interp`                                         |                                                                                  |
+| Theorem 3.1                      | ---                                                              | Theorem 3.1 comes from Cerise. Our version is Theorem 4.1.                       |
+| Figure 11                        | `program_logic/rules/rules_IsUnique:wp_isunique_success`         |                                                                                  |
+| Figure 16                        | `program_logic/rules/rules_EStoreId:wp_estoreid_success_unknown` |                                                                                  |
+| Figure 17                        | `logrel/logrel.v:system_inv`                                     |                                                                                  |
+| Figure 18                        | `logrel/logrel.v:custom_enclave_contract`                        |                                                                                  |
+| Theorem 4.1                      | `logrel/fundamental:cerisier_universal_contract`                 |                                                                                  |
 
 Finally, some definitions have different names from the paper.
 
